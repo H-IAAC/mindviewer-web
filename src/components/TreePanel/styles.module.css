@@ -1,0 +1,32 @@
+.treePanel {
+  width: 250px;
+  padding: 10px 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  width: auto;
+  height: 100%;
+  padding: 5px;
+  height: 680px;
+  border: 0.5px solid #999;
+  border-top: none;
+  background-color: #bfbfbf;
+  overflow: auto;
+}
+
+.tabs {
+  width: fit-content;
+  display: flex;
+}
+
+.tabItem {
+  width: auto;
+  padding: 6px 10px;
+  background: #bfbfbf;
+  border: 0.5px solid #999;
+  border-bottom: none;
+  border-top-left-radius: 18px;
+  cursor: pointer;
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Visualizador",
+  "language": "Idioma",
+  "connection": {
+    "stop": "Interromper conexão",
+    "start": "Ativar conexão"
+  }
+}

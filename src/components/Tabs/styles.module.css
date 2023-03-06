@@ -1,0 +1,14 @@
+.tabs {
+  width: fit-content;
+  display: flex;
+}
+
+.tabItem {
+  width: auto;
+  padding: 6px 10px;
+  background: #bfbfbf;
+  border: 0.5px solid #999;
+  border-bottom: none;
+  border-top-left-radius: 18px;
+  cursor: pointer;
+}

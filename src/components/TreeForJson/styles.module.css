@@ -1,0 +1,61 @@
+.container {
+  overflow: auto;
+}
+
+.treeItemLabel {
+  width: max-content;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  font-size: 13px;
+  position: relative;
+}
+
+.treeItemLabel img {
+  margin-right: 5px;
+}
+
+.root {
+  color: #222
+}
+
+.content {
+  color: #222
+}
+
+.group {
+  margin-left: 28px !important;
+  padding-left: 8px !important;
+  border-left: 0.5px dashed #2d2d2d;
+}
+
+.label {
+  font-weight: inherit !important;
+  color: inherit;
+  background-color: transparent;
+  padding-left: 2px !important;
+}
+
+.iconContainer {
+  min-width: fit-content !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+
+.menuPaper {
+  min-width: 100px;
+  position: fixed;
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 20%), 0px 3px 4px 0px rgb(0 0 0 / 14%), 0px 1px 8px 0px rgb(0 0 0 / 12%);
+  z-index: 1;
+}
+
+.menuList {
+  padding: 0 !important;
+}
+
+.menuItemText {
+  font-size: 11px !important;
+  padding: 5px !important;
+}

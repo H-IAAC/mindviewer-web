@@ -1,0 +1,91 @@
+.container {
+  margin: 5px 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.config, .preview {
+  padding: 5px;
+}
+
+.config h1, .preview h1 {
+  font-size: 16px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  margin: 10px 5px;
+}
+
+.item p {
+  padding: 7px 12px;
+  align-self: end;
+  width: 50px;
+  text-align: center;
+}
+
+.value, .color, .interval {
+  display: flex;
+  flex-direction: column;
+  padding: 0 5px;
+  margin: 0 5px;
+  width: 180px;
+}
+
+.value label, .interval label {
+  margin: 5px 0;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.value input, .interval input {
+  padding: 5px;
+  border-radius: 5px;
+  border: solid 1px #333;
+}
+
+.color label {
+  margin: 5px 0 0 0;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.intervalInputs {
+  display: flex;
+  align-items: center;
+}
+
+.intervalInputs input {
+  width: 70px;
+}
+
+.addButton {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0;
+}
+
+.addButton button {
+  width: 35px;
+  height: 35px;
+  font-size: 20px;
+  background: #d3455b;
+  border: none;
+  color: #fff;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.removeButton {
+  align-self: flex-end;
+  margin-bottom: 4px;
+}
+
+.removeButton button {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+}

@@ -1,0 +1,78 @@
+.container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background: #e4e4e4;
+  border-radius: 0 20px 20px 20px;
+  margin-bottom: 10px;
+}
+
+.container:last-child {
+  margin-bottom: 0;
+}
+
+.head {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+}
+
+.refreshButton {
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+}
+
+.refreshButton input {
+  margin: 0 5px;
+}
+
+.refreshButton label {
+  font-size: 14px;
+  padding: 2px 0 0 0;
+}
+
+.editButton button{
+  border: solid 1px #555;
+  border-radius: 5px;
+  background: #fff;
+  display: flex;
+  margin: 4px;
+  cursor: pointer;
+}
+
+.closeButton {
+  position: absolute;
+  right: 0;
+}
+
+.closeButton button {
+  border: none;
+  background: transparent;
+  padding: 0 15px;
+  display: flex;
+  cursor: pointer;
+}
+
+.slider {
+  width: 100%;
+  height: 35px;
+  margin: 0 25px 0 10px;
+  align-self: center;
+}
+
+.timeDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 15px;
+}
+
+.timeDisplay input {
+  border-radius: 8px;
+  padding: 2px;
+  border: 1px solid #aaa;
+  width: 160px;
+  cursor: pointer;
+}

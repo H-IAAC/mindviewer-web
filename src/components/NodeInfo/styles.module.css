@@ -1,0 +1,142 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.background {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  background-color: rgba(0,0,0,0.1);
+}
+
+.modal {
+  width: 80%;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  background: #fcfdfd;
+  border-radius: 10px;
+  /* position: relative; */
+  z-index: 2;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 20px;
+  background: #c3cfd9;
+  border-radius: 10px 10px 0 0;
+}
+
+.type, .time {
+  background: #1717a8;
+  padding: 8px 15px;
+  border-radius: 19px;
+  margin-right: 20px;
+}
+
+.time {
+  cursor: pointer;
+}
+
+.type p, .time p {
+  color: #fff;
+}
+
+.path {
+  display: flex;
+  align-items: center;
+  max-width: 80%;
+  overflow: auto;
+}
+
+.path div {
+  display: flex;
+  align-items: center;
+}
+
+.path div:last-child button {
+  pointer-events: none;
+}
+
+.path div:last-child p {
+  display: none;
+}
+
+.path button {
+  border: none;
+  background: #fff;
+  padding: 6px 9px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* .path button:last-child {
+  pointer-events: none;
+} */
+
+.path p {
+  margin: 0px 7px;
+  font-size: 18px;
+}
+
+/* .path p:last-child {
+  display: none;
+} */
+
+.closeButton {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 60px);
+  padding: 20px;
+  position: relative;
+}
+
+.bodyTop {
+  display: flex;
+  align-items: center;
+  /* padding: 26px 0; */
+}
+
+.bodyBottom {
+  height: calc(100% - 35px);
+  margin: 20px 55px 0 0;
+  overflow: auto;
+}
+
+.bodyBottom h1 {
+  font-size: 18px;
+}
+
+.moreButton {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 25px;
+  font-size: 26px;
+  color: #fff;
+  background: #d3455b;
+  border: none;
+  cursor: pointer;
+}

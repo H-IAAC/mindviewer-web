@@ -1,0 +1,8 @@
+.ColorPicker-MuiTextField-root {
+  width: 75px !important;
+  margin-right: 10px !important;
+}
+
+.MuiInput-underline:before, .MuiInput-underline:after {
+  display: none;
+}

@@ -1,0 +1,8 @@
+{
+  "title": "MindViewer",
+  "language": "Language",
+  "connection": {
+    "stop": "Stop connection",
+    "start": "Start connection"
+  }
+}

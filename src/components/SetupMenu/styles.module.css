@@ -1,0 +1,52 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu {
+  width: 40%;
+  border: 1px solid #777;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 20px;
+}
+
+/* .title {
+  width: 100%;
+} */
+
+.options {
+  margin: 20px 0;
+}
+
+.options input[type="text"] {
+  padding: 10px 5px;
+  width: 70%;
+  border-radius: 8px;
+  border: 1px solid #777;
+}
+
+.option input {
+  margin-right: 5px;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.buttons button {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  border: solid 2px #1717a8;
+  background: #1717a8;
+  color: #fff;
+  cursor: pointer;
+}

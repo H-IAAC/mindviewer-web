@@ -1,0 +1,36 @@
+.chartPanel {
+  width: 1460px;
+  margin: 5px;
+  padding: 5px 10px;
+}
+
+.chartContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  width: 100%;
+  display: flex;
+}
+
+.tabButton {
+  width: 130px;
+  padding: 5px 10px;
+  border-radius: 20px 20px 0 0;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.tabButtonActive {
+  background: #e4e4e4;
+  color: #000;
+}
+
+.tabButtonDisable {
+  background:  #1717a8;
+  color: #fff;
+}

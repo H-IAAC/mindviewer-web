@@ -1,0 +1,50 @@
+.chartPaper {
+  flex-grow: 50;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  margin: 0 10px;
+  height: 100%;
+}
+
+.chartContainer {
+  flex-grow: 50;
+  display: flex;
+}
+
+.yLegend {
+  flex-grow: 1;
+}
+
+.chartComponent {
+  flex-grow: 50;
+  display: flex;
+  padding: 10px 20px;
+  font-size: 14px;
+  box-sizing: border-box;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 300;
+  flex-direction: column;
+}
+
+.chartTitle {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 5px;
+  font-size: 20px;
+}
+
+.legendComponent {
+  padding: 0;
+}
+
+.legendItemComponent {
+  width: 100%;
+  display: flex;
+  position: relative;
+  box-sizing: border-box;
+  text-align: left;
+  align-items: center;
+  padding: 0;
+  justify-content: flex-start;
+}

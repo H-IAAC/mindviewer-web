@@ -1,0 +1,9 @@
+version: "3.3"
+services:
+  production: 
+    container_name: docker-react-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8000"
