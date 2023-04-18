@@ -3,6 +3,7 @@ import Tree from '../Tree';
 import AddChartMenu from '../AddChartMenu';
 import TreePanelViewProps from '../../@types/TreePanelViewProps';
 import NodeInfo from '../NodeInfo';
+import IdeasInfo from '../IdeasInfo';
 
 const TreePanelView = (props: TreePanelViewProps) => {
   const {
@@ -11,7 +12,9 @@ const TreePanelView = (props: TreePanelViewProps) => {
   const {
     tabActive,
     addChartMenu,
-    nodeInfoModal
+    nodeInfoModal,
+    ideasModal,
+
   } = props.treePanelState;
   const {
     data,
@@ -44,6 +47,11 @@ const TreePanelView = (props: TreePanelViewProps) => {
       }
       {nodeInfoModal &&
         <NodeInfo
+          {...props}
+        />
+      }
+      {ideasModal &&
+        <IdeasInfo
           {...props}
         />
       }

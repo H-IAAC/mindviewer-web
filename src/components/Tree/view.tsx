@@ -22,6 +22,7 @@ const TreeView = (props: TreeViewProps) => {
     handleSelect,
     handleOpenAddChartMenu,
     handleOpenNodeInfoModal,
+    handleIdeaModal,
     handleAddChartNewTab
   } = props.treeProps
   const {
@@ -92,6 +93,7 @@ const TreeView = (props: TreeViewProps) => {
             <MenuItem className={styles.menuItemText} onClick={() => handleOpenAddChartMenu(treeState.idTree)}>Inserir gráfico</MenuItem>
             <MenuItem className={styles.menuItemText} onClick={() => handleAddChartNewTab(treeState.idTree)}>Inserir gráfico em uma nova guia</MenuItem>
             <MenuItem className={styles.menuItemText}>Opção 3</MenuItem>
+            <MenuItem className={styles.menuItemText} onClick={() => handleIdeaModal(treeState.idTree)}>Ideas</MenuItem>
           </MenuList>
         </div>
       }

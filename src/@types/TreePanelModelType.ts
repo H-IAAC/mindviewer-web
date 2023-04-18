@@ -5,6 +5,7 @@ type TreePanelModelType = {
   selectedNodesProcessed: string[][],
   addChartMenu: boolean,
   nodeInfoModal: boolean,
+  ideasModal: boolean,
   idTree: string[],
   allCharts: string[]
 }

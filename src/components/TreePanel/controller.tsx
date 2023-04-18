@@ -54,7 +54,14 @@ const reducerTreePanel = (state: any, action: any) => {
     case 'CLOSE_NODEINFOMODAL':
       return { 
         ...state, 
-        nodeInfoModal: false
+        nodeInfoModal: false,
+        ideasModal: false
+      };
+    case 'OPEN_IDEAMODAL':
+      return {
+        ...state,
+        idTree: action.idTree,
+        ideasModal: true
       };
     default:
       return state;
@@ -137,6 +144,10 @@ const TreePanelController = (props: TreePanelProps) => {
     treePanelModel.openNodeInfoModal(idTree);
   }
 
+  const handleIdeaModal = (idTree: string[]) => {
+    treePanelModel.openIdeaModal(idTree);
+  }
+
   const handleCloseNodeInfoModal = () => {
     treePanelModel.closeNodeInfoModal();
   }
@@ -158,6 +169,7 @@ const TreePanelController = (props: TreePanelProps) => {
     handleOpenAddChartMenu,
     handleCloseAddChartMenu,
     handleOpenNodeInfoModal,
+    handleIdeaModal,
     handleCloseNodeInfoModal,
     handleAddChartNewTab,
     handleTabActive,
