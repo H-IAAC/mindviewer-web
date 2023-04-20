@@ -11,7 +11,6 @@ const stylesheet: cytoscape.Stylesheet[] = [
     selector: "node",
     style: {
       label: "data(id)",
-      shape: "ellipse",
       height: "100",
       width: "100",
       "text-valign": "center",
@@ -29,6 +28,105 @@ const stylesheet: cytoscape.Stylesheet[] = [
       "line-color": "green",
       "target-arrow-color": "green",
       "curve-style": "bezier"
+    }
+  },
+  {
+    selector: '.ellipse',
+    style: {
+        shape: 'ellipse'
+    }
+  },
+  {
+    selector: '.ellipse-double',
+    style: {
+        shape: 'ellipse',
+        "border-color": "black",
+        "border-width": 10,
+        "border-style": 'double'
+    }
+  },
+  {
+    selector: '.Azure',
+    style: {
+      'background-color': 'Azure'
+    }
+  },
+  {
+    selector: '.DarkSeaGreen',
+    style: {
+      'background-color': 'DarkSeaGreen'
+    }
+  },
+  {
+    selector: '.WhiteSmoke',
+    style: {
+      'background-color': 'WhiteSmoke'
+    }
+  },
+  {
+    selector: '.Green',
+    style: {
+      'background-color': '#cfe2cf'
+    }
+  },
+  {
+    selector: '.Plum',
+    style: {
+      'background-color': 'Plum'
+    }
+  },
+  {
+    selector: '.Red',
+    style: {
+      'background-color': '#ff6666'
+    }
+  },
+  {
+    selector: '.RoyalBlue',
+    style: {
+      'background-color': 'RoyalBlue'
+    }
+  },
+  {
+    selector: '.SkyBlue',
+    style: {
+      'background-color': '#d3edf8'
+    }
+  },
+  {
+    selector: '.Tan',
+    style: {
+      'background-color': 'Tan'
+    }
+  },
+  {
+    selector: '.BurlyWood',
+    style: {
+      'background-color': 'BurlyWood'
+    }
+  },
+  {
+    selector: '.Wheat',
+    style: {
+      'background-color': 'Wheat'
+    }
+  },
+  {
+    selector: '.LightSkyBlue',
+    style: {
+      'background-color': 'LightSkyBlue'
+    }
+  },
+  {
+    selector: '.DodgerBlue',
+    style: {
+      'background-color': 'DodgerBlue'
+    }
+  },
+  {
+    selector: '.CornflowerBlue',
+    style: {
+      'background-color': 'CornflowerBlue'
     }
   }
 ];

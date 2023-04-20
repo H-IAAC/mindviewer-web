@@ -15,7 +15,7 @@ const initialNodeInfoState = {
   inputTimeModal: false 
 };
 
-const CytoNode = (id: string, label: string, posX = 0, posY = 0) => ({
+const CytoNode = (id: string, label: string, classes:string, posX = 0, posY = 0) => ({
   data: {
     id,
     label
@@ -23,7 +23,8 @@ const CytoNode = (id: string, label: string, posX = 0, posY = 0) => ({
   position: {
     x: posX,
     y: posY
-  }
+  },
+  classes
 });
 
 const CytoEdge = (source: string, target: string, label = '') => ({
@@ -90,7 +91,32 @@ const getNodeDataElements = (values: any, edgeId: any) => {
     //console.log("id: " + value.info[0].info);
     //console.log("name: " + value.info[1].info);
     //console.log("value: " + value.info[2].info);
-    elementsJson.nodes.push(CytoNode(value.info[0].info, value.info[1].info));
+    //console.log("type: " + value.info[4].info);
+    //console.log("category: " + value.info[5].info);
+    //console.log("scope: " + value.info[6].info);
+
+    var color = 'Azure';
+    switch(value.info[4].info) {
+      case 1: { color = 'DarkSeaGreen'; break; }
+      case 2: { color = 'DarkSeaGreen'; break; }
+      case 3: { color = 'WhiteSmoke'; break; }
+      case 4: { color = 'Green'; break; }
+      case 5: { color = 'Plum'; break; }
+      case 6: { color = 'Red'; break; }
+      case 7: { color = 'RoyalBlue'; break; }
+      case 8: { color = 'SkyBlue'; break; }
+      case 9: { color = 'Tan'; break; }
+      case 10: { color = 'BurlyWood'; break; }
+      case 11: { color = 'Wheat'; break; }
+      case 12: { color = 'LightSkyBlue'; break; }
+      case 13: { color = 'DodgerBlue'; break; }
+      case 14: { color = 'CornflowerBlue'; break; }
+      case 15: { color = 'CornflowerBlue'; break; }
+      case 16: { color = 'DarkSeaGreen'; break; }
+      case 17: { color = 'Wheat'; break; }
+      default: { color = 'Azure'; break; }
+    }
+    elementsJson.nodes.push(CytoNode(value.info[0].info, value.info[1].info, "ellipse " + color));
     elementsJson.edges.push(CytoEdge(edgeId, value.info[0].info,));
 
     if (value.info[3].info.length > 0 ) {
@@ -104,7 +130,8 @@ const parseNodeData = (nodeData: any, setLoading: any, setElements: any) => {
     nodeData.values[0].y.info.forEach(function (value: any) {
       if (value.hasChildren) {
         elementsJson.nodes.push(CytoNode(nodeData.values[0].y.info[0].info, // id
-                                nodeData.values[0].y.info[1].info));        // name
+                                nodeData.values[0].y.info[1].info,          // name
+                                "ellipse-double"));
         getNodeDataElements(value, nodeData.values[0].y.info[0].info);
       }
   });
