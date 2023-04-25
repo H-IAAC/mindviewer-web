@@ -15,7 +15,7 @@ const initialNodeInfoState = {
   inputTimeModal: false 
 };
 
-const CytoNode = (id: string, label: string, classes:string, posX = 0, posY = 0) => ({
+const CytoNode = (id: string, label: string, classes: string, posX = 0, posY = 0) => ({
   data: {
     id,
     label
@@ -95,28 +95,28 @@ const getNodeDataElements = (values: any, edgeId: any) => {
     //console.log("category: " + value.info[5].info);
     //console.log("scope: " + value.info[6].info);
 
-    var color = 'Azure';
+    var type = 'type0';
     switch(value.info[4].info) {
-      case 1: { color = 'DarkSeaGreen'; break; }
-      case 2: { color = 'DarkSeaGreen'; break; }
-      case 3: { color = 'WhiteSmoke'; break; }
-      case 4: { color = 'Green'; break; }
-      case 5: { color = 'Plum'; break; }
-      case 6: { color = 'Red'; break; }
-      case 7: { color = 'RoyalBlue'; break; }
-      case 8: { color = 'SkyBlue'; break; }
-      case 9: { color = 'Tan'; break; }
-      case 10: { color = 'BurlyWood'; break; }
-      case 11: { color = 'Wheat'; break; }
-      case 12: { color = 'LightSkyBlue'; break; }
-      case 13: { color = 'DodgerBlue'; break; }
-      case 14: { color = 'CornflowerBlue'; break; }
-      case 15: { color = 'CornflowerBlue'; break; }
-      case 16: { color = 'DarkSeaGreen'; break; }
-      case 17: { color = 'Wheat'; break; }
-      default: { color = 'Azure'; break; }
+      case 1: { type = 'type1'; break; }
+      case 2: { type = 'type2'; break; }
+      case 3: { type = 'type3'; break; }
+      case 4: { type = 'type4'; break; }
+      case 5: { type = 'type5'; break; }
+      case 6: { type = 'type6'; break; }
+      case 7: { type = 'type7'; break; }
+      case 8: { type = 'type8'; break; }
+      case 9: { type = 'type9'; break; }
+      case 10: { type = 'type10'; break; }
+      case 11: { type = 'type11'; break; }
+      case 12: { type = 'type12'; break; }
+      case 13: { type = 'type13'; break; }
+      case 14: { type = 'type14'; break; }
+      case 15: { type = 'type15'; break; }
+      case 16: { type = 'type16'; break; }
+      case 17: { type = 'type17'; break; }
+      default: { type = 'type0'; break; }
     }
-    elementsJson.nodes.push(CytoNode(value.info[0].info, value.info[1].info, "ellipse " + color));
+    elementsJson.nodes.push(CytoNode(value.info[0].info, value.info[1].info, "ellipse " + type));
     elementsJson.edges.push(CytoEdge(edgeId, value.info[0].info,));
 
     if (value.info[3].info.length > 0 ) {

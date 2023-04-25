@@ -3,6 +3,24 @@ import styles from './styles.module.css';
 import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from "cytoscape";
 import dagre from "cytoscape-dagre";
+import iconType0 from '../../assets/ideas/0.png';
+import iconType1 from '../../assets/ideas/1.png';
+import iconType2 from '../../assets/ideas/2.png';
+import iconType3 from '../../assets/ideas/3.png';
+import iconType4 from '../../assets/ideas/4.png';
+import iconType5 from '../../assets/ideas/5.png';
+import iconType6 from '../../assets/ideas/6.png';
+import iconType7 from '../../assets/ideas/7.png';
+import iconType8 from '../../assets/ideas/8.png';
+import iconType9 from '../../assets/ideas/9.png';
+import iconType10 from '../../assets/ideas/10.png';
+import iconType11 from '../../assets/ideas/11.png';
+import iconType12 from '../../assets/ideas/12.png';
+import iconType13 from '../../assets/ideas/13.png';
+import iconType14 from '../../assets/ideas/14.png';
+import iconType15 from '../../assets/ideas/15.png';
+import iconType16 from '../../assets/ideas/16.png';
+import iconType17 from '../../assets/ideas/17.png';
 
 cytoscape.use(dagre);
 
@@ -46,87 +64,183 @@ const stylesheet: cytoscape.Stylesheet[] = [
     }
   },
   {
-    selector: '.Azure',
+    selector: '.type0',
     style: {
-      'background-color': 'Azure'
+      'background-color': 'Azure',
+      'background-image': iconType0,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
     }
   },
   {
-    selector: '.DarkSeaGreen',
+    selector: '.type1',
     style: {
-      'background-color': 'DarkSeaGreen'
+      'background-color': 'DarkSeaGreen',
+      'background-image': iconType1,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
     }
   },
   {
-    selector: '.WhiteSmoke',
+    selector: '.type2',
     style: {
-      'background-color': 'WhiteSmoke'
+      'background-color': 'DarkSeaGreen',
+      'background-image': iconType2,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
     }
   },
   {
-    selector: '.Green',
+    selector: '.type3',
     style: {
-      'background-color': '#cfe2cf'
+      'background-color': 'WhiteSmoke',
+      'background-image': iconType3,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
     }
   },
   {
-    selector: '.Plum',
+    selector: '.type4',
     style: {
-      'background-color': 'Plum'
+      'background-color': '#cfe2cf',
+      'background-image': iconType4,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
     }
   },
   {
-    selector: '.Red',
+    selector: '.type5',
     style: {
-      'background-color': '#ff6666'
+      'background-color': 'Plum',
+      'background-image': iconType5,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
     }
   },
   {
-    selector: '.RoyalBlue',
+    selector: '.type6',
     style: {
-      'background-color': 'RoyalBlue'
+      'background-color': '#ff6666',
+      'background-image': iconType6,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
     }
   },
   {
-    selector: '.SkyBlue',
+    selector: '.type7',
     style: {
-      'background-color': '#d3edf8'
+      'background-color': '#acc1fe',
+      'background-image': iconType7,
+      'background-width': '35%',
+      'background-height': '35%',
+      'background-position-y': '90%'
     }
   },
   {
-    selector: '.Tan',
+    selector: '.type8',
     style: {
-      'background-color': 'Tan'
+      'background-color': '#d3edf8',
+      'background-image': iconType8,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
     }
   },
   {
-    selector: '.BurlyWood',
+    selector: '.type9',
     style: {
-      'background-color': 'BurlyWood'
+      'background-color': 'Tan',
+      'background-image': iconType9,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
     }
   },
   {
-    selector: '.Wheat',
+    selector: '.type10',
     style: {
-      'background-color': 'Wheat'
+      'background-color': 'BurlyWood',
+      'background-image': iconType10,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
     }
   },
   {
-    selector: '.LightSkyBlue',
+    selector: '.type11',
     style: {
-      'background-color': 'LightSkyBlue'
+      'background-color': 'Wheat',
+      'background-image': iconType11,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
     }
   },
   {
-    selector: '.DodgerBlue',
+    selector: '.type12',
     style: {
-      'background-color': 'DodgerBlue'
+      'background-color': 'LightSkyBlue',
+      'background-image': iconType12,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
     }
   },
   {
-    selector: '.CornflowerBlue',
+    selector: '.type13',
     style: {
-      'background-color': 'CornflowerBlue'
+      'background-color': 'DodgerBlue',
+      'background-image': iconType13,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'      
+    }
+  },
+  {
+    selector: '.type14',
+    style: {
+      'background-color': 'CornflowerBlue',
+      'background-image': iconType14,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
+    }
+  },
+  {
+    selector: '.type15',
+    style: {
+      'background-color': 'CornflowerBlue',
+      'background-image': iconType15,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
+    }
+  },
+  {
+    selector: '.type16',
+    style: {
+      'background-color': 'DarkSeaGreen',
+      'background-image': iconType16,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
+    }
+  },
+  {
+    selector: '.type17',
+    style: {
+      'background-color': 'Wheat',
+      'background-image': iconType17,
+      'background-width': '40%',
+      'background-height': '40%',
+      'background-position-y': '90%'
     }
   }
 ];
