@@ -86,6 +86,31 @@ const getElements = (c) => {
 }
 */
 
+const getIdeaType = (value: any) => {
+  switch(value.info[4].info) {
+    case 0: { return 'type0'; break; }
+    case 1: { return 'type1'; break; }
+    case 2: { return 'type2'; break; }
+    case 3: { return 'type3'; break; }
+    case 4: { return 'type4'; break; }
+    case 5: { return 'type5'; break; }
+    case 6: { return 'type6'; break; }
+    case 7: { return 'type7'; break; }
+    case 8: { return 'type8'; break; }
+    case 9: { return 'type9'; break; }
+    case 10: { return 'type10'; break; }
+    case 11: { return 'type11'; break; }
+    case 12: { return 'type12'; break; }
+    case 13: { return 'type13'; break; }
+    case 14: { return 'type14'; break; }
+    case 15: { return 'type15'; break; }
+    case 16: { return 'type16'; break; }
+    case 17: { return 'type17'; break; }
+    case 18: { return 'type18'; break; }
+    default: { return 'type0'; break; }
+  }
+}
+
 const getNodeDataElements = (values: any, edgeId: any) => {
   values.info.forEach(function (value: any) {
     //console.log("id: " + value.info[0].info);
@@ -95,27 +120,7 @@ const getNodeDataElements = (values: any, edgeId: any) => {
     //console.log("category: " + value.info[5].info);
     //console.log("scope: " + value.info[6].info);
 
-    var type = 'type0';
-    switch(value.info[4].info) {
-      case 1: { type = 'type1'; break; }
-      case 2: { type = 'type2'; break; }
-      case 3: { type = 'type3'; break; }
-      case 4: { type = 'type4'; break; }
-      case 5: { type = 'type5'; break; }
-      case 6: { type = 'type6'; break; }
-      case 7: { type = 'type7'; break; }
-      case 8: { type = 'type8'; break; }
-      case 9: { type = 'type9'; break; }
-      case 10: { type = 'type10'; break; }
-      case 11: { type = 'type11'; break; }
-      case 12: { type = 'type12'; break; }
-      case 13: { type = 'type13'; break; }
-      case 14: { type = 'type14'; break; }
-      case 15: { type = 'type15'; break; }
-      case 16: { type = 'type16'; break; }
-      case 17: { type = 'type17'; break; }
-      default: { type = 'type0'; break; }
-    }
+    var type = getIdeaType(value);
     elementsJson.nodes.push(CytoNode(value.info[0].info, value.info[1].info, "ellipse " + type));
     elementsJson.edges.push(CytoEdge(edgeId, value.info[0].info,));
 
@@ -129,9 +134,10 @@ const parseNodeData = (nodeData: any, setLoading: any, setElements: any) => {
   if (nodeData && nodeData.values[0] && nodeData.values[0].y && nodeData.values[0].y.info)
     nodeData.values[0].y.info.forEach(function (value: any) {
       if (value.hasChildren) {
+        var type = getIdeaType(value);
         elementsJson.nodes.push(CytoNode(nodeData.values[0].y.info[0].info, // id
                                 nodeData.values[0].y.info[1].info,          // name
-                                "ellipse-double"));
+                                "ellipse-double " + type));
         getNodeDataElements(value, nodeData.values[0].y.info[0].info);
       }
   });
@@ -261,18 +267,6 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     //  clearRefs(cyRef/*, contextMenuRef*/);
     //};
   },[nodeInfoState])
-
-
-
-
-
-
-
-
-
-
-
-
 
   const handleIdTree = (idTree: string) => {
     ideasModel.handleNewInfo(idTree, mainPanelState.data, tabActive);

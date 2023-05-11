@@ -124,7 +124,6 @@ class MainPanelModel {
     try {
       const response = await axios.get(`${this.url}`);
       const rawJson: IMindProperties = response.data;
-      //console.log(rawJson)
 
       if (this.noConnection) {
         this.noConnection = false;
