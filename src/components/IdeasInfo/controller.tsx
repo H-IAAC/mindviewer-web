@@ -3,7 +3,11 @@ import NodeInfoProps from "../../@types/NodeInfoProps";
 import IdeasViewProps from "../../@types/IdeasViewProps";
 import IdeasInfoModel from "./model";
 import IdeasView from "./view";
-import { get } from "lodash";
+import cytoscape from 'cytoscape';
+import popper from 'cytoscape-popper';
+import tippy from 'tippy.js';
+
+cytoscape.use(popper);
 
 const initialNodeInfoState = { 
   pathList: [],
@@ -15,10 +19,14 @@ const initialNodeInfoState = {
   inputTimeModal: false 
 };
 
-const CytoNode = (id: string, label: string, classes: string, posX = 0, posY = 0) => ({
+const CytoNode = (id: string, name: string, value: string, type: string, category: string, scope: string, classes: string, posX = 0, posY = 0) => ({
   data: {
     id,
-    label
+    name,
+    value,
+    type,
+    category,
+    scope
   },
   position: {
     x: posX,
@@ -87,6 +95,9 @@ const getElements = (c) => {
 */
 
 const getIdeaType = (value: any) => {
+
+  if (value.info[4] == null || value.info[4].info == null) return;
+
   switch(value.info[4].info) {
     case 0: { return 'type0'; break; }
     case 1: { return 'type1'; break; }
@@ -113,15 +124,15 @@ const getIdeaType = (value: any) => {
 
 const getNodeDataElements = (values: any, edgeId: any) => {
   values.info.forEach(function (value: any) {
-    //console.log("id: " + value.info[0].info);
-    //console.log("name: " + value.info[1].info);
-    //console.log("value: " + value.info[2].info);
-    //console.log("type: " + value.info[4].info);
-    //console.log("category: " + value.info[5].info);
-    //console.log("scope: " + value.info[6].info);
 
     var type = getIdeaType(value);
-    elementsJson.nodes.push(CytoNode(value.info[0].info, value.info[1].info, "ellipse " + type));
+    elementsJson.nodes.push(CytoNode(value.info[0].info, // id
+                                     value.info[1].info, // name
+                                     value.info[2].info, // value
+                                     value.info[4].info, // type
+                                     value.info[5].info, // category
+                                     value.info[6].info, // scope
+                                     "ellipse " + type));
     elementsJson.edges.push(CytoEdge(edgeId, value.info[0].info,));
 
     if (value.info[3].info.length > 0 ) {
@@ -136,7 +147,11 @@ const parseNodeData = (nodeData: any, setLoading: any, setElements: any) => {
       if (value.hasChildren) {
         var type = getIdeaType(value);
         elementsJson.nodes.push(CytoNode(nodeData.values[0].y.info[0].info, // id
-                                nodeData.values[0].y.info[1].info,          // name
+                                         nodeData.values[0].y.info[1].info, // name
+                                         nodeData.values[0].y.info[2].info, // value
+                                         nodeData.values[0].y.info[4].info, // type
+                                         nodeData.values[0].y.info[5].info, // category
+                                         nodeData.values[0].y.info[6].info, // scope
                                 "ellipse-double " + type));
         getNodeDataElements(value, nodeData.values[0].y.info[0].info);
       }
@@ -163,6 +178,29 @@ const reducerNodeInfo = (state: any, action: any) => {
   }
 }
 
+function makePopper(ele: cytoscape.NodeSingular | any) {
+  let ref = ele.popperRef();
+  ele.tippy = tippy(document.createElement('div'), {
+    content: () => {
+      let content = document.createElement("div");
+      content.innerHTML = "Name: " + ele.data('name') + '<br>' +
+                          "Value: " + ele.data('value') + '<br>' +
+                          "Type: " + ele.data('type') + '<br>' +
+                          "Category: " + ele.data('category') + '<br>' +
+                          "Scope: " + ele.data('scope');
+      content.style.backgroundColor = "lightgray"
+      content.style.padding = '5px 5px 5px 5px';
+      return content;
+    },
+    hideOnClick: true,
+    placement: 'right',
+    zIndex: 2,
+    onShow(instance) {
+      instance.popperInstance!.reference = ref;
+    },
+  });
+}
+
 const IdeasInfoController = (props: NodeInfoProps) => {
 
   const {
@@ -178,7 +216,8 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
   const [isLoading, setLoading] = useState(true);
   const [elements, setElements] = useState({ nodes: [], edges: []});
-  const cyRef = useRef<any>();
+  const cyRef = React.useRef<cytoscape.Core | undefined>();
+  var popperRef: any;
 
   const clearRefs = (...refs: any[]) =>
     refs.forEach(
@@ -188,8 +227,6 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
   const [nodeInfoState, dispatch] = useReducer(reducerNodeInfo, initialNodeInfoState);
   const ideasModel = IdeasInfoModel.getInstance();
-
-
 
   useEffect(() => {
     // Get data from JSON
@@ -210,63 +247,85 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       parseNodeData(nodeInfoState.nodeData, setLoading, setElements);
     }
 
+    return () => {
+    };
+  },[nodeInfoState]);
+
+  useEffect(() => {
     if (cyRef.current) {
-      cyRef.current.on("tap", (event: any) => {
-        //clearRefs(popperRef, contextMenuRef);
-        console.log(event);
-        const label = get(event, "target._private.data.label");
-        /*if (label) {
-          popperRef.current = event.target.popper({
-            content: () => {
-              const div = document.createElement("div");
-              div.innerHTML = `<p>${label}</p><div class="popper__arrow" x-arrow=""></div>`;
-              div.setAttribute("class", "popper");
-              document.body.appendChild(div);
-              return div;
-            },
-            popper: { removeOnDestroy: true }
-          });
-        }*/
+      cyRef.current.ready(function() {
+        cyRef.current!.elements().nodes().forEach(function(ele) {
+          popperRef = ele;
+          makePopper(ele);
+        });
       });
-      /* cyRef.current.on("pan zoom resize position", () => {
-        clearRefs(popperRef, contextMenuRef);
-      });*/
-      /*cyRef.current.on("cxttap", (event) => {
-        clearRefs(popperRef, contextMenuRef);
+
+      cyRef.current.minZoom(0.2);
+      cyRef.current.maxZoom(2);
+
+      cyRef.current.elements().unbind('mouseover');
+      cyRef.current.elements().bind('mouseover', (event) => {
+                                      popperRef = event.target;
+                                      if (event.target.tippy) event.target.tippy.show();
+                                    });
+
+      cyRef.current.elements().unbind('mouseout');
+      cyRef.current.elements().bind('mouseout', (event) => {
+                                      popperRef = event.target;
+                                      if (event.target.tippy) event.target.tippy.hide();
+                                    });
+
+      cyRef.current.elements().unbind('drag');
+      cyRef.current.elements().bind('drag', (event) => {
+                                      popperRef = event.target;
+                                      if (event.target.tippy.popperInstance) event.target.tippy.popperInstance.update();
+                                    });
+
+      cyRef.current.on('viewport', (event) => {
+        popperRef.tippy.hide();
+      });
+
+      /*cyRef.current.nodes().on('mouseover', (event: any) => {
+        const id = get(event, "target._private.data.id");
         const label = get(event, "target._private.data.label");
-        if (label) {
-          contextMenuRef.current = event.target.popper({
-            content: () => {
-              const div = document.createElement("div");
-              div.innerHTML = `
-              <div>option1</div>
-              <div>option2</div>
-              <div>option3</div>
-            `;
-              document.body.appendChild(div);
-              return div;
-            },
-            popper: { removeOnDestroy: true }
-          });
-        }
+        console.log("mouse over node id: " + id);
+
+        cyPopperRef.current = event.target.popper({
+          content: () => {
+            const div = document.createElement("div");
+            div.innerHTML = `<p id='popper'>${label}</p><div class="popper__arrow" x-arrow=""></div>`;
+            div.setAttribute("class", "popper");
+
+            var modal = document.getElementById("ideasModal");
+            modal!.appendChild(div);
+            return div;
+          },
+          popper: {
+            placement: 'right',
+            removeOnDestroy: true,
+          },
+        });
+      });
+
+      /*cyRef.current.nodes().on('mouseout', () => {
       });*/
-      cyRef.current.on("cxttap", (e: any) => {
+
+      /*cyRef.current.on("cxttap", (e: any) => {
         if (e.target === cyRef.current) {
           console.log("cxttap on background");
         } else if (e.target.isEdge()) {
           console.log("cxttap on edge");
-          cyRef.current.remove(e.target);
+          cyRef.current!.remove(e.target);
         } else {
           console.log("cxttap on node"); // e.target.isNode()
         }
-      });
-      //const eh = cyRef.current.edgehandles(edgehandlesOptions);
-      //eh.enableDrawMode();
+      });*/
+
     }
-    //return () => {
-    //  clearRefs(cyRef/*, contextMenuRef*/);
-    //};
-  },[nodeInfoState])
+    return () => {
+      clearRefs(cyRef);
+    }
+ }, [cyRef.current]);
 
   const handleIdTree = (idTree: string) => {
     ideasModel.handleNewInfo(idTree, mainPanelState.data, tabActive);
