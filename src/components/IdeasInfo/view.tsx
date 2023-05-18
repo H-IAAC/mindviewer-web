@@ -18,9 +18,12 @@ const IdeasView = (props: IdeasViewProps) => {
   } = props.nodeInfoState
   const {
     handleIdTree,
+    handleZoomIn,
+    handleZoomOut,
     cyRef,
     elements,
     isLoading,
+    zoom
   } = props
 
   const nodeDataAux = nodeJsonData ? nodeJsonData : nodeData;
@@ -30,7 +33,7 @@ const IdeasView = (props: IdeasViewProps) => {
       <>
         <div className={styles.container}>
           <div className={styles.background}></div>
-          <div className={styles.modal}>
+          <div className={styles.modal} id='ideasModal'>
             <div className={styles.header}>
               <div className={styles.path}>
                 {
@@ -55,8 +58,13 @@ const IdeasView = (props: IdeasViewProps) => {
                 X
               </button>
             </div>
+
+
             <div className={styles.body}>
-              
+            <div className={styles.buttons}>
+                <button onClick={handleZoomIn}>Zoom in</button>
+                <button onClick={handleZoomOut}>Zoom out</button>
+              </div>
               { isLoading && <div className="App">Loading...</div> }
               { elements.nodes.length == 0 && <div className="App">There is no idea to display.</div> }
               { !isLoading && <CytoscapeComponent
@@ -65,6 +73,9 @@ const IdeasView = (props: IdeasViewProps) => {
                   elements={CytoscapeComponent.normalizeElements(elements)}
                   layout={{ name: "dagre"}}
                   style={{ width: "auto", height: "-webkit-fill-available" }}
+                  zoomingEnabled={true}
+                  wheelSensitivity={0.05}
+                  zoom={zoom}
                 />
               }
             </div>

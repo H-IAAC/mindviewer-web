@@ -201,7 +201,38 @@ function makePopper(ele: cytoscape.NodeSingular | any) {
   });
 }
 
+
+/*function makeInfo(ele: cytoscape.NodeSingular | any) {
+  let ref = ele.popperRef();
+  ele.info = tippy(document.createElement('div'), {
+    content: () => {
+      let content = document.createElement("div");
+      content.innerHTML = "Name: " + ele.data('name') + '<br>' +
+                          "Value: " + ele.data('value');
+      content.style.backgroundColor = "lightgray"
+      content.style.padding = '5px 5px 5px 5px';
+      return content;
+    },
+    hideOnClick: true,
+    placement: 'right',
+    zIndex: 2,
+    onShow(instance) {
+      instance.popperInstance!.reference = ref;
+    },
+  });
+}*/
+
 const IdeasInfoController = (props: NodeInfoProps) => {
+
+  const handleZoomIn = () => {
+    console.log('Zoom In');
+    setZoom(zoom + 0.1);
+  }
+  
+  const handleZoomOut = () => {
+    console.log('Zoom Out');
+    setZoom(zoom - 0.1);
+  }
 
   const {
     idTree,
@@ -214,6 +245,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     handleCloseNodeInfoModal,
   } = props;
 
+  const [zoom, setZoom] = useState(0.55);
   const [isLoading, setLoading] = useState(true);
   const [elements, setElements] = useState({ nodes: [], edges: []});
   const cyRef = React.useRef<cytoscape.Core | undefined>();
@@ -282,7 +314,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
                                     });
 
       cyRef.current.on('viewport', (event) => {
-        popperRef.tippy.hide();
+        if (popperRef.tippy) popperRef.tippy.hide();
       });
 
       /*cyRef.current.nodes().on('mouseover', (event: any) => {
@@ -334,9 +366,12 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   const ideasViewProps: IdeasViewProps = {
     nodeInfoState,
     handleIdTree,
+    handleZoomIn,
+    handleZoomOut,
     cyRef,
     elements,
     isLoading,
+    zoom,
     nodeInfoProps: props
   }
 
