@@ -20,6 +20,7 @@ const IdeasView = (props: IdeasViewProps) => {
     handleIdTree,
     handleZoomIn,
     handleZoomOut,
+    handleShowInfo,
     cyRef,
     elements,
     isLoading,
@@ -60,11 +61,13 @@ const IdeasView = (props: IdeasViewProps) => {
             </div>
 
 
-            <div className={styles.body}>
-            <div className={styles.buttons}>
+            <div className={styles.body} id='body'>
+              <div className={styles.buttons}>
                 <button onClick={handleZoomIn}>Zoom in</button>
                 <button onClick={handleZoomOut}>Zoom out</button>
+                <button onClick={handleShowInfo}>Show Info</button>
               </div>
+              
               { isLoading && <div className="App">Loading...</div> }
               { elements.nodes.length == 0 && <div className="App">There is no idea to display.</div> }
               { !isLoading && <CytoscapeComponent
@@ -78,6 +81,7 @@ const IdeasView = (props: IdeasViewProps) => {
                   zoom={zoom}
                 />
               }
+              <div className={styles.tippys} id='tippys'></div>
             </div>
           </div>
         </div>

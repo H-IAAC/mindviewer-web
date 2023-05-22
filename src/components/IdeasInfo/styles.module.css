@@ -26,6 +26,7 @@
   border-radius: 10px;
   /* position: relative; */
   z-index: 2;
+  overflow: hidden;
 }
 
 .header {
@@ -90,6 +91,7 @@
   height: calc(100% - 60px);
   padding: 2px;
   position: relative;
+  overflow: hidden;
 }
 
 .buttons {
@@ -103,4 +105,28 @@
 button {
   margin: 0px 5px 0px 5px;
   padding: 3px 10px 3px 10px;
+}
+
+.tippys {
+  position: absolute !important;
+  z-index: 2;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+  /*margin-top: calc(50% - 50vh) !important;
+  margin-left: calc(50% - 50vw) !important;*/
+  margin-top: calc(-15vh - 60px) !important;
+  /*margin-left: calc(80% - 100vw) !important;*/
+  margin-left: -10vw !important;
+}
+
+.tippysA {
+  position: absolute !important;
+  z-index: 2;
+  width: 99vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+  margin-top: -15% !important;
+  /*left: -10vw !important;*/
+  margin-left: calc(80% - 100vw) !important;
 }

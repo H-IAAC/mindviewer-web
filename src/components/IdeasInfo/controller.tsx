@@ -94,41 +94,14 @@ const getElements = (c) => {
 }
 */
 
-const getIdeaType = (value: any) => {
-
-  if (value.info[4] == null || value.info[4].info == null) return;
-
-  switch(value.info[4].info) {
-    case 0: { return 'type0'; break; }
-    case 1: { return 'type1'; break; }
-    case 2: { return 'type2'; break; }
-    case 3: { return 'type3'; break; }
-    case 4: { return 'type4'; break; }
-    case 5: { return 'type5'; break; }
-    case 6: { return 'type6'; break; }
-    case 7: { return 'type7'; break; }
-    case 8: { return 'type8'; break; }
-    case 9: { return 'type9'; break; }
-    case 10: { return 'type10'; break; }
-    case 11: { return 'type11'; break; }
-    case 12: { return 'type12'; break; }
-    case 13: { return 'type13'; break; }
-    case 14: { return 'type14'; break; }
-    case 15: { return 'type15'; break; }
-    case 16: { return 'type16'; break; }
-    case 17: { return 'type17'; break; }
-    case 18: { return 'type18'; break; }
-    default: { return 'type0'; break; }
-  }
-}
-
 const getNodeDataElements = (values: any, edgeId: any) => {
   values.info.forEach(function (value: any) {
 
-    var type = getIdeaType(value);
+    //var type = getIdeaType(value);
+    var type = (value.info[4] == null || value.info[4].info == null) ? '' : 'type' + value.info[4].info;
     elementsJson.nodes.push(CytoNode(value.info[0].info, // id
                                      value.info[1].info, // name
-                                     value.info[2].info, // value
+                                     parseFloat(value.info[2].info).toFixed(2).toString(), // value
                                      value.info[4].info, // type
                                      value.info[5].info, // category
                                      value.info[6].info, // scope
@@ -145,10 +118,12 @@ const parseNodeData = (nodeData: any, setLoading: any, setElements: any) => {
   if (nodeData && nodeData.values[0] && nodeData.values[0].y && nodeData.values[0].y.info)
     nodeData.values[0].y.info.forEach(function (value: any) {
       if (value.hasChildren) {
-        var type = getIdeaType(value);
+        var type = (value.info[4] == null || value.info[4].info == null) ? '' : 'type' + value.info[4].info;
         elementsJson.nodes.push(CytoNode(nodeData.values[0].y.info[0].info, // id
                                          nodeData.values[0].y.info[1].info, // name
-                                         nodeData.values[0].y.info[2].info, // value
+                                         nodeData.values[0].y.info[2].info ?
+                                              parseFloat(nodeData.values[0].y.info[2].info).toFixed(2).toString() :
+                                              '',
                                          nodeData.values[0].y.info[4].info, // type
                                          nodeData.values[0].y.info[5].info, // category
                                          nodeData.values[0].y.info[6].info, // scope
@@ -178,60 +153,65 @@ const reducerNodeInfo = (state: any, action: any) => {
   }
 }
 
-function makePopper(ele: cytoscape.NodeSingular | any) {
+function makePopper(ele: cytoscape.NodeSingular | any, showInfo: boolean) {
   let ref = ele.popperRef();
+  let tippysDiv = document.getElementById('tippys');
+  let bodyDiv = document.getElementById('ideasModal');
+
+  if (ele.tippy) ele.tippy.destroy();
+
   ele.tippy = tippy(document.createElement('div'), {
     content: () => {
       let content = document.createElement("div");
-      content.innerHTML = "Name: " + ele.data('name') + '<br>' +
+      (!showInfo) ?
+        content.innerHTML = "Name: " + ele.data('name') + '<br>' +
                           "Value: " + ele.data('value') + '<br>' +
                           "Type: " + ele.data('type') + '<br>' +
                           "Category: " + ele.data('category') + '<br>' +
-                          "Scope: " + ele.data('scope');
-      content.style.backgroundColor = "lightgray"
+                          "Scope: " + ele.data('scope')
+                          :
+                          content.innerHTML = ele.data('name') +
+                                              '<br>' +
+                                              ele.data('value');
+      if (showInfo) content.style.fontSize = "11px";
+      if (showInfo) content.style.textAlign = "center"
+      if (!showInfo) content.style.backgroundColor = "lightgray";
       content.style.padding = '5px 5px 5px 5px';
       return content;
     },
-    hideOnClick: true,
-    placement: 'right',
+    hideOnClick: (showInfo) ? false : true,
+    placement: (showInfo) ? "bottom" : 'right',
+    //boundary: bodyDiv!,
     zIndex: 2,
+    flip: true,
+    appendTo: () =>  tippysDiv!,
+    popperOptions: {
+      modifiers: {
+        flip: {
+          boundariesElement: 'scrollParent',
+        },
+      }
+    },
     onShow(instance) {
       instance.popperInstance!.reference = ref;
     },
   });
+
+  if (showInfo) ele.tippy!.show();
 }
-
-
-/*function makeInfo(ele: cytoscape.NodeSingular | any) {
-  let ref = ele.popperRef();
-  ele.info = tippy(document.createElement('div'), {
-    content: () => {
-      let content = document.createElement("div");
-      content.innerHTML = "Name: " + ele.data('name') + '<br>' +
-                          "Value: " + ele.data('value');
-      content.style.backgroundColor = "lightgray"
-      content.style.padding = '5px 5px 5px 5px';
-      return content;
-    },
-    hideOnClick: true,
-    placement: 'right',
-    zIndex: 2,
-    onShow(instance) {
-      instance.popperInstance!.reference = ref;
-    },
-  });
-}*/
 
 const IdeasInfoController = (props: NodeInfoProps) => {
 
   const handleZoomIn = () => {
-    console.log('Zoom In');
     setZoom(zoom + 0.1);
   }
   
   const handleZoomOut = () => {
-    console.log('Zoom Out');
     setZoom(zoom - 0.1);
+  }
+
+  const handleShowInfo = () => {
+    (showInfo) ? setShowInfo(false) : setShowInfo(true);
   }
 
   const {
@@ -246,6 +226,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   } = props;
 
   const [zoom, setZoom] = useState(0.55);
+  const [showInfo, setShowInfo] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [elements, setElements] = useState({ nodes: [], edges: []});
   const cyRef = React.useRef<cytoscape.Core | undefined>();
@@ -287,8 +268,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     if (cyRef.current) {
       cyRef.current.ready(function() {
         cyRef.current!.elements().nodes().forEach(function(ele) {
-          popperRef = ele;
-          makePopper(ele);
+          makePopper(ele, showInfo);
         });
       });
 
@@ -297,12 +277,14 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
       cyRef.current.elements().unbind('mouseover');
       cyRef.current.elements().bind('mouseover', (event) => {
+                                      if (showInfo === true) return;
                                       popperRef = event.target;
                                       if (event.target.tippy) event.target.tippy.show();
                                     });
 
       cyRef.current.elements().unbind('mouseout');
       cyRef.current.elements().bind('mouseout', (event) => {
+                                      if (showInfo === true) return;
                                       popperRef = event.target;
                                       if (event.target.tippy) event.target.tippy.hide();
                                     });
@@ -314,7 +296,14 @@ const IdeasInfoController = (props: NodeInfoProps) => {
                                     });
 
       cyRef.current.on('viewport', (event) => {
-        if (popperRef.tippy) popperRef.tippy.hide();
+        if (showInfo === true) {
+          setShowInfo(false);
+          cyRef.current!.elements().nodes().forEach(function(ele : any) {
+            if (ele.tippy) ele.tippy.destroy();
+          });
+        } else {
+          if (popperRef && popperRef.tippy) popperRef.tippy.hide();
+        }
       });
 
       /*cyRef.current.nodes().on('mouseover', (event: any) => {
@@ -357,7 +346,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     return () => {
       clearRefs(cyRef);
     }
- }, [cyRef.current]);
+ }, [cyRef.current, showInfo]);
 
   const handleIdTree = (idTree: string) => {
     ideasModel.handleNewInfo(idTree, mainPanelState.data, tabActive);
@@ -368,6 +357,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     handleIdTree,
     handleZoomIn,
     handleZoomOut,
+    handleShowInfo,
     cyRef,
     elements,
     isLoading,

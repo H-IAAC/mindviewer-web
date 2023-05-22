@@ -6,6 +6,7 @@ type NodeInfoViewProps = {
   handleIdTree: (idTree: string) => void,
   handleZoomIn: () => void,
   handleZoomOut: () => void,
+  handleShowInfo: () => void,
   cyRef: React.MutableRefObject<any>,
   elements: any,
   isLoading: boolean,
