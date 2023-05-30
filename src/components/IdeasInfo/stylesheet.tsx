@@ -28,9 +28,11 @@ const stylesheet: cytoscape.Stylesheet[] = [
         width: "100",
         "text-valign": "center",
         "text-halign": "center",
+        "text-margin-y": -16,
         "background-color": "LightGray",
         "border-color": "black",
-        "border-width": 2
+        "border-width": 2,
+        "font-size": "24"
       }
     },
     {
