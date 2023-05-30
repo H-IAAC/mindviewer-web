@@ -21,6 +21,7 @@ const IdeasView = (props: IdeasViewProps) => {
     handleZoomIn,
     handleZoomOut,
     handleShowInfo,
+    handleSaveAsPng,
     cyRef,
     elements,
     isLoading,
@@ -66,6 +67,7 @@ const IdeasView = (props: IdeasViewProps) => {
                 <button onClick={handleZoomIn}>Zoom in</button>
                 <button onClick={handleZoomOut}>Zoom out</button>
                 <button onClick={handleShowInfo}>Show Info</button>
+                <button onClick={handleSaveAsPng}>Save PNG</button>
               </div>
               
               { isLoading && <div className="App">Loading...</div> }

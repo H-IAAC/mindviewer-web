@@ -7,6 +7,7 @@ type NodeInfoViewProps = {
   handleZoomIn: () => void,
   handleZoomOut: () => void,
   handleShowInfo: () => void,
+  handleSaveAsPng: () => void,
   cyRef: React.MutableRefObject<any>,
   elements: any,
   isLoading: boolean,

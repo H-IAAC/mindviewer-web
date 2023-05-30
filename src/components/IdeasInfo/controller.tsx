@@ -6,6 +6,7 @@ import IdeasView from "./view";
 import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
 import tippy from 'tippy.js';
+import html2canvas from "html2canvas";
 
 cytoscape.use(popper);
 
@@ -214,6 +215,26 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     (showInfo) ? setShowInfo(false) : setShowInfo(true);
   }
 
+  const handleSaveAsPng = async () => {
+
+    const element = document.getElementById('body')
+    const canvas = await html2canvas(element!);
+
+    const data = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+
+    if (typeof link.download === 'string') {
+      link.href = data;
+      link.download = 'image.png';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      window.open(data);
+    }
+  }
+
   const {
     idTree,
     tabActive
@@ -358,6 +379,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     handleZoomIn,
     handleZoomOut,
     handleShowInfo,
+    handleSaveAsPng,
     cyRef,
     elements,
     isLoading,
