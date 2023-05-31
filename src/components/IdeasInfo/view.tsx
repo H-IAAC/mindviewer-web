@@ -22,10 +22,12 @@ const IdeasView = (props: IdeasViewProps) => {
     handleZoomOut,
     handleShowInfo,
     handleSaveAsPng,
+    handleFullscreen,
     cyRef,
     elements,
     isLoading,
-    zoom
+    zoom,
+    showInfo
   } = props
 
   const nodeDataAux = nodeJsonData ? nodeJsonData : nodeData;
@@ -63,13 +65,24 @@ const IdeasView = (props: IdeasViewProps) => {
 
 
             <div className={styles.body} id='body'>
-              <div className={styles.buttons}>
-                <button onClick={handleZoomIn}>Zoom in</button>
-                <button onClick={handleZoomOut}>Zoom out</button>
-                <button onClick={handleShowInfo}>Show Info</button>
+              <div className={styles.bodyLeft}>
+                <div>
+                  <button onClick={handleFullscreen}>&#x26F6;</button>
+                </div>
+                <div>
+                  <button onClick={handleZoomIn}>&#x002B;</button>
+                <div>
+                </div>
+                  <button onClick={handleZoomOut}>&#x002D;</button>
+                </div>
+              </div>
+              <div className={styles.bodyRight}>
+                {showInfo ? <button onClick={handleShowInfo}><b>Show Info</b></button>
+                          : <button onClick={handleShowInfo}>Show Info</button>
+                }
                 <button onClick={handleSaveAsPng}>Save PNG</button>
               </div>
-              
+
               { isLoading && <div className="App">Loading...</div> }
               { elements.nodes.length == 0 && <div className="App">There is no idea to display.</div> }
               { !isLoading && <CytoscapeComponent

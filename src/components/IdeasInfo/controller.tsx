@@ -7,6 +7,7 @@ import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
 import tippy from 'tippy.js';
 import html2canvas from "html2canvas";
+import styles from './styles.module.css';
 
 cytoscape.use(popper);
 
@@ -154,9 +155,11 @@ const reducerNodeInfo = (state: any, action: any) => {
   }
 }
 
-function makePopper(ele: cytoscape.NodeSingular | any, showInfo: boolean) {
+function makePopper(ele: cytoscape.NodeSingular | any, showInfo: boolean, fullscreen: boolean) {
   let ref = ele.popperRef();
   let tippysDiv = document.getElementById('tippys');
+  (fullscreen) ? tippysDiv!.className = styles.tippysFullscreen : tippysDiv!.className = styles.tippys;
+
   let bodyDiv = document.getElementById('ideasModal');
 
   if (ele.tippy) ele.tippy.destroy();
@@ -215,6 +218,10 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     (showInfo) ? setShowInfo(false) : setShowInfo(true);
   }
 
+  const handleFullscreen = () => {
+    (fullscreen) ? setFullscreen(false) : setFullscreen(true);
+  }
+
   const handleSaveAsPng = async () => {
 
     const element = document.getElementById('body')
@@ -247,6 +254,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   } = props;
 
   const [zoom, setZoom] = useState(0.55);
+  const [fullscreen, setFullscreen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [elements, setElements] = useState({ nodes: [], edges: []});
@@ -289,9 +297,12 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     if (cyRef.current) {
       cyRef.current.ready(function() {
         cyRef.current!.elements().nodes().forEach(function(ele) {
-          makePopper(ele, showInfo);
+          makePopper(ele, showInfo, fullscreen);
         });
       });
+
+      (fullscreen) ? document.getElementById('ideasModal')!.className = styles.modalFullscreen
+                   : document.getElementById('ideasModal')!.className = styles.modal;
 
       cyRef.current.minZoom(0.2);
       cyRef.current.maxZoom(2);
@@ -326,48 +337,11 @@ const IdeasInfoController = (props: NodeInfoProps) => {
           if (popperRef && popperRef.tippy) popperRef.tippy.hide();
         }
       });
-
-      /*cyRef.current.nodes().on('mouseover', (event: any) => {
-        const id = get(event, "target._private.data.id");
-        const label = get(event, "target._private.data.label");
-        console.log("mouse over node id: " + id);
-
-        cyPopperRef.current = event.target.popper({
-          content: () => {
-            const div = document.createElement("div");
-            div.innerHTML = `<p id='popper'>${label}</p><div class="popper__arrow" x-arrow=""></div>`;
-            div.setAttribute("class", "popper");
-
-            var modal = document.getElementById("ideasModal");
-            modal!.appendChild(div);
-            return div;
-          },
-          popper: {
-            placement: 'right',
-            removeOnDestroy: true,
-          },
-        });
-      });
-
-      /*cyRef.current.nodes().on('mouseout', () => {
-      });*/
-
-      /*cyRef.current.on("cxttap", (e: any) => {
-        if (e.target === cyRef.current) {
-          console.log("cxttap on background");
-        } else if (e.target.isEdge()) {
-          console.log("cxttap on edge");
-          cyRef.current!.remove(e.target);
-        } else {
-          console.log("cxttap on node"); // e.target.isNode()
-        }
-      });*/
-
     }
     return () => {
       clearRefs(cyRef);
     }
- }, [cyRef.current, showInfo]);
+ }, [cyRef.current, showInfo, fullscreen]);
 
   const handleIdTree = (idTree: string) => {
     ideasModel.handleNewInfo(idTree, mainPanelState.data, tabActive);
@@ -380,10 +354,12 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     handleZoomOut,
     handleShowInfo,
     handleSaveAsPng,
+    handleFullscreen,
     cyRef,
     elements,
     isLoading,
     zoom,
+    showInfo,
     nodeInfoProps: props
   }
 

@@ -29,6 +29,18 @@
   overflow: hidden;
 }
 
+.modalFullscreen {
+  width: 94%;
+  height: 94%;
+  display: flex;
+  flex-direction: column;
+  background: #fcfdfd;
+  border-radius: 10px;
+  /* position: relative; */
+  z-index: 2;
+  overflow: hidden;
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -72,7 +84,6 @@
   font-size: 16px;
 }
 
-
 .path p {
   margin: 0px 7px;
   font-size: 18px;
@@ -94,16 +105,33 @@
   overflow: hidden;
 }
 
+.bodyLeft {
+  position: absolute;
+  top: 0;
+  z-index: 99999;
+  margin: 2px;
+  left: 0;
+}
+
+.bodyRight {
+  position: absolute;
+  top: 0;
+  z-index: 99999;
+  margin: 2px;
+  right: 0;
+}
+
 .buttons {
   position: absolute;
-  right: 0;
   top: 0;
   z-index: 99999;
   margin: 2px;
 }
 
 button {
-  margin: 0px 5px 0px 5px;
+  min-width: 45px;
+  min-height: 30px;
+  margin: 0px 5px 5px 5px;
   padding: 3px 10px 3px 10px;
 }
 
@@ -113,20 +141,16 @@ button {
   width: 100vw !important;
   height: 100vh !important;
   pointer-events: none !important;
-  /*margin-top: calc(50% - 50vh) !important;
-  margin-left: calc(50% - 50vw) !important;*/
   margin-top: calc(-15vh - 60px) !important;
-  /*margin-left: calc(80% - 100vw) !important;*/
   margin-left: -10vw !important;
 }
 
-.tippysA {
+.tippysFullscreen {
   position: absolute !important;
   z-index: 2;
-  width: 99vw !important;
+  width: 100vw !important;
   height: 100vh !important;
   pointer-events: none !important;
-  margin-top: -15% !important;
-  /*left: -10vw !important;*/
-  margin-left: calc(80% - 100vw) !important;
+  margin-top: calc(-3vh - 60px) !important;
+  margin-left: -3vw !important;
 }
