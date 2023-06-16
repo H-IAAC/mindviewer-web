@@ -203,6 +203,11 @@ function makePopper(ele: cytoscape.NodeSingular | any, showInfo: boolean, fullSc
 
 const IdeasInfoController = (props: NodeInfoProps) => {
 
+  const handleResetLayout = () => {
+    elemsGrabbed.clear();
+    refreshGraphLayout(cyRef);
+  }
+
   const handleZoomIn = () => {
     let currentZoom = (cyRef?.current?.zoom()) ? cyRef?.current?.zoom() : 0;
     setZoom(currentZoom + 0.1);
@@ -254,7 +259,6 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   const [elements, setElements] = useState(jsonElements);
 
   const cyRef = React.useRef<cytoscape.Core | undefined>();
-  var popperRef: any;
 
   const clearRefs = (...refs: any[]) =>
     refs.forEach(
@@ -287,7 +291,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     } else {
       const parsedElements = parseNodeData(nodeInfoState.nodeData, nodeInfoState.index);
 
-      if (jsonElements.nodes.size == 0) {
+      if (jsonElements.nodes.size === 0) {
         jsonElements.nodes = parsedElements.nodes;
         jsonElements.edges = parsedElements.edges;
         setElements(jsonElements);
@@ -358,20 +362,18 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       cyRef.current.elements().unbind('mouseover');
       cyRef.current.elements().bind('mouseover', (event) => {
                                       if (showInfo) return;
-                                      popperRef = event.target;
                                       event.target.tippy?.show();
                                     });
 
       cyRef.current.elements().unbind('mouseout');
       cyRef.current.elements().bind('mouseout', (event) => {
                                       if (showInfo) return;
-                                      popperRef = event.target;
                                       event.target.tippy?.hide();
                                     });
 
       cyRef.current.elements().unbind('drag');
       cyRef.current.elements().bind('drag', (event) => {
-                                      popperRef = event.target;
+                                      elemsGrabbed.add(event.target.id());
                                       event.target.tippy?.popperInstance?.update();
                                     });
 
@@ -406,6 +408,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     handleShowInfo,
     handleSaveImage,
     handleFullScreen,
+    handleResetLayout,
     cyRef,
     elements,
     isLoading,

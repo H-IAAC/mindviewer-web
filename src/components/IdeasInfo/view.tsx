@@ -26,6 +26,7 @@ const IdeasView = (props: IdeasViewProps) => {
     handleShowInfo,
     handleSaveImage,
     handleFullScreen,
+    handleResetLayout,
     cyRef,
     elements,
     isLoading,
@@ -87,6 +88,7 @@ const IdeasView = (props: IdeasViewProps) => {
                 </div>
               </div>
               <div className={styles.bodyRight}>
+              <button onClick={handleResetLayout}>Reset</button>
                 {showInfo ? <button onClick={handleShowInfo}><b>Show Info</b></button>
                           : <button onClick={handleShowInfo}>Show Info</button>
                 }
