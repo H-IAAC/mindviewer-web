@@ -9,7 +9,6 @@ class IdeasInfoModel {
   private nodeJsonData: JsonData | undefined;
   private idTree: string;
   private index: number;
-  //private info: any
   private dispatch: React.Dispatch<any>;
 
   public static getInstance = () => {
@@ -23,7 +22,6 @@ class IdeasInfoModel {
     this.nodeData = undefined;
     this.idTree = "";
     this.index = -1;
-    //this.info = undefined;
     this.dispatch = ()=>null;
   }
 
@@ -32,9 +30,6 @@ class IdeasInfoModel {
   }
 
   public handleNewInfo = (idTree: string, data: IDataTree[], tabActive: number) => {
-
-    //if (this.nodeData) return;
-
     this.idTree = idTree;
     this.nodeJsonData = undefined;
     let idTreeAux = idTree.split("-").reverse();
@@ -46,16 +41,13 @@ class IdeasInfoModel {
     let idCompare = "";
     let hasJsonTree = false;
 
-
     //console.log(JSON.stringify(data));
 
     nodeInfoListAux.push({
       name: requiredData.name.includes(":")? requiredData.name.slice(0,requiredData.name.indexOf(":")): requiredData.name,
       idTree: requiredData.id
-    })
-
-    
-    
+    }) 
+  
     while (idTreeAux.length != 0) {
       id = idTreeAux.pop();
       if (id) {
@@ -108,13 +100,16 @@ class IdeasInfoModel {
       }
     }
 
-    
-
     this.pathList = [...nodeInfoListAux];
     this.nodeData = requiredData;
     this.nodeJsonData = requiredJsonData;
 
     const nodeDataType = this.getType(this.nodeJsonData ? this.nodeJsonData : this.nodeData);
+
+    if (requiredData.values) {
+      //console.log('index: ' + (requiredData.values!!.length-1));
+      this.index = requiredData.values!!.length-1;
+    }
 
     this.dispatch({
       type: "UPDATE_INFO",
@@ -122,40 +117,6 @@ class IdeasInfoModel {
       nodeData: this.nodeData,
       nodeJsonData: this.nodeJsonData,
       nodeDataType: nodeDataType,
-      index: this.index
-    })
-  }
-
-  public updateNodeJsonData = () => {
-    console.log("updateNodeJsonData");
-    let requiredJsonData: JsonData | undefined;
-    if (this.nodeData?.values) {
-      requiredJsonData = this.nodeData.values[this.index].y;
-    }
-
-    if (this.idTree.includes("i-")) {
-      let id;
-      let idTreeAux = this.idTree.split("i-")[1].split("-").reverse();
-      let idCompare = this.idTree.split("i-")[0]+"i";
-
-      while (idTreeAux.length != 0) {
-        id = idTreeAux.pop();
-        if (id) idCompare = idCompare !== "" ? idCompare+"-"+id : id;
-
-        if (requiredJsonData)
-          for (let i = 0; i < requiredJsonData.info.length; i++) {
-            if (requiredJsonData.info[i].id === idCompare) {
-              requiredJsonData = requiredJsonData.info[i];
-              break;
-            }
-          }
-      }
-    }
-
-    this.nodeJsonData = requiredJsonData;
-    this.dispatch({
-      type: "UPDATE_NODEJSONDATA",
-      nodeJsonData: this.nodeJsonData,
       index: this.index
     })
   }

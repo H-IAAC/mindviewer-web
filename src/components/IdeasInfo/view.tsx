@@ -4,6 +4,8 @@ import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from "cytoscape";
 import dagre from "cytoscape-dagre";
 import stylesheet from './stylesheet';
+import cytoscapeLayout from './cytoscapeLayout';
+import cola from 'cytoscape-cola';
 
 cytoscape.use(dagre);
 
@@ -12,6 +14,7 @@ const IdeasView = (props: IdeasViewProps) => {
     handleCloseNodeInfoModal,
   } = props.nodeInfoProps;
   const {
+    index,
     nodeData,
     nodeJsonData,
     pathList
@@ -21,16 +24,20 @@ const IdeasView = (props: IdeasViewProps) => {
     handleZoomIn,
     handleZoomOut,
     handleShowInfo,
-    handleSaveAsPng,
-    handleFullscreen,
+    handleSaveImage,
+    handleFullScreen,
     cyRef,
     elements,
     isLoading,
-    zoom,
     showInfo
   } = props
 
   const nodeDataAux = nodeJsonData ? nodeJsonData : nodeData;
+
+  const cyElements : any =  {
+    nodes: Array.from(elements.nodes.values()),
+    edges: Array.from(elements.edges.values())
+  };
 
   if (nodeDataAux)
     return(
@@ -67,7 +74,7 @@ const IdeasView = (props: IdeasViewProps) => {
             <div className={styles.body} id='body'>
               <div className={styles.bodyLeft}>
                 <div>
-                  <button onClick={handleFullscreen}>&#x26F6;</button>
+                  <button onClick={handleFullScreen}>&#x26F6;</button>
                 </div>
                 <div>
                   <button onClick={handleZoomIn}>&#x002B;</button>
@@ -75,25 +82,27 @@ const IdeasView = (props: IdeasViewProps) => {
                 </div>
                   <button onClick={handleZoomOut}>&#x002D;</button>
                 </div>
+                <div>
+                  <p>{ index }</p>
+                </div>
               </div>
               <div className={styles.bodyRight}>
                 {showInfo ? <button onClick={handleShowInfo}><b>Show Info</b></button>
                           : <button onClick={handleShowInfo}>Show Info</button>
                 }
-                <button onClick={handleSaveAsPng}>Save PNG</button>
+                <button onClick={handleSaveImage}>Save PNG</button>
               </div>
 
               { isLoading && <div className="App">Loading...</div> }
-              { elements.nodes.length == 0 && <div className="App">There is no idea to display.</div> }
+              { cyElements.nodes.length == 0 && <div className="App">There is no idea to display.</div> }
               { !isLoading && <CytoscapeComponent
                   cy={(cy) => (cyRef.current = cy)}
                   stylesheet={stylesheet}
-                  elements={CytoscapeComponent.normalizeElements(elements)}
-                  layout={{ name: "dagre"}}
+                  elements={CytoscapeComponent.normalizeElements(cyElements)}
+                  layout={cytoscapeLayout}
                   style={{ width: "auto", height: "-webkit-fill-available" }}
                   zoomingEnabled={true}
                   wheelSensitivity={0.05}
-                  zoom={zoom}
                 />
               }
               <div className={styles.tippys} id='tippys'></div>

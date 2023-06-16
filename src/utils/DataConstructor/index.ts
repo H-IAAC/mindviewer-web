@@ -24,7 +24,7 @@ const getType = (data: any): string => {
     return "Bool";
   }
 
-  if (dataAux[0] !== undefined) {
+  if (dataAux && dataAux[0] !== undefined) {
     if (dataAux[0][0] !== undefined) {
       const aux = parseFloat(dataAux[0][0]);
       if (isNaN(aux))

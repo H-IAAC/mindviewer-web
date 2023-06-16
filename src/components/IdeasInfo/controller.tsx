@@ -1,13 +1,17 @@
 import React, { useRef, useEffect, useState, useReducer } from "react";
 import NodeInfoProps from "../../@types/NodeInfoProps";
 import IdeasViewProps from "../../@types/IdeasViewProps";
+import Elements from "../../@types/IdeasGraphElements";
 import IdeasInfoModel from "./model";
 import IdeasView from "./view";
+import cytoscapeLayout from './cytoscapeLayout';
 import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
 import tippy from 'tippy.js';
 import html2canvas from "html2canvas";
 import styles from './styles.module.css';
+import IDataTree from "../../interfaces/IDataTree";
+import graph from './cytoscapeClasses';
 
 cytoscape.use(popper);
 
@@ -16,126 +20,89 @@ const initialNodeInfoState = {
   nodeData: undefined,
   nodeJsonData: undefined,
   nodeDataType: "Undefined",
-  time: "",
-  index: 0,
-  inputTimeModal: false 
+  index: 0
 };
 
-const CytoNode = (id: string, name: string, value: string, type: string, category: string, scope: string, classes: string, posX = 0, posY = 0) => ({
-  data: {
-    id,
-    name,
-    value,
-    type,
-    category,
-    scope
-  },
-  position: {
-    x: posX,
-    y: posY
-  },
-  classes
-});
+const elemsGrabbed = new Set<string>();
 
-const CytoEdge = (source: string, target: string, label = '') => ({
-  data: { source, target, label }
-});
-
-const elementsJson : any = {
-  nodes: [],
-  edges: []
+const jsonElements : Elements = {
+  nodes: new Map<string, cytoscape.ElementDefinition>(),
+  edges: new Map<string, cytoscape.ElementDefinition>()
 };
 
-/*** CODE TO PARSE JSON *
-const parseIdeas = (idea : any, edge = false, edgeSource = '0') => {
+const removeNodeDataElements = (ids: Set<string>, parsedElements: Elements) => {
 
-  if (idea.hasOwnProperty('l') && idea.l) {
-      //console.log(JSON.stringify(idea));
-      idea.l.forEach(function (l : any) {
-          //console.log(JSON.stringify(l.l.length));
+  parsedElements.nodes.forEach(function (value: any, key: string) {
+    if (!ids.has(key)) {
+      parsedElements.nodes.delete(key);
+    }
+  });
 
-          if (edge)
-            elementsJson.edges.push(CytoEdge(edgeSource, l.id));
+  parsedElements.edges.forEach(function (value: any, key: string) {
+    if (!ids.has(value.data.source) || !ids.has(value.data.target)) {
+      parsedElements.edges.delete(key);
+    }
+  });
 
-          if (l.hasOwnProperty('l') && l.l.length > 0) {
-              parseIdeas(l, true, l.id);
-          }
-
-          let name = l.name;
-          name += (l.value) ? ' (' + l.value + ')' : '';
-          elementsJson.nodes.push(CytoNode(l.id, name));
-
-      });
-  }
-};
-
-const getElements = (c) => {
-
-  fetch("http://localhost:5000")
-        .then((res) => res.text())
-        .then((data) => {
-            //console.log(JSON.stringify(json));
-
-            var json = JSON.parse(data);
-            //console.log("DATA: " + JSON.stringify(json));
-      
-            if(json.hasOwnProperty('memories')) {
-              var memories = json.memories;
-          
-              memories.forEach(function (element : any) {
-                  if (element.hasOwnProperty('I')) {
-                      if (typeof element.I === "object") {
-                          parseIdeas(element.I);
-                      }
-                  }
-              });
-              }              
-              setElements(elementsJson);
-              setLoading(false);
-        })
 }
-*/
 
-const getNodeDataElements = (values: any, edgeId: any) => {
+const parseNodeDataSubElement = (values: any, edgeId: string, ids: Set<string>, parsedElements: Elements) => {
   values.info.forEach(function (value: any) {
 
-    //var type = getIdeaType(value);
     var type = (value.info[4] == null || value.info[4].info == null) ? '' : 'type' + value.info[4].info;
-    elementsJson.nodes.push(CytoNode(value.info[0].info, // id
+    ids.add(value.info[0].info);
+    // Get sub nodes
+    parsedElements.nodes.set(value.info[0].info, graph.Node(value.info[0].info, // id
                                      value.info[1].info, // name
                                      parseFloat(value.info[2].info).toFixed(2).toString(), // value
                                      value.info[4].info, // type
                                      value.info[5].info, // category
                                      value.info[6].info, // scope
                                      "ellipse " + type));
-    elementsJson.edges.push(CytoEdge(edgeId, value.info[0].info,));
+    // Get node edge
+    parsedElements.edges.set(edgeId + '_' + value.info[0].info, graph.Edge(edgeId, value.info[0].info, ''));
 
     if (value.info[3].info.length > 0 ) {
-      getNodeDataElements(value.info[3], value.info[0].info);
+      parseNodeDataSubElement(value.info[3], value.info[0].info, ids, parsedElements);
     }
   });
 }
 
-const parseNodeData = (nodeData: any, setLoading: any, setElements: any) => {
-  if (nodeData && nodeData.values[0] && nodeData.values[0].y && nodeData.values[0].y.info)
-    nodeData.values[0].y.info.forEach(function (value: any) {
-      if (value.hasChildren) {
-        var type = (value.info[4] == null || value.info[4].info == null) ? '' : 'type' + value.info[4].info;
-        elementsJson.nodes.push(CytoNode(nodeData.values[0].y.info[0].info, // id
-                                         nodeData.values[0].y.info[1].info, // name
-                                         nodeData.values[0].y.info[2].info ?
-                                              parseFloat(nodeData.values[0].y.info[2].info).toFixed(2).toString() :
-                                              '',
-                                         nodeData.values[0].y.info[4].info, // type
-                                         nodeData.values[0].y.info[5].info, // category
-                                         nodeData.values[0].y.info[6].info, // scope
-                                "ellipse-double " + type));
-        getNodeDataElements(value, nodeData.values[0].y.info[0].info);
-      }
-  });
+const parseNodeData = (nodeData: IDataTree | undefined, index: number) : Elements=> {
 
-  setElements(elementsJson);
-  setLoading(false);
+  let ids = new Set<string>();
+  let parsedElements: Elements = {
+    nodes: new Map<string, cytoscape.ElementDefinition>(jsonElements.nodes),
+    edges: new Map<string, cytoscape.ElementDefinition>(jsonElements.edges)
+  }
+
+  if (nodeData && nodeData.values && nodeData.values[index] && nodeData.values[index].y && nodeData.values[index].y.info) {
+    const node = nodeData.values[index];
+    
+    node.y.info.forEach(function (value: any) {
+      if (value.hasChildren) {
+        // This children node refers to the root node.
+        var type = (value.info[4] == null || value.info[4].info == null) ? '' : 'type' + value.info[4].info;
+        ids.add(node.y.info[0].info);
+        parsedElements.nodes.set(node.y.info[0].info, graph.Node(node.y.info[0].info, // id
+                                              node.y.info[1].info, // name
+                                              node.y.info[2].info ?
+                                                parseFloat(node.y.info[2].info).toFixed(2).toString() :
+                                                '',
+                                              node.y.info[4].info, // type
+                                              node.y.info[5].info, // category
+                                              node.y.info[6].info, // scope
+                                              "ellipse-double " + type));
+
+        // Every other node related to this root is identified by the function below
+        parseNodeDataSubElement(value, node.y.info[0].info, ids, parsedElements);
+      }
+    });
+  }
+
+  removeNodeDataElements(ids, parsedElements);
+
+  return parsedElements;
 }
 
 const reducerNodeInfo = (state: any, action: any) => {
@@ -147,45 +114,75 @@ const reducerNodeInfo = (state: any, action: any) => {
         nodeData: action.nodeData,
         nodeJsonData: action.nodeJsonData,
         nodeDataType: action.nodeDataType,
-        index: action.index,
-        time: action.time
+        index: action.index
       };
     default:
       return state;
   }
 }
 
-function makePopper(ele: cytoscape.NodeSingular | any, showInfo: boolean, fullscreen: boolean) {
-  let ref = ele.popperRef();
+function refreshGraphLayout(cyRef : any) {
+  // Save pan and zoom values
+  const pan = cyRef.current?.pan();
+  const zoomLevel = cyRef.current?.zoom();
+
+  // Lock all elements that were move by the user, so then they will
+  // keep at same position after refresh.
+  elemsGrabbed.forEach(id => {
+    cyRef.current?.getElementById(id).lock();
+  });
+
+  // Perform the refresh
+  cyRef.current?.makeLayout(cytoscapeLayout).run();
+
+  // Unlock all elements, so then user can move it again
+  elemsGrabbed.forEach(id => {
+    cyRef.current?.getElementById(id).unlock();
+  });
+
+  // Restore pan and zoom values
+  cyRef.current?.zoom(zoomLevel);
+  cyRef.current?.pan(pan);
+}
+
+function destroyPopper (cyRef : any) {
+  cyRef.current!.elements().nodes().forEach(function(ele : any) {
+    ele.tippy?.destroy();
+    ele.tippy = undefined;
+  });
+}
+
+function makePopper(ele: cytoscape.NodeSingular | any, showInfo: boolean, fullScreen: boolean) {
   let tippysDiv = document.getElementById('tippys');
-  (fullscreen) ? tippysDiv!.className = styles.tippysFullscreen : tippysDiv!.className = styles.tippys;
+  (fullScreen) ? tippysDiv!.className = styles.tippysFullscreen : tippysDiv!.className = styles.tippys;
 
-  let bodyDiv = document.getElementById('ideasModal');
-
-  if (ele.tippy) ele.tippy.destroy();
+  ele.tippy?.destroy();
 
   ele.tippy = tippy(document.createElement('div'), {
     content: () => {
       let content = document.createElement("div");
-      (!showInfo) ?
-        content.innerHTML = "Name: " + ele.data('name') + '<br>' +
-                          "Value: " + ele.data('value') + '<br>' +
-                          "Type: " + ele.data('type') + '<br>' +
-                          "Category: " + ele.data('category') + '<br>' +
-                          "Scope: " + ele.data('scope')
-                          :
-                          content.innerHTML = ele.data('name') +
-                                              '<br>' +
-                                              ele.data('value');
-      if (showInfo) content.style.fontSize = "11px";
-      if (showInfo) content.style.textAlign = "center"
-      if (!showInfo) content.style.backgroundColor = "lightgray";
       content.style.padding = '5px 5px 5px 5px';
+
+      if (showInfo) {
+        content.innerHTML = ele.data('name') +
+                            '<br>' +
+                            ele.data('value');
+        content.style.fontSize = "11px";
+        content.style.textAlign = "center"
+      } else {
+        content.innerHTML = "Name: " + ele.data('name') + '<br>' +
+                            "Value: " + ele.data('value') + '<br>' +
+                            "Type: " + ele.data('type') + '<br>' +
+                            "Category: " + ele.data('category') + '<br>' +
+                            "Scope: " + ele.data('scope');
+        content.style.backgroundColor = "#e9e9e9";
+        content.style.border = "1px solid black";
+      }
+      
       return content;
     },
     hideOnClick: (showInfo) ? false : true,
     placement: (showInfo) ? "bottom" : 'right',
-    //boundary: bodyDiv!,
     zIndex: 2,
     flip: true,
     appendTo: () =>  tippysDiv!,
@@ -197,33 +194,30 @@ function makePopper(ele: cytoscape.NodeSingular | any, showInfo: boolean, fullsc
       }
     },
     onShow(instance) {
-      instance.popperInstance!.reference = ref;
+      instance.popperInstance!.reference = ele.popperRef();;
     },
   });
 
-  if (showInfo) ele.tippy!.show();
+  if (showInfo) ele.tippy?.show();
 }
 
 const IdeasInfoController = (props: NodeInfoProps) => {
 
   const handleZoomIn = () => {
-    setZoom(zoom + 0.1);
+    let currentZoom = (cyRef?.current?.zoom()) ? cyRef?.current?.zoom() : 0;
+    setZoom(currentZoom + 0.1);
   }
   
   const handleZoomOut = () => {
-    setZoom(zoom - 0.1);
+    let currentZoom = (cyRef?.current?.zoom()) ? cyRef?.current?.zoom() : 0;
+    setZoom(currentZoom - 0.1);
   }
 
-  const handleShowInfo = () => {
-    (showInfo) ? setShowInfo(false) : setShowInfo(true);
-  }
+  const handleShowInfo = () => { (showInfo) ? setShowInfo(false) : setShowInfo(true); }
 
-  const handleFullscreen = () => {
-    (fullscreen) ? setFullscreen(false) : setFullscreen(true);
-  }
+  const handleFullScreen = () => { (fullScreen) ? setFullscreen(false) : setFullscreen(true); }
 
-  const handleSaveAsPng = async () => {
-
+  const handleSaveImage = async () => {
     const element = document.getElementById('body')
     const canvas = await html2canvas(element!);
 
@@ -254,10 +248,11 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   } = props;
 
   const [zoom, setZoom] = useState(0.55);
-  const [fullscreen, setFullscreen] = useState(false);
+  const [fullScreen, setFullscreen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [isLoading, setLoading] = useState(true);
-  const [elements, setElements] = useState({ nodes: [], edges: []});
+  const [elements, setElements] = useState(jsonElements);
+
   const cyRef = React.useRef<cytoscape.Core | undefined>();
   var popperRef: any;
 
@@ -271,22 +266,75 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   const ideasModel = IdeasInfoModel.getInstance();
 
   useEffect(() => {
-    // Get data from JSON
-    //getElements(setLoading, setElements);
+    cyRef?.current?.zoom(zoom);
 
+    if (showInfo) {
+      cyRef.current!.elements().nodes().forEach(function(ele) {
+        makePopper(ele, showInfo, fullScreen);
+      });
+    }
+    return () => {
+    };
+},[zoom]);
+
+  useEffect(() => {
     if (!nodeInfoState.nodeData) {
       setLoading(true);
-
-      elementsJson.nodes = [];
-      elementsJson.edges = [];
-      setElements(elementsJson);
-
       ideasModel.init(dispatch);
-      ideasModel.reset();
+      //ideasModel.reset();
       ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
 
     } else {
-      parseNodeData(nodeInfoState.nodeData, setLoading, setElements);
+      const parsedElements = parseNodeData(nodeInfoState.nodeData, nodeInfoState.index);
+
+      if (jsonElements.nodes.size == 0) {
+        jsonElements.nodes = parsedElements.nodes;
+        jsonElements.edges = parsedElements.edges;
+        setElements(jsonElements);
+      } else {
+        let hasChanged = false;
+        // Remove nodes that are not present in the new nodeData
+        for (let [key, value] of jsonElements.nodes) {        
+          if (!parsedElements.nodes.has(key)) {
+            jsonElements.nodes.delete(key);
+            hasChanged = true;
+          }
+        }
+
+        // Remove edges that are not present in the new nodeData
+        for (let [key, value] of jsonElements.edges) {        
+          if (!parsedElements.edges.has(key)) {
+            jsonElements.edges.delete(key);
+            hasChanged = true;
+          }
+        }
+
+        // Add nodes that are not present in the current graph
+        for (let [key, value] of parsedElements.nodes) {        
+          if (!jsonElements.nodes.has(key)) {
+            cyRef.current?.add(value);
+            jsonElements.nodes.set(key, value);
+            hasChanged = true;
+          }
+        }
+
+        // Add edges that are not present in the current graph
+        for (let [key, value] of parsedElements.edges) {
+          if (!jsonElements.edges.has(key)) {
+            cyRef.current?.add(value);
+            jsonElements.edges.set(key, value);
+            hasChanged = true;
+          }
+        }
+
+        if (hasChanged) refreshGraphLayout(cyRef);
+      }
+
+      setLoading(false);
+
+      setTimeout(() => {        
+        ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
+      }, 5000);
     }
 
     return () => {
@@ -297,11 +345,11 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     if (cyRef.current) {
       cyRef.current.ready(function() {
         cyRef.current!.elements().nodes().forEach(function(ele) {
-          makePopper(ele, showInfo, fullscreen);
+          makePopper(ele, showInfo, fullScreen);
         });
       });
 
-      (fullscreen) ? document.getElementById('ideasModal')!.className = styles.modalFullscreen
+      (fullScreen) ? document.getElementById('ideasModal')!.className = styles.modalFullscreen
                    : document.getElementById('ideasModal')!.className = styles.modal;
 
       cyRef.current.minZoom(0.2);
@@ -309,39 +357,42 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
       cyRef.current.elements().unbind('mouseover');
       cyRef.current.elements().bind('mouseover', (event) => {
-                                      if (showInfo === true) return;
+                                      if (showInfo) return;
                                       popperRef = event.target;
-                                      if (event.target.tippy) event.target.tippy.show();
+                                      event.target.tippy?.show();
                                     });
 
       cyRef.current.elements().unbind('mouseout');
       cyRef.current.elements().bind('mouseout', (event) => {
-                                      if (showInfo === true) return;
+                                      if (showInfo) return;
                                       popperRef = event.target;
-                                      if (event.target.tippy) event.target.tippy.hide();
+                                      event.target.tippy?.hide();
                                     });
 
       cyRef.current.elements().unbind('drag');
       cyRef.current.elements().bind('drag', (event) => {
                                       popperRef = event.target;
-                                      if (event.target.tippy.popperInstance) event.target.tippy.popperInstance.update();
+                                      event.target.tippy?.popperInstance?.update();
                                     });
 
-      cyRef.current.on('viewport', (event) => {
-        if (showInfo === true) {
+      cyRef.current.unbind('scrollzoom');
+      cyRef.current.on('scrollzoom', (event) => {
+        if (showInfo) {
           setShowInfo(false);
-          cyRef.current!.elements().nodes().forEach(function(ele : any) {
-            if (ele.tippy) ele.tippy.destroy();
-          });
-        } else {
-          if (popperRef && popperRef.tippy) popperRef.tippy.hide();
+          destroyPopper(cyRef);
         }
       });
+
+      cyRef.current.unbind('dragpan');
+      cyRef.current.on('dragpan', (event) => {
+        setShowInfo(false);
+      });
+
     }
     return () => {
-      clearRefs(cyRef);
+      //clearRefs(cyRef);
     }
- }, [cyRef.current, showInfo, fullscreen]);
+ }, [cyRef.current, showInfo, fullScreen]);
 
   const handleIdTree = (idTree: string) => {
     ideasModel.handleNewInfo(idTree, mainPanelState.data, tabActive);
@@ -353,12 +404,11 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     handleZoomIn,
     handleZoomOut,
     handleShowInfo,
-    handleSaveAsPng,
-    handleFullscreen,
+    handleSaveImage,
+    handleFullScreen,
     cyRef,
     elements,
     isLoading,
-    zoom,
     showInfo,
     nodeInfoProps: props
   }

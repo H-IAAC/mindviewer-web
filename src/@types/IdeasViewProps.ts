@@ -7,12 +7,11 @@ type NodeInfoViewProps = {
   handleZoomIn: () => void,
   handleZoomOut: () => void,
   handleShowInfo: () => void,
-  handleSaveAsPng: () => void,
-  handleFullscreen: () => void,
+  handleSaveImage: () => void,
+  handleFullScreen: () => void,
   cyRef: React.MutableRefObject<any>,
   elements: any,
   isLoading: boolean,
-  zoom: number,
   showInfo: boolean,
   nodeInfoProps: NodeInfoProps;
 }
