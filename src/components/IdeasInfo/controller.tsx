@@ -15,6 +15,9 @@ import graph from './cytoscapeClasses';
 
 cytoscape.use(popper);
 
+const maxZoom = 1.3;
+const minZoom = 0.2;
+
 const initialNodeInfoState = { 
   pathList: [],
   nodeData: undefined,
@@ -124,12 +127,12 @@ const reducerNodeInfo = (state: any, action: any) => {
 function refreshGraphLayout(cyRef : any) {
   // Save pan and zoom values
   const pan = cyRef.current?.pan();
-  const zoomLevel = cyRef.current?.zoom();
+  const zoomLevel = (cyRef.current?.zoom() > maxZoom) ? maxZoom : cyRef.current?.zoom();
 
   // Lock all elements that were move by the user, so then they will
   // keep at same position after refresh.
   elemsGrabbed.forEach(id => {
-    cyRef.current?.getElementById(id).lock();
+    cyRef.current?.elements().$id(id).lock();
   });
 
   // Perform the refresh
@@ -137,19 +140,22 @@ function refreshGraphLayout(cyRef : any) {
 
   // Unlock all elements, so then user can move it again
   elemsGrabbed.forEach(id => {
-    cyRef.current?.getElementById(id).unlock();
+    cyRef.current?.elements().$id(id).unlock();
   });
 
   // Restore pan and zoom values
   cyRef.current?.zoom(zoomLevel);
   cyRef.current?.pan(pan);
+
+  cyRef.current?.fit();
 }
 
-function destroyPopper (cyRef : any) {
+function destroyPopper (cyRef: any) {
   cyRef.current!.elements().nodes().forEach(function(ele : any) {
     ele.tippy?.destroy();
     ele.tippy = undefined;
   });
+
 }
 
 function makePopper(ele: cytoscape.NodeSingular | any, showInfo: boolean, fullScreen: boolean) {
@@ -252,6 +258,14 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     handleCloseNodeInfoModal,
   } = props;
 
+
+  const handleClose = () => {
+    jsonElements.nodes = new Map<string, cytoscape.ElementDefinition>();
+    jsonElements.edges = new Map<string, cytoscape.ElementDefinition>();
+
+    handleCloseNodeInfoModal();
+  }
+
   const [zoom, setZoom] = useState(0.55);
   const [fullScreen, setFullscreen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -282,6 +296,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 },[zoom]);
 
   useEffect(() => {
+    let timeoutExec: NodeJS.Timeout;
     if (!nodeInfoState.nodeData) {
       setLoading(true);
       ideasModel.init(dispatch);
@@ -301,6 +316,8 @@ const IdeasInfoController = (props: NodeInfoProps) => {
         for (let [key, value] of jsonElements.nodes) {        
           if (!parsedElements.nodes.has(key)) {
             jsonElements.nodes.delete(key);
+            (cyRef.current?.elements().$id(key) as any).tippy?.destroy();
+            (cyRef.current?.elements().$id(key) as any).tippy = undefined;
             hasChanged = true;
           }
         }
@@ -318,6 +335,8 @@ const IdeasInfoController = (props: NodeInfoProps) => {
           if (!jsonElements.nodes.has(key)) {
             cyRef.current?.add(value);
             jsonElements.nodes.set(key, value);
+            makePopper(cyRef.current?.elements().$id(key), showInfo, fullScreen);
+
             hasChanged = true;
           }
         }
@@ -336,13 +355,12 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
       setLoading(false);
 
-      setTimeout(() => {        
+      timeoutExec = setTimeout(() => {        
         ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
       }, 5000);
     }
 
-    return () => {
-    };
+    return () => { clearTimeout(timeoutExec); } ;
   },[nodeInfoState]);
 
   useEffect(() => {
@@ -356,8 +374,8 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       (fullScreen) ? document.getElementById('ideasModal')!.className = styles.modalFullscreen
                    : document.getElementById('ideasModal')!.className = styles.modal;
 
-      cyRef.current.minZoom(0.2);
-      cyRef.current.maxZoom(2);
+      cyRef.current.minZoom(minZoom);
+      cyRef.current.maxZoom(maxZoom);
 
       cyRef.current.elements().unbind('mouseover');
       cyRef.current.elements().bind('mouseover', (event) => {
@@ -377,6 +395,21 @@ const IdeasInfoController = (props: NodeInfoProps) => {
                                       event.target.tippy?.popperInstance?.update();
                                     });
 
+      // Position and Remove events are used when graph layout is updated by
+      // layout.run command.
+      cyRef.current.elements().unbind('position');
+      cyRef.current.elements().bind('position', (event) => {
+                                      event.target.tippy?.destroy();
+                                      event.target.tippy = undefined;
+                                      makePopper(event.target, showInfo, fullScreen);
+                                    });
+
+      cyRef.current.elements().unbind('remove');
+      cyRef.current.elements().bind('remove', (event) => {
+                                      event.target.tippy?.destroy();
+                                      event.target.tippy = undefined;
+                                    });
+
       cyRef.current.unbind('scrollzoom');
       cyRef.current.on('scrollzoom', (event) => {
         if (showInfo) {
@@ -392,7 +425,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
     }
     return () => {
-      //clearRefs(cyRef);
+      clearRefs(cyRef);
     }
  }, [cyRef.current, showInfo, fullScreen]);
 
@@ -409,6 +442,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     handleSaveImage,
     handleFullScreen,
     handleResetLayout,
+    handleClose,
     cyRef,
     elements,
     isLoading,

@@ -10,6 +10,7 @@ type NodeInfoViewProps = {
   handleSaveImage: () => void,
   handleFullScreen: () => void,
   handleResetLayout: () => void,
+  handleClose: () => void,
   cyRef: React.MutableRefObject<any>,
   elements: any,
   isLoading: boolean,

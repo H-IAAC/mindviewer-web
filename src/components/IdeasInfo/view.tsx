@@ -27,6 +27,7 @@ const IdeasView = (props: IdeasViewProps) => {
     handleSaveImage,
     handleFullScreen,
     handleResetLayout,
+    handleClose,
     cyRef,
     elements,
     isLoading,
@@ -65,7 +66,7 @@ const IdeasView = (props: IdeasViewProps) => {
               </div>
               <button 
                 className={styles.closeButton}
-                onClick={handleCloseNodeInfoModal}
+                onClick={handleClose}
               >
                 X
               </button>
@@ -103,8 +104,9 @@ const IdeasView = (props: IdeasViewProps) => {
                   elements={CytoscapeComponent.normalizeElements(cyElements)}
                   layout={cytoscapeLayout}
                   style={{ width: "auto", height: "-webkit-fill-available" }}
-                  zoomingEnabled={true}
+                  userZoomingEnabled={true}
                   wheelSensitivity={0.05}
+                  maxZoom={1.3}
                 />
               }
               <div className={styles.tippys} id='tippys'></div>
