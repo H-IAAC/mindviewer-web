@@ -27,6 +27,7 @@ const initialNodeInfoState = {
 };
 
 const elemsGrabbed = new Set<string>();
+elemsGrabbed.add('0');
 
 const jsonElements : Elements = {
   nodes: new Map<string, cytoscape.ElementDefinition>(),
@@ -117,7 +118,8 @@ const reducerNodeInfo = (state: any, action: any) => {
         nodeData: action.nodeData,
         nodeJsonData: action.nodeJsonData,
         nodeDataType: action.nodeDataType,
-        index: action.index
+        index: action.index,
+        time: action.time
       };
     default:
       return state;
@@ -147,7 +149,7 @@ function refreshGraphLayout(cyRef : any) {
   cyRef.current?.zoom(zoomLevel);
   cyRef.current?.pan(pan);
 
-  cyRef.current?.fit();
+  //cyRef.current?.fit();
 }
 
 function destroyPopper (cyRef: any) {
@@ -201,8 +203,11 @@ function makePopper(ele: cytoscape.NodeSingular | any, showInfo: boolean, fullSc
     },
     onShow(instance) {
       instance.popperInstance!.reference = ele.popperRef();;
-    },
+    }
   });
+
+  ele.tippy.showInfo = showInfo;
+  ele.tippy.fullScreen = fullScreen;
 
   if (showInfo) ele.tippy?.show();
 }
@@ -270,7 +275,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   const [fullScreen, setFullscreen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [isLoading, setLoading] = useState(true);
-  const [elements, setElements] = useState(jsonElements);
+  var [elementsChanged, setElementsChanged] = useState(false);
 
   const cyRef = React.useRef<cytoscape.Core | undefined>();
 
@@ -309,12 +314,13 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       if (jsonElements.nodes.size === 0) {
         jsonElements.nodes = parsedElements.nodes;
         jsonElements.edges = parsedElements.edges;
-        setElements(jsonElements);
+
       } else {
         let hasChanged = false;
         // Remove nodes that are not present in the new nodeData
         for (let [key, value] of jsonElements.nodes) {        
           if (!parsedElements.nodes.has(key)) {
+            cyRef.current?.$id(key).remove();
             jsonElements.nodes.delete(key);
             (cyRef.current?.elements().$id(key) as any).tippy?.destroy();
             (cyRef.current?.elements().$id(key) as any).tippy = undefined;
@@ -325,6 +331,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
         // Remove edges that are not present in the new nodeData
         for (let [key, value] of jsonElements.edges) {        
           if (!parsedElements.edges.has(key)) {
+            cyRef.current?.$id(key).remove();
             jsonElements.edges.delete(key);
             hasChanged = true;
           }
@@ -335,8 +342,6 @@ const IdeasInfoController = (props: NodeInfoProps) => {
           if (!jsonElements.nodes.has(key)) {
             cyRef.current?.add(value);
             jsonElements.nodes.set(key, value);
-            makePopper(cyRef.current?.elements().$id(key), showInfo, fullScreen);
-
             hasChanged = true;
           }
         }
@@ -350,14 +355,21 @@ const IdeasInfoController = (props: NodeInfoProps) => {
           }
         }
 
-        if (hasChanged) refreshGraphLayout(cyRef);
+        if (hasChanged) {
+          // Refresh Graph to display added and removed nodes/edges.
+          refreshGraphLayout(cyRef);
+
+          // When graph changes, it is necessary to set tippy and events
+          // to the new elements.
+          setElementsChanged(!elementsChanged);
+        }
       }
 
       setLoading(false);
 
       timeoutExec = setTimeout(() => {        
         ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
-      }, 5000);
+      }, 4000);
     }
 
     return () => { clearTimeout(timeoutExec); } ;
@@ -366,8 +378,14 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   useEffect(() => {
     if (cyRef.current) {
       cyRef.current.ready(function() {
-        cyRef.current!.elements().nodes().forEach(function(ele) {
-          makePopper(ele, showInfo, fullScreen);
+        cyRef.current!.elements().nodes().forEach(function(ele : any) {
+          // Create popper only if it is undefined (to avoid re-creation) or
+          // when showInfo/fullScreen options has changes.
+          if ((ele.tippy === undefined) ||
+              (ele.tippy.fullScreen !== fullScreen || ele.tippy.showInfo !== showInfo)) {
+            makePopper(ele, showInfo, fullScreen);
+          } else {
+          }
         });
       });
 
@@ -425,9 +443,9 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
     }
     return () => {
-      clearRefs(cyRef);
+      
     }
- }, [cyRef.current, showInfo, fullScreen]);
+ }, [cyRef.current, elementsChanged, showInfo, fullScreen]);
 
   const handleIdTree = (idTree: string) => {
     ideasModel.handleNewInfo(idTree, mainPanelState.data, tabActive);
@@ -444,7 +462,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     handleResetLayout,
     handleClose,
     cyRef,
-    elements,
+    jsonElements,
     isLoading,
     showInfo,
     nodeInfoProps: props

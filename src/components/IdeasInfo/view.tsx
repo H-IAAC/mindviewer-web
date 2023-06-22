@@ -1,5 +1,7 @@
 import IdeasViewProps from '../../@types/IdeasViewProps';
 import styles from './styles.module.css';
+import IdeasHistory from '../IdeasHistory';
+import IdeasHistoryProps from '../../@types/IdeasHistoryProps';
 import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from "cytoscape";
 import dagre from "cytoscape-dagre";
@@ -15,6 +17,7 @@ const IdeasView = (props: IdeasViewProps) => {
   } = props.nodeInfoProps;
   const {
     index,
+    time,
     nodeData,
     nodeJsonData,
     pathList
@@ -29,16 +32,24 @@ const IdeasView = (props: IdeasViewProps) => {
     handleResetLayout,
     handleClose,
     cyRef,
-    elements,
+    jsonElements,
     isLoading,
     showInfo
   } = props
 
+  const numberOfElements = jsonElements.nodes.size;
+
+  const ideasHistoryProps: IdeasHistoryProps = {
+    index,
+    time,
+    numberOfElements
+  }
+
   const nodeDataAux = nodeJsonData ? nodeJsonData : nodeData;
 
   const cyElements : any =  {
-    nodes: Array.from(elements.nodes.values()),
-    edges: Array.from(elements.edges.values())
+    nodes: Array.from(jsonElements.nodes.values()),
+    edges: Array.from(jsonElements.edges.values())
   };
 
   if (nodeDataAux)
@@ -84,9 +95,6 @@ const IdeasView = (props: IdeasViewProps) => {
                 </div>
                   <button onClick={handleZoomOut}>&#x002D;</button>
                 </div>
-                <div>
-                  <p>{ index }</p>
-                </div>
               </div>
               <div className={styles.bodyRight}>
               <button onClick={handleResetLayout}>Reset</button>
@@ -110,6 +118,11 @@ const IdeasView = (props: IdeasViewProps) => {
                 />
               }
               <div className={styles.tippys} id='tippys'></div>
+              <div>
+                <IdeasHistory
+                  {...ideasHistoryProps}
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -12,7 +12,7 @@ type NodeInfoViewProps = {
   handleResetLayout: () => void,
   handleClose: () => void,
   cyRef: React.MutableRefObject<any>,
-  elements: any,
+  jsonElements: any,
   isLoading: boolean,
   showInfo: boolean,
   nodeInfoProps: NodeInfoProps;

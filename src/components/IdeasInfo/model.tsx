@@ -8,6 +8,7 @@ class IdeasInfoModel {
   private nodeData: IDataTree | undefined;
   private nodeJsonData: JsonData | undefined;
   private idTree: string;
+  private time: string;
   private index: number;
   private dispatch: React.Dispatch<any>;
 
@@ -21,6 +22,7 @@ class IdeasInfoModel {
     this.pathList = [];
     this.nodeData = undefined;
     this.idTree = "";
+    this.time = "";
     this.index = -1;
     this.dispatch = ()=>null;
   }
@@ -109,6 +111,8 @@ class IdeasInfoModel {
     if (requiredData.values) {
       //console.log('index: ' + (requiredData.values!!.length-1));
       this.index = requiredData.values!!.length-1;
+      const timeAux = (requiredData.values[this.index].x as Date).getTime();
+      this.time = `${new Date(timeAux).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}`;
     }
 
     this.dispatch({
@@ -117,7 +121,8 @@ class IdeasInfoModel {
       nodeData: this.nodeData,
       nodeJsonData: this.nodeJsonData,
       nodeDataType: nodeDataType,
-      index: this.index
+      index: this.index,
+      time: this.time
     })
   }
 
