@@ -1,9 +1,9 @@
 import { useEffect, useReducer } from 'react';
 import EditChartMenuProps from '../../@types/EditChartMenuProps';
 import EditChartMenuViewProps from '../../@types/EditChartMenuViewProps';
-
 import EditChartMenuView from './view';
 
+// Initial state for EditChartMenu
 const initialEditChartMenuState = { 
   type: "",
   tab: 0,
@@ -20,6 +20,7 @@ const initialEditChartMenuState = {
   showYAxisGrid: false
 };
 
+// Reducer for EditChartMenu
 const reducerEditChartMenu = (state: any, action: any) => {
   switch (action.type) {
     case 'INIT':
@@ -96,6 +97,7 @@ const reducerEditChartMenu = (state: any, action: any) => {
   }
 }
 
+// Controller for ChartMenu
 const EditChartMenuController = (props: EditChartMenuProps) => {
   const {
     chart,
@@ -105,26 +107,34 @@ const EditChartMenuController = (props: EditChartMenuProps) => {
     handleEditChartMenu
   } = props;
 
+  // Use of hooks
   const [editChartMenuState, dispatch] = useReducer(reducerEditChartMenu,initialEditChartMenuState);
+
+  // Getting instance of EditChartMenu model
   const editChartMenuModel = chart.getEditChartMenuModel();
 
+  // Initializing ChartMenu model
   useEffect(() => {
     editChartMenuModel.init(chartId, dispatch)
   },[])
 
+  // Function that handle saving edits action
   const handleSaveEdits = () => {
     editChartMenuModel.saveEdits(handleXAxisChanged,removeDataFromChart);
     handleEditChartMenu(false);
   }
 
+  // Function that handle changing color action
   const handleColor = (color: string, index: number) => {
     editChartMenuModel.setColor(color,index);
   }
 
+  // Function that handle confirming palette action
   const handleConfirmPalette = () => {
     editChartMenuModel.confirmPalette();
   }
 
+  // Function that handle updating info action
   const handleUpdateInfo = (idInfo: string, value: any) => {
     switch (idInfo) {
       case "tab":

@@ -1,16 +1,16 @@
 import AddChartMenuModelType from "../../@types/AddChartMenuModelType";
 
 class AddChartMenuModel {
-  private tab: number;
-  private type: string;
-  private title: string;
-  private minXInterval: string;
-  private timeUnit: string;
-  private minY: string;
-  private maxY: string;
-  private autoRange: boolean;
-  private selectedChart: number;
-  private dispatch: React.Dispatch<any>;
+  private tab: number;            // current tab ("Novo gráfico" or "add em um gráfico existente")
+  private type: string;           // current chart type
+  private title: string;          // chart title
+  private minXInterval: string;   // x interval
+  private timeUnit: string;       // time unit for x axis
+  private minY: string;           // inferior limit for y axis
+  private maxY: string;           // superior limit for y axis
+  private autoRange: boolean;     // it defines if auto range of y axis is activated
+  private selectedChart: number;  // selected chart in "add em um gráfico existente" tab
+  private dispatch: React.Dispatch<any>;  // tab option
 
   constructor (initialState: AddChartMenuModelType, dispatch: React.Dispatch<any>) {
     this.tab = initialState.tab;
@@ -25,6 +25,7 @@ class AddChartMenuModel {
     this.dispatch = dispatch;
   }
 
+  // Function that returns the new chart's info 
   public getNewChartInfo = () => {
     let multiplier: number;
     if (this.timeUnit === "second") {
@@ -36,7 +37,6 @@ class AddChartMenuModel {
     }
 
     return({
-      // idTree: this.idTree,
       type: this.type,
       xInterval: parseInt(this.minXInterval)*multiplier,
       timeMultiplier: multiplier,
@@ -46,7 +46,11 @@ class AddChartMenuModel {
     })
   }
 
+  // getters
   public getTab = () => this.tab;
+  public getSelectedChart = () => this.selectedChart;
+
+  // setters
   public setTab = (value: number) => {
     this.tab = value;
     this.dispatch({
@@ -111,7 +115,6 @@ class AddChartMenuModel {
     })
   }
 
-  public getSelectedChart = () => this.selectedChart;
   public setSelectedChart = (value: number) => {
     this.selectedChart = value;
     this.dispatch({

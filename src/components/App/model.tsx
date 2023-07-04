@@ -6,14 +6,14 @@ class AppModel {
     connectionActive -> Variável booleana que indica se a conexão está ativa;
     initialTime -> Tempo inicial da aplicação;
   */
-  private connectionActive: boolean;
-  private initialTime: number;
-  private inSetup: boolean;
-  private setupOption: number;
-  private url: string;
-  private files: string[];
-  private layout: string;
-  private dispatch: React.Dispatch<any>
+  private connectionActive: boolean;  // It defines if the conection with server is activated
+  private initialTime: number;        // Initial time of the application
+  private inSetup: boolean;           // It defines if the application it's in setup phase
+  private setupOption: number;        // Setup option (synchronous or asynchronous)
+  private url: string;                // url for synchronous option
+  private files: string[];            // files for asynchronous
+  private layout: string;             // application layout
+  private dispatch: React.Dispatch<any>   // dispatch function
 
   constructor (initialState: AppModelType, dispatch: React.Dispatch<any>) {
     this.connectionActive = initialState.connectionActive;
@@ -26,6 +26,7 @@ class AppModel {
     this.dispatch = dispatch;
   }
 
+  // Function that initializes the application if there is a preset in localStorage
   public initApp = () => {
     const setupOptionFromStorage = localStorage.getItem("@visualizador/setupOption");
     if (setupOptionFromStorage) {
@@ -50,6 +51,8 @@ class AppModel {
     }
   }
 
+  // setters
+
   public setConnectionActive = (value: boolean) => {
     this.connectionActive = value
     this.dispatch({
@@ -62,6 +65,7 @@ class AppModel {
     const {setupOption, url, files} = setupConfig;
     this.setupOption = setupOption;
     
+    // According to the setup option, we define the url or the files
     if (this.setupOption === 0) {
       if (url) {this.url = url}
       this.dispatch({

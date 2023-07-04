@@ -5,6 +5,7 @@ import LineChartActionsView from './lineChartActionsView';
 import LineChartProps from '../../../@types/LineChartProps';
 import LineChartActionsViewProps from '../../../@types/LineChartActionsViewProps';
 
+// Initial state for LineChartActions
 const initialLineChartActionsState = { 
   enableRefresh: true,
   sliderValue: 100,
@@ -14,6 +15,7 @@ const initialLineChartActionsState = {
   inputTimeModal: false
 };
 
+// Reducer for LineChartActions
 const reducerLineChartActions = (state: any, action: any) => {
   switch (action.type) {
     case 'UPDATE_ALL':
@@ -71,51 +73,62 @@ const reducerLineChartActions = (state: any, action: any) => {
   }
 }
 
+// Controller for LineChartActions
 const LineChartActionsController = (props: LineChartProps) => {
   const { chartId } = props;
+
+  // Getting instance of LineChartActions model
   const chartActions = props.chartActions as LineChartActionsModel;
 
-
+  // Use of hooks
   const [lineChartActionsState, dispatch] = useReducer(reducerLineChartActions,initialLineChartActionsState);
-  //const lineChartActionsModel = new LineChartActionsModel(chart, dispatch)
 
+  // Initializing LineChartActions model
   useEffect(() => {
     chartActions.init(dispatch);
   },[])
 
+  // If model changes, we restart it
   useEffect(() => {
     chartActions.restart(dispatch);
   },[chartActions])
 
+  // Function that handle editting chart menu action
   const handleEditChartMenu = (value: boolean) => {
     chartActions.setEditChartMenu(value);
   }
 
+  // Function that handle input time modal action
   const handleInputTimeModal = (value: boolean) => {
     chartActions.setInputTimeModal(value);
   }
 
+  // Function that handle enabling refresh action
   const handleEnableRefresh = (value: boolean) => {
     chartActions.setEnableRefresh(value);
   }
 
+  // Function that handle slider action
   const handleSlider = (value: any) => {
-    //console.log("aki")
     chartActions.setSliderValue(value as number);
   }
 
+  // Function that handle xAxis slider action
   const handleSliderXAxis = (value: any) => {
     chartActions.setSliderXAxisValue(value as number);
   }
 
+  // Function that handle input time action
   const handleInputTime = (date: Date) => {
     chartActions.setSliderValueWithInputTime(date);
   }
 
+  // Function that handle xAxis change action
   const handleXAxisChanged = () => {
     chartActions.xAxisChanged();
   }
 
+  // Function that handle screenshot action
   const handleScreenshot = (id: string, title: string) => {
     getScreenshot(id, title);
   }

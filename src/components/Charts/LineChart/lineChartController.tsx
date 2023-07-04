@@ -4,6 +4,7 @@ import LineChartViewProps from "../../../@types/LineChartViewProps";
 import LineChartModel from "./lineChartModel";
 import LineChartView from "./lineChartView";
 
+// Initial state for LineChart
 const initialLineChartState = { 
   data: [],
   dataChart: [],
@@ -20,6 +21,7 @@ const initialLineChartState = {
   loading: true
 };
 
+// Reducer for LineChart
 const reducerLineChart = (state: any, action: any) => {
   switch (action.type) {
     case 'INIT_CHART':
@@ -114,12 +116,17 @@ const reducerLineChart = (state: any, action: any) => {
   }
 }
 
+// Controller for LineChart
 const LineChartController = (props: LineChartProps) => {
   const { chartId } = props;
+
+  // Getting instance of LineChart model
   const chart = props.chart as LineChartModel;
 
+  // Use of hooks
   const [lineChartState, dispatch] = useReducer(reducerLineChart,initialLineChartState);
 
+  // Initializing LineChart model
   useEffect(() => {
     chart.setDispatch(dispatch);
     chart.init();

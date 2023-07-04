@@ -2,7 +2,7 @@ import JsonData from "../../../@types/JsonDataType";
 import Chart from "../chartModel";
 
 class ScatterChartModel extends Chart {
-  private viewport: number;
+  private viewport: number;   // x axis range of visualization
 
   constructor (idTree: string[][], defaultInterval: number, yInterval: number[], autoRange: boolean, timeMultiplier: number, title: string) {
     super(idTree);
@@ -14,6 +14,7 @@ class ScatterChartModel extends Chart {
     this.viewport = 0;
   }
 
+  // Initialization function
   public init = () => {
     this.dispatch({
       type: "INIT_CHART",
@@ -34,12 +35,14 @@ class ScatterChartModel extends Chart {
   }
 
   /*
-    defineRange: calcula o novo 'range', quando auto-refresh é desativado
+    defineRange: calculates the new 'range', when auto-refresh is turned off
   */
   public defineRange = () => {
     this.range = this.dataChart.length
     //console.log(this.range);
   }
+
+  // setters
 
   public setViewport = () => {
     this.viewport = this.dataChart.length-1;
@@ -51,7 +54,7 @@ class ScatterChartModel extends Chart {
   }
 
   /*
-    setViewPortWithSlider: define o novo 'viewport', quando o slider é mudado
+    setViewPortWithSlider: sets the new 'viewport', when the slider is changed
   */
   public setViewportWithSlider = (value: number) => {
     if (this.range === 0) return;
@@ -71,6 +74,7 @@ class ScatterChartModel extends Chart {
     this.time = this.dataChart[this.viewport][0]["time"].getTime();
   }
 
+  // Function that defines the new viewport according to a step
   public handleStep = (step: number) => {
     if (this.range === 0) return 100;
 
@@ -91,8 +95,10 @@ class ScatterChartModel extends Chart {
     return (sliderValue);
   }
   
+  // Unused
   public setViewportWithXAxisSlider = (value: number) => {return;}
 
+  // Function that finds viewport value with a instant of time
   public findViewportValueWithTime = (time: number) => {
     if (time) {
       const difs = this.dataChart.map(item => (
@@ -108,7 +114,7 @@ class ScatterChartModel extends Chart {
   }
 
   /*
-    getDomain: Devolve o intervalo atual de visualização do gráfico
+     getDomain: Returns the current visualization range of the chart
   */
   public getDomain = () => {
     if (this.elementRef.length === 0) {
@@ -117,8 +123,10 @@ class ScatterChartModel extends Chart {
     return ([this.elementRef[0].x, Math.max(this.defaultInterval, this.elementRef[this.elementRef.length-1].x)])
   }
 
+  // unused
   public fixColors = () => {return}
 
+  // Function that deletes a list of colors from chart color's list
   public deleteColors = (items: number[]) => {
     let index: number | undefined;
     while (items.length !== 0) {
@@ -139,37 +147,24 @@ class ScatterChartModel extends Chart {
     })
   }
 
+  // getters
+
   public getXAxisViewPortValue = () => 0;
 
   /*
-    constructDataChart: Constroi os novos 'previousDataChart' e 'dataChart'
+    constructDataChart: Build new 'previousDataChart' and 'dataChart'
   */
   public constructDataChart = () => {
-    // this.dataChart = new Array(300).fill(0).map(_ => ({x: 100*Math.random(), y: 100*Math.random()}));
-    // this.dispatch({
-    //   type: "UPDATE_DATACHART",
-    //   value: [...this.dataChart]
-    // })
-
+    // If there is no data, we initialize the vector with all information available
     if (this.dataChart.length === 0) { 
       if (this.data[0].values) {
+        // We iterate the values vector
         for (let j = 0; j < this.data[0].values.length; j++) {
           let vectorAux: any[] = [];
+          // We iterate the data vector
           for (let i = 0; i < this.data.length; i++) {
+            // For each element, we process it to be in the format accepted by the library
             const element = this.data[i];
-            // if (element.values) {
-            //   const time = element.values[j].x;
-            //   const points: Array<{x:number, y:number}> = element.values[j].y;
-            //   points.forEach((point) => {
-            //     vectorAux.push({
-            //       [`x${i}`]: point.x,
-            //       [`y${i}`]: point.y,
-            //       time: time
-            //     })
-            //   })
-            //   //vectorAux.push({name: element.labelChart, y: element.values[j].y, x: element.values[j].x});
-            // }
-            console.log(this.jsonIds);
             if (this.jsonIds[i].length === 0) {
               if (element.values) {
                 const time = element.values[j].x;
@@ -181,7 +176,6 @@ class ScatterChartModel extends Chart {
                     time: time
                   })
                 })
-                //vectorAux.push({name: element.labelChart, y: element.values[j].y, x: element.values[j].x});
               }
             } else if (element.values) {
               let idTreeAux = this.jsonIds[i].split("-").reverse();
@@ -222,6 +216,7 @@ class ScatterChartModel extends Chart {
             }
           }
           
+          // Initializing the dataChart vectors
           this.previousDataChart.push(vectorAux);
           this.dataChart.push(vectorAux);
         }
@@ -232,24 +227,14 @@ class ScatterChartModel extends Chart {
         //this.setViewport();
       }
     }
+    // Else, we just update the vectors
     else { 
       let vectorAux: any[] = [];
       if (this.data[0].values) {
         let len = this.data[0].values.length;
+        // We iterate the data vector
         for (let i = 0; i < this.data.length; i++) {
           const element = this.data[i];
-          // if (element.values) {
-          //   const time = element.values[len-1].x;
-          //   const points: Array<{x:number, y:number}> = element.values[len-1].y;
-          //   points.forEach((point) => {
-          //     vectorAux.push({
-          //       [`x${i}`]: point.x,
-          //       [`y${i}`]: point.y,
-          //       time: time
-          //     })
-          //   })
-          //   //vectorAux.push({name: element.labelChart, y: element.values[len-1].y, x: element.values[len-1].x});
-          // }
           if (this.jsonIds[i].length === 0) {
             if (element.values) {
               const time = element.values[len-1].x;
@@ -261,7 +246,6 @@ class ScatterChartModel extends Chart {
                   time: time
                 })
               })
-              //vectorAux.push({name: element.labelChart, y: element.values[len-1].y, x: element.values[len-1].x});
             }
           } else if (element.values) {
             let idTreeAux = this.jsonIds[i].split("-").reverse();
@@ -290,7 +274,6 @@ class ScatterChartModel extends Chart {
               [item.info[0].label]: item.info[0].info,
               [item.info[1].label]: item.info[1].info
             }))
-            //objAux[`y${i}`] = requiredJsonData.info;
             const time = element.values[len-1].x;
             points.forEach((point: any) => {
               vectorAux.push({
@@ -303,6 +286,7 @@ class ScatterChartModel extends Chart {
         }
       }
 
+      // Updating the dataChart vectors
       this.previousDataChart.push(vectorAux);
       if (this.enableRefresh) {
         this.dataChart = [...this.previousDataChart];
@@ -312,46 +296,6 @@ class ScatterChartModel extends Chart {
         })
       }
     }
-    // if (this.dataChart.length === 0) {
-    //   if (this.data[0].values) {
-    //     for (let j = 0; j < this.data[0].values.length; j++) {
-    //       let objAux: any = {};
-    //       objAux["time"] = this.data[0].values[j].x;
-    //       for (let i = 0; i < this.data.length; i++) {
-    //         const element = this.data[i];
-    //         if (element.values) objAux[`y${i}`] = element.values[j].y;
-            
-    //       }
-          
-    //       this.previousDataChart.push(objAux);
-    //       this.dataChart.push(objAux);
-    //       this.dispatch({
-    //         type: "UPDATE_DATACHART",
-    //         value: [...this.dataChart]
-    //       })
-    //     }
-    //   }
-    // }
-    // else { 
-    //   let objAux: any = {};
-    //   if (this.data[0].values) {
-    //     let len = this.data[0].values.length;
-    //     objAux["time"] = this.data[0].values[len-1].x;
-    //     for (let i = 0; i < this.data.length; i++) {
-    //       const element = this.data[i];
-    //       if (element.values) objAux[`y${i}`] = element.values[len-1].y;
-    //     }
-    //   }
-
-    //   this.previousDataChart.push(objAux);
-    //   if (this.enableRefresh) {
-    //     this.dataChart = [...this.previousDataChart];
-    //     this.dispatch({
-    //       type: "UPDATE_DATACHART",
-    //       value: [...this.dataChart]
-    //     })
-    //   }
-    // }
   }
 }
 

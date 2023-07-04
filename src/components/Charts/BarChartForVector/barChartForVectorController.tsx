@@ -4,6 +4,7 @@ import BarChartForVectorViewProps from "../../../@types/BarChartForVectorViewPro
 import BarChartForVectorModel from "./barChartForVectorModel";
 import BarChartForVectorView from "./barChartForVectorView";
 
+// Initial state for BarChart
 const initialBarChartState = { 
   data: [],
   dataChart: [],
@@ -19,6 +20,7 @@ const initialBarChartState = {
   loading: true
 };
 
+// Reducer for BarChart
 const reducerBarChart = (state: any, action: any) => {
   switch (action.type) {
     case 'INIT_CHART':
@@ -27,7 +29,6 @@ const reducerBarChart = (state: any, action: any) => {
         dataChart: action.dataChart,
         active: action.active,
         autoRange: action.autoRange,
-        // xInterval: action.xInterval,
         yInterval: action.yInterval,
         showXAxisGrid: action.showXAxisGrid,
         showYAxisGrid: action.showYAxisGrid,
@@ -58,11 +59,6 @@ const reducerBarChart = (state: any, action: any) => {
         ...state, 
         autoRange: action.value
       };
-    // case 'UPDATE_XINTERVAL':
-    //   return { 
-    //     ...state, 
-    //     xInterval: action.value
-    //   };
     case 'UPDATE_YINTERVAL':
       return { 
         ...state, 
@@ -114,12 +110,17 @@ const reducerBarChart = (state: any, action: any) => {
   }
 }
 
+// Controller for BarChart
 const BarChartForVectorController = (props: BarChartForVectorProps) => {
   const { chartId } = props;
+
+  // Getting instance of BarChart model
   const chart = props.chart as BarChartForVectorModel;
 
+  // Use of hooks
   const [barChartForVectorState, dispatch] = useReducer(reducerBarChart,initialBarChartState);
 
+  // Initializing BarChart model
   useEffect(() => {
     chart.setDispatch(dispatch);
     chart.init();

@@ -1,12 +1,13 @@
 import JsonData from "../../../@types/JsonDataType";
 import Chart from "../chartModel";
 
+// Timeout wrapper
 const timeout = (delay: number) => {
   return new Promise((res) => setTimeout(res, delay));
 }
 
 class BarChartModel extends Chart {
-  private viewport: number;
+  private viewport: number;   // x axis range of visualization
 
   constructor (idTree: string[][], yInterval: number[], autoRange: boolean, title: string) {
     super(idTree);
@@ -16,6 +17,7 @@ class BarChartModel extends Chart {
     this.viewport = 0;
   }
 
+  // Initialization function
   public init = () => {
     this.dispatch({
       type: "INIT_CHART",
@@ -33,12 +35,14 @@ class BarChartModel extends Chart {
   }
 
   /*
-    defineRange: calcula o novo 'range', quando auto-refresh é desativado
+    defineRange: calculates the new 'range', when auto-refresh is turned off
   */
   public defineRange = () => {
     this.range = this.dataChart.length
     console.log(this.range);
   }
+
+  // setters
 
   public setViewport = () => {
     this.viewport = this.dataChart.length-1;
@@ -50,7 +54,7 @@ class BarChartModel extends Chart {
   }
 
   /*
-    setViewPortWithSlider: define o novo 'viewport', quando o slider é mudado
+    setViewPortWithSlider: sets the new 'viewport', when the slider is changed
   */
   public setViewportWithSlider = (value: number) => {
     if (this.range === 0) return;
@@ -73,6 +77,7 @@ class BarChartModel extends Chart {
     //this.fixColors();
   }
 
+  // Function that defines the new viewport according to a step
   public handleStep = (step: number) => {
     if (this.range === 0) return 100;
 
@@ -94,8 +99,10 @@ class BarChartModel extends Chart {
     return (sliderValue);
   }
 
+  // Unused
   public setViewportWithXAxisSlider = (value: number) => {return}
 
+  // Function that finds viewport value with a instant of time
   public findViewportValueWithTime = (time: number) => {
     if (time) {
       const difs = this.dataChart.map(item => (
@@ -111,7 +118,7 @@ class BarChartModel extends Chart {
   }
 
   /*
-    getDomain: Devolve o intervalo atual de visualização do gráfico
+    getDomain: Returns the current visualization range of the chart
   */
   public getDomain = () => {
     if (this.elementRef.length === 0) {
@@ -120,6 +127,8 @@ class BarChartModel extends Chart {
     return ([this.elementRef[0].x, Math.max(this.defaultInterval, this.elementRef[this.elementRef.length-1].x)])
   }
 
+  // Function that corrects the bars' colors (because the library doesn't support an option for each bar having just one color)
+  // This correction is not working after the transition to MVC architecture
   public fixColors = async () => {
     let doc: HTMLElement | null;
     while (true) {
@@ -162,6 +171,7 @@ class BarChartModel extends Chart {
     // })
   }
 
+  // Function that deletes a list of colors from chart color's list
   public deleteColors = (items: number[]) => {
     let index: number | undefined;
     while (items.length !== 0) {
@@ -180,17 +190,23 @@ class BarChartModel extends Chart {
     setTimeout(() => this.setViewportWithSlider(100), 5);
   }
 
+  // getters
+
   public getXAxisViewPortValue = () => 0;
 
   /*
-    constructDataChart: Constroi os novos 'previousDataChart' e 'dataChart'
+    constructDataChart: Build new 'previousDataChart' and 'dataChart'
   */
   public constructDataChart = () => {
+    // If there is no data, we initialize the vector with all information available
     if (this.dataChart.length === 0) { 
       if (this.data[0].values) {
+        // We iterate the values vector
         for (let j = 0; j < this.data[0].values.length; j++) {
           let vectorAux = [];
+          // We iterate the data vector
           for (let i = 0; i < this.data.length; i++) {
+            // For each element, we process it to be in the format accepted by the library
             const element = this.data[i];
             if (this.jsonIds[i].length === 0) {
               if (element.values) vectorAux.push({name: element.labelChart, y: element.values[j].y, x: element.values[j].x});
@@ -221,6 +237,7 @@ class BarChartModel extends Chart {
             }
           }
           
+          // Initializing the dataChart vectors
           this.previousDataChart.push(vectorAux);
           this.dataChart.push(vectorAux);
         }
@@ -231,10 +248,12 @@ class BarChartModel extends Chart {
         //this.setViewport();
       }
     }
+    // Else, we just update the vectors
     else { 
       let vectorAux = [];
       if (this.data[0].values) {
         let len = this.data[0].values.length;
+        // We iterate the data vector
         for (let i = 0; i < this.data.length; i++) {
           const element = this.data[i];
           if (this.jsonIds[i].length === 0) {
@@ -267,6 +286,7 @@ class BarChartModel extends Chart {
         }
       }
 
+      // Updating the dataChart vectors
       this.previousDataChart.push(vectorAux);
       if (this.enableRefresh) {
         this.dataChart = [...this.previousDataChart];

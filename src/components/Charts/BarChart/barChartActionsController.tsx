@@ -5,6 +5,7 @@ import BarChartActionsModel from './barChartActionsModel';
 import BarChartProps from '../../../@types/BarChartProps';
 import BarChartActionsViewProps from '../../../@types/BarChartActionsViewProps';
 
+// Initial state for BarChartActions
 const initialBarChartActionsState = { 
   enableRefresh: true,
   sliderValue: 100,
@@ -13,6 +14,7 @@ const initialBarChartActionsState = {
   inputTimeModal: false
 };
 
+// Reducer for BarChartActions
 const reducerBarChartActions = (state: any, action: any) => {
   switch (action.type) {
     case 'UPDATE_ALL':
@@ -60,49 +62,62 @@ const reducerBarChartActions = (state: any, action: any) => {
   }
 }
 
+// Controller for BarChartActions
 const BarChartActionsController = (props: BarChartProps) => {
   const { chartId } = props;
+
+  // Getting instance of BarChartActions model
   const chartActions = props.chartActions as BarChartActionsModel;
 
+  // Use of hooks
   const [barChartActionsState, dispatch] = useReducer(reducerBarChartActions,initialBarChartActionsState);
-  //const lineChartActionsModel = LineChartActionsModel.getInstance(chartId);
 
+  // Initializing BarChartActions model
   useEffect(() => {
     chartActions.init(dispatch);
   },[])
 
+  // If model changes, we restart it
   useEffect(() => {
     chartActions.restart(dispatch);
   },[chartActions])
 
+  // Function that handle editting chart menu action
   const handleEditChartMenu = (value: boolean) => {
     chartActions.setEditChartMenu(value);
   }
 
+  // Function that handle input time modal action
   const handleInputTimeModal = (value: boolean) => {
     chartActions.setInputTimeModal(value);
   }
 
+  // Function that handle enabling refresh action
   const handleEnableRefresh = (value: boolean) => {
     chartActions.setEnableRefresh(value);
   }
 
+  // Function that handle slider action
   const handleSlider = (value: any) => {
     chartActions.setSliderValue(value as number);
   }
 
+  // Function that handle slider step action
   const handleSliderStep = (e: React.KeyboardEvent<HTMLInputElement>) => {
     chartActions.setSliderWithStep(e);
   }
 
+  // Function that handle input time action
   const handleInputTime = (date: Date) => {
     chartActions.setSliderValueWithInputTime(date);
   }
 
+  // Function that handle xAxis change action
   const handleXAxisChanged = () => {
     chartActions.xAxisChanged();
   }
 
+  // Function that handle screenshot action
   const handleScreenshot = (id: string, title: string) => {
     getScreenshot(id, title);
   }

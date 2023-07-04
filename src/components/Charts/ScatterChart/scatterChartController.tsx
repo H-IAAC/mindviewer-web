@@ -2,6 +2,7 @@ import { useEffect, useReducer } from "react";
 import ScatterChartModel from "./scatterChartModel";
 import ScatterChartView from "./scatterChartView";
 
+// Initial state for ScatterChart
 const initialScatterChartState = { 
   data: [],
   dataChart: [],
@@ -18,6 +19,7 @@ const initialScatterChartState = {
   loading: true
 };
 
+// Reducer for ScatterChart
 const reducerScatterChart = (state: any, action: any) => {
   switch (action.type) {
     case 'INIT_CHART':
@@ -112,12 +114,17 @@ const reducerScatterChart = (state: any, action: any) => {
   }
 }
 
+// Controller for ScatterChart
 const ScatterChartController = (props: any) => {
   const { chartId } = props;
+
+  // Getting instance of ScatterChart model
   const chart = props.chart as ScatterChartModel;
 
+  // Use of hooks
   const [scatterChartState, dispatch] = useReducer(reducerScatterChart,initialScatterChartState);
 
+  // Initializing ScatterChart model
   useEffect(() => {
     chart.setDispatch(dispatch);
     chart.init();

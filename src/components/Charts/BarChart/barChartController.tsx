@@ -4,6 +4,7 @@ import BarChartViewProps from "../../../@types/BarChartViewProps";
 import BarChartModel from "./barChartModel";
 import BarChartView from "./barChartView";
 
+// Initial state for BarChart
 const initialBarChartState = { 
   dataChart: [],
   active: false,
@@ -18,35 +19,26 @@ const initialBarChartState = {
   loading: true
 };
 
+// Reducer for BarChart
 const reducerBarChart = (state: any, action: any) => {
   switch (action.type) {
     case 'INIT_CHART':
       return {
-        // data: action.data,
         dataChart: action.dataChart,
         active: action.active,
         autoRange: action.autoRange,
-        // xInterval: action.xInterval,
         yInterval: action.yInterval,
         showXAxisGrid: action.showXAxisGrid,
         showYAxisGrid: action.showYAxisGrid,
-        // colors: action.colors,
-        // colorsFixed: action.colorsFixed,
         viewport: action.viewport,
         title: action.title,
         tooltipActive: action.tooltipActive,
         loading: action.loading
       };
-    // case 'UPDATE_DATA':
-    //   return { 
-    //     ...state, 
-    //     data: action.value
-    //   };
     case 'UPDATE_DATACHART':
       return { 
         ...state, 
         dataChart: action.value,
-        //colorsFixed: false
       };
     case 'UPDATE_ACTIVE':
       return { 
@@ -58,11 +50,6 @@ const reducerBarChart = (state: any, action: any) => {
         ...state, 
         autoRange: action.value
       };
-    // case 'UPDATE_XINTERVAL':
-    //   return { 
-    //     ...state, 
-    //     xInterval: action.value
-    //   };
     case 'UPDATE_YINTERVAL':
       return { 
         ...state, 
@@ -78,11 +65,6 @@ const reducerBarChart = (state: any, action: any) => {
         ...state, 
         showYAxisGrid: action.value
       };
-    // case 'UPDATE_COLORS':
-    //   return { 
-    //     ...state, 
-    //     colors: action.value
-    //   };
     case 'COLORSFIXED':
       return { 
         ...state, 
@@ -92,7 +74,6 @@ const reducerBarChart = (state: any, action: any) => {
       return { 
         ...state, 
         viewport: action.value,
-        //colorsFixed: false
       };
     case 'UPDATE_TITLE':
       return { 
@@ -121,21 +102,22 @@ const reducerBarChart = (state: any, action: any) => {
   }
 }
 
+// Controller for BarChart
 const BarChartController = (props: BarChartProps) => {
   const { chartId } = props;
+
+  // Getting instance of BarChart model
   const chart = props.chart as BarChartModel;
 
+  // Use of hooks
   const [barChartState, dispatch] = useReducer(reducerBarChart,initialBarChartState);
 
+  // Initializing BarChart model
   useEffect(() => {
     chart.setDispatch(dispatch);
     chart.init();
     chart.setId(chartId)
   },[chart])
-
-  // useEffect(()=>{
-  //   setTimeout(chart.fixColors,5)
-  // },[barChartState.viewport, barChartState.dataChart])
 
   const barChartViewProps: BarChartViewProps = {
     barChartState,

@@ -4,6 +4,7 @@ import NodeInfoViewProps from "../../@types/NodeInfoViewProps";
 import NodeInfoModel from "./model";
 import NodeInfoView from "./view";
 
+// Initial state for NodeInfo
 const initialNodeInfoState = { 
   pathList: [],
   nodeData: undefined,
@@ -14,6 +15,7 @@ const initialNodeInfoState = {
   inputTimeModal: false 
 };
 
+// Reducer for NodeInfo
 const reducerNodeInfo = (state: any, action: any) => {
   switch (action.type) {
     case 'UPDATE_INFO':
@@ -54,6 +56,7 @@ const reducerNodeInfo = (state: any, action: any) => {
   }
 }
 
+// Controller for NodeInfo
 const NodeInfoController = (props: NodeInfoProps) => {
   const {
     idTree,
@@ -67,28 +70,36 @@ const NodeInfoController = (props: NodeInfoProps) => {
     handleCloseNodeInfoModal,
   } = props;
 
+  // Use of hooks
   const [nodeInfoState, dispatch] = useReducer(reducerNodeInfo,initialNodeInfoState);
+
+  // Getting instance of NodeInfo model
   const nodeInfoModel = NodeInfoModel.getInstance();
 
+  // Initializing model
   useEffect(() => {
     nodeInfoModel.init(dispatch);
     nodeInfoModel.reset();
     nodeInfoModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
   },[])
 
+  // Function that handle id tree action
   const handleIdTree = (idTree: string) => {
     nodeInfoModel.handleNewInfo(idTree, mainPanelState.data, tabActive);
   }
 
+  // Function that handle adding chart action
   const handleAddChart = () => {
     handleOpenAddChartMenu([nodeInfoModel.getIdTree()]);
     handleCloseNodeInfoModal();
   }
 
+  // Function that handle InputTimeModal action
   const handleInputTimeModal = (value: boolean) => {
     nodeInfoModel.setInputTimeModal(value);
   }
 
+  // Function that handle input time action
   const handleInputTime = (date: Date) => {
     nodeInfoModel.setInputTime(date)
   }

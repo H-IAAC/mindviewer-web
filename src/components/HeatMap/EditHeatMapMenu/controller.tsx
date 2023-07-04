@@ -2,6 +2,7 @@ import { useEffect, useReducer } from 'react';
 import HeatMapModel from '../heatMapModel';
 import EditHeatMapMenuView from './view';
 
+// Initial state for EditHeatMapMenu
 const initialEditHeatMapMenuState = { 
   tab: 0,
   title: "",
@@ -18,6 +19,7 @@ const initialEditHeatMapMenuState = {
   colorRangeType: "gradient"
 };
 
+// Reducer for EditHeatMapMenu
 const reducerEditHeatMapMenu = (state: any, action: any) => {
   switch (action.type) {
     case 'INIT':
@@ -106,29 +108,39 @@ const reducerEditHeatMapMenu = (state: any, action: any) => {
   }
 }
 
+// Controller for EditHeatMapMenu
 const EditHeatMapMenuController = (props: any) => {
   const {
-    //chart,
     chartId,
     handleXAxisChanged,
     removeDataFromChart,
     handleEditHeatMapMenu
   } = props;
 
+  // Getting instance of HeatMap model
   const chart = props.chart as HeatMapModel
+
+  // Use of hooks
   const [editHeatMapMenuState, dispatch] = useReducer(reducerEditHeatMapMenu,initialEditHeatMapMenuState);
+
+  // Getting instance of EditHeatMapMenu model
   const editHeatMapMenuModel = chart.getEditHeatMapMenuModel();
+
+  // Gettind instance of ColorManager model
   const colorManager = chart.getColorManager();
 
+  // Initializing HeatMapMenu model
   useEffect(() => {
     editHeatMapMenuModel.init(chartId, dispatch)
   },[])
 
+  // Function that handle saving edits action
   const handleSaveEdits = () => {
     editHeatMapMenuModel.saveEdits();
     handleEditHeatMapMenu(false);
   }
 
+  // Function that handle updating info action
   const handleUpdateInfo = (idInfo: string, value: any) => {
     switch (idInfo) {
       case "tab":
