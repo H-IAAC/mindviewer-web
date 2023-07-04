@@ -31,6 +31,7 @@ const IdeasView = (props: IdeasViewProps) => {
     handleFullScreen,
     handleResetLayout,
     handleClose,
+    handleUserIndex,
     cyRef,
     jsonElements,
     isLoading,
@@ -42,7 +43,8 @@ const IdeasView = (props: IdeasViewProps) => {
   const ideasHistoryProps: IdeasHistoryProps = {
     index,
     time,
-    numberOfElements
+    numberOfElements,
+    handleUserIndex
   }
 
   const nodeDataAux = nodeJsonData ? nodeJsonData : nodeData;

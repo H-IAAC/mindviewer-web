@@ -11,6 +11,7 @@ type NodeInfoViewProps = {
   handleFullScreen: () => void,
   handleResetLayout: () => void,
   handleClose: () => void,
+  handleUserIndex: (customIndex: number) => void,
   cyRef: React.MutableRefObject<any>,
   jsonElements: any,
   isLoading: boolean,

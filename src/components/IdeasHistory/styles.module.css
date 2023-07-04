@@ -1,0 +1,66 @@
+.container {
+  height: 40px;
+  width: 100%;
+  margin:0 auto;
+}
+
+.timeframe {
+  height: inherit;
+  width: 90%;
+  float: left;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: baseline;
+}
+
+.options {
+  width:10%;
+  float:right;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dot {
+  height: 5px;
+  width: inherit;
+  background-color: #ff0000;
+  display: inline-block;
+}
+
+.dot:hover {
+  height: 5px;
+  width: inherit;
+  background-color: #3700ff;
+  display: inline-block;
+}
+
+.histButton {
+  width: 70%;
+  min-height: 30px;
+  margin: 5px;
+  
+}
+
+.dot2 {
+  width: 60px;
+  height: 60px;
+  overflow: hidden;
+  position: relative;
+}
+
+.dot2:before {
+  content: "";
+  display: block;
+  width: 200%;
+  height: 200%;
+  position: absolute;
+  border-radius: 50%; 
+}
+
+.dot2::before {
+  bottom: 0;
+  left: 0;
+  box-shadow: -50px 50px 0 0 red;
+}

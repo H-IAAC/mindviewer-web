@@ -271,10 +271,16 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     handleCloseNodeInfoModal();
   }
 
+  const handleUserIndex = (customIndex: number) => {
+    setUserIndex(customIndex);
+    console.log('Selected index = ' + customIndex);
+  }
+
   const [zoom, setZoom] = useState(0.55);
   const [fullScreen, setFullscreen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [isLoading, setLoading] = useState(true);
+  const [userIndex, setUserIndex] = useState(0);
   var [elementsChanged, setElementsChanged] = useState(false);
 
   const cyRef = React.useRef<cytoscape.Core | undefined>();
@@ -309,7 +315,8 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
 
     } else {
-      const parsedElements = parseNodeData(nodeInfoState.nodeData, nodeInfoState.index);
+        const parsedElements = parseNodeData(nodeInfoState.nodeData,
+                                             (userIndex === 0 ) ? nodeInfoState.index : userIndex);
 
       if (jsonElements.nodes.size === 0) {
         jsonElements.nodes = parsedElements.nodes;
@@ -461,6 +468,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     handleFullScreen,
     handleResetLayout,
     handleClose,
+    handleUserIndex,
     cyRef,
     jsonElements,
     isLoading,

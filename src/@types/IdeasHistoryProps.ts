@@ -1,7 +1,8 @@
 type IdeasHistoryProps = {
   index: number,
   time: string,
-  numberOfElements: number
+  numberOfElements: number,
+  handleUserIndex: (customIndex: number) => void
 }
 
 export default IdeasHistoryProps;
