@@ -122,7 +122,8 @@ class IdeasInfoModel {
       nodeJsonData: this.nodeJsonData,
       nodeDataType: nodeDataType,
       index: this.index,
-      time: this.time
+      time: this.time,
+      numberOfElements: 0
     })
   }
 

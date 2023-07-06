@@ -27,7 +27,6 @@
     "cytoscape-dagre": "2.5.0",
     "cytoscape-edgehandles": "3.6.0",
     "cytoscape-popper": "^2.0.0",
-    "cytoscape-cola": "^2.5.1",
     "cytoscape-cose-bilkent": "^4.1.0",
     "d3-scale": "^3.3.0",
     "date-fns": "^2.25.0",

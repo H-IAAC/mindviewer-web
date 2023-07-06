@@ -7,7 +7,6 @@ import cytoscape from "cytoscape";
 import dagre from "cytoscape-dagre";
 import stylesheet from './stylesheet';
 import cytoscapeLayout from './cytoscapeLayout';
-import cola from 'cytoscape-cola';
 
 cytoscape.use(dagre);
 
@@ -20,7 +19,8 @@ const IdeasView = (props: IdeasViewProps) => {
     time,
     nodeData,
     nodeJsonData,
-    pathList
+    pathList,
+    numberOfElements
   } = props.nodeInfoState
   const {
     handleIdTree,
@@ -37,8 +37,6 @@ const IdeasView = (props: IdeasViewProps) => {
     isLoading,
     showInfo
   } = props
-
-  const numberOfElements = jsonElements.nodes.size;
 
   const ideasHistoryProps: IdeasHistoryProps = {
     index,

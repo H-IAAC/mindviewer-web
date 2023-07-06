@@ -23,7 +23,8 @@ const initialNodeInfoState = {
   nodeData: undefined,
   nodeJsonData: undefined,
   nodeDataType: "Undefined",
-  index: 0
+  index: 0,
+  numberOfElements: 0
 };
 
 const elemsGrabbed = new Set<string>();
@@ -214,6 +215,19 @@ function makePopper(ele: cytoscape.NodeSingular | any, showInfo: boolean, fullSc
 
 const IdeasInfoController = (props: NodeInfoProps) => {
 
+  const {
+    idTree,
+    tabActive
+  } = props.treePanelState;
+
+  const {
+    mainPanelState,
+  } = props.treePanelProps;
+
+  const {
+    handleCloseNodeInfoModal,
+  } = props;
+
   const handleResetLayout = () => {
     elemsGrabbed.clear();
     refreshGraphLayout(cyRef);
@@ -251,18 +265,6 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       window.open(data);
     }
   }
-
-  const {
-    idTree,
-    tabActive
-  } = props.treePanelState;
-  const {
-    mainPanelState,
-  } = props.treePanelProps;
-  const {
-    handleCloseNodeInfoModal,
-  } = props;
-
 
   const handleClose = () => {
     jsonElements.nodes = new Map<string, cytoscape.ElementDefinition>();
@@ -304,7 +306,88 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     }
     return () => {
     };
-},[zoom]);
+  },[zoom]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  function compareNodeData(currentElements: Elements, latestElements: Elements) : boolean {
+
+    let hasChanged = false;
+
+    if (currentElements.nodes.size === 0) {
+      currentElements.nodes = latestElements.nodes;
+      currentElements.edges = latestElements.edges;
+    } else {
+      // Remove nodes that are not present in the new nodeData
+      for (let [key, value] of currentElements.nodes) {        
+        if (!latestElements.nodes.has(key)) {
+          cyRef.current?.$id(key).remove();
+          currentElements.nodes.delete(key);
+          (cyRef.current?.elements().$id(key) as any).tippy?.destroy();
+          (cyRef.current?.elements().$id(key) as any).tippy = undefined;
+          hasChanged = true;
+        }
+      }
+
+      // Remove edges that are not present in the new nodeData
+      for (let [key, value] of currentElements.edges) {        
+        if (!latestElements.edges.has(key)) {
+          cyRef.current?.$id(key).remove();
+          currentElements.edges.delete(key);
+          hasChanged = true;
+        }
+      }
+
+      // Add nodes that are not present in the current graph
+      for (let [key, value] of latestElements.nodes) {        
+        if (!currentElements.nodes.has(key)) {
+          cyRef.current?.add(value);
+          currentElements.nodes.set(key, value);
+          hasChanged = true;
+        }
+      }
+
+      // Add edges that are not present in the current graph
+      for (let [key, value] of latestElements.edges) {
+        if (!currentElements.edges.has(key)) {
+          cyRef.current?.add(value);
+          currentElements.edges.set(key, value);
+          hasChanged = true;
+        }
+      }
+    }
+
+    return hasChanged;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   useEffect(() => {
     let timeoutExec: NodeJS.Timeout;
@@ -315,52 +398,23 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
 
     } else {
-        const parsedElements = parseNodeData(nodeInfoState.nodeData,
-                                             (userIndex === 0 ) ? nodeInfoState.index : userIndex);
+        // Parse last index available
+        let latestElements = parseNodeData(nodeInfoState.nodeData, nodeInfoState.index);
+        nodeInfoState.numberOfElements = latestElements.nodes.size;
 
-      if (jsonElements.nodes.size === 0) {
-        jsonElements.nodes = parsedElements.nodes;
-        jsonElements.edges = parsedElements.edges;
-
-      } else {
-        let hasChanged = false;
-        // Remove nodes that are not present in the new nodeData
-        for (let [key, value] of jsonElements.nodes) {        
-          if (!parsedElements.nodes.has(key)) {
-            cyRef.current?.$id(key).remove();
-            jsonElements.nodes.delete(key);
-            (cyRef.current?.elements().$id(key) as any).tippy?.destroy();
-            (cyRef.current?.elements().$id(key) as any).tippy = undefined;
-            hasChanged = true;
-          }
+        // Parse the selected index
+        if (userIndex === 0) {
+          console.log('LIVE MODE');
+          console.log('LIVE MODE size: ' + nodeInfoState.numberOfElements);
+        } else {
+          console.log('SELECTION MODE index: ' + userIndex);
+          latestElements = parseNodeData(nodeInfoState.nodeData, userIndex);
+          console.log('SELECTION MODE size: ' + latestElements.nodes.size);
         }
 
-        // Remove edges that are not present in the new nodeData
-        for (let [key, value] of jsonElements.edges) {        
-          if (!parsedElements.edges.has(key)) {
-            cyRef.current?.$id(key).remove();
-            jsonElements.edges.delete(key);
-            hasChanged = true;
-          }
-        }
 
-        // Add nodes that are not present in the current graph
-        for (let [key, value] of parsedElements.nodes) {        
-          if (!jsonElements.nodes.has(key)) {
-            cyRef.current?.add(value);
-            jsonElements.nodes.set(key, value);
-            hasChanged = true;
-          }
-        }
-
-        // Add edges that are not present in the current graph
-        for (let [key, value] of parsedElements.edges) {
-          if (!jsonElements.edges.has(key)) {
-            cyRef.current?.add(value);
-            jsonElements.edges.set(key, value);
-            hasChanged = true;
-          }
-        }
+      // Render the correct index???????
+      let hasChanged = compareNodeData(jsonElements, latestElements);
 
         if (hasChanged) {
           // Refresh Graph to display added and removed nodes/edges.
@@ -370,7 +424,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
           // to the new elements.
           setElementsChanged(!elementsChanged);
         }
-      }
+      
 
       setLoading(false);
 
@@ -452,7 +506,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     return () => {
       
     }
- }, [cyRef.current, elementsChanged, showInfo, fullScreen]);
+  }, [cyRef.current, elementsChanged, showInfo, fullScreen]);
 
   const handleIdTree = (idTree: string) => {
     ideasModel.handleNewInfo(idTree, mainPanelState.data, tabActive);

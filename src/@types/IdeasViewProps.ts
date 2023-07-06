@@ -1,8 +1,8 @@
-import NodeInfoModelType from "./NodeInfoModelType";
+import IdeasInfoModelType from "./IdeasInfoModelType";
 import NodeInfoProps from "./NodeInfoProps";
 
 type NodeInfoViewProps = {
-  nodeInfoState: NodeInfoModelType,
+  nodeInfoState: IdeasInfoModelType,
   handleIdTree: (idTree: string) => void,
   handleZoomIn: () => void,
   handleZoomOut: () => void,
