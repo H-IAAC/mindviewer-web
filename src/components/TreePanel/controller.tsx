@@ -4,6 +4,7 @@ import TreePanelViewProps from '../../@types/TreePanelViewProps';
 import TreePanelModel from './model';
 import TreePanelView from './view';
 
+// Initial state for TreePanel
 const initialTreePanelState = { 
   tabActive: 0,
   expandedNodes: [],
@@ -15,6 +16,7 @@ const initialTreePanelState = {
   allCharts: []
 };
 
+// Reducer for TreePanel
 const reducerTreePanel = (state: any, action: any) => {
   switch (action.type) {
     case 'UPDATE_TAB':
@@ -68,6 +70,7 @@ const reducerTreePanel = (state: any, action: any) => {
   }
 }
 
+// Controller for TreePanel
 const TreePanelController = (props: TreePanelProps) => {
   const {
     data,
@@ -78,14 +81,22 @@ const TreePanelController = (props: TreePanelProps) => {
     handleAddNewDataInChart
   } = props;
 
+  // Use of hooks
   const [treePanelState, dispatch] = useReducer(reducerTreePanel,initialTreePanelState);
+
+  // Creating instance of TreePanel model
   const treePanelModel = new TreePanelModel(treePanelState, dispatch);
 
+  // Initializing
   useEffect(() => {
+    // Getting url params
     const urlParams = new URLSearchParams(window.location.search);
+
+    // Getting "id" param
     const id = urlParams.get("id");
     let idListParam: Array<string> = [];
 
+    // Analysing if there is some pre-defined action to open "AddChartMenu"
     if (id) {
       idListParam = id.split("-");
       let tab = idListParam.shift();
@@ -95,6 +106,7 @@ const TreePanelController = (props: TreePanelProps) => {
       }
 
       const initializePage = () => treePanelModel.openAddChartMenu(chartList, [idListParam.join("-")]);
+      // We open the menu after some seconds to avoid lost of information
       setTimeout(initializePage, 1500);
     }
   },[])
@@ -136,26 +148,32 @@ const TreePanelController = (props: TreePanelProps) => {
     treePanelModel.openAddChartMenu(chartList, idTree);
   }
 
+  // Function that handle closing AddChartMenu action
   const handleCloseAddChartMenu = () => {
     treePanelModel.closeAddChartMenu();
   }
 
+  // Function that handle opening NodeInfoModal action
   const handleOpenNodeInfoModal = (idTree: string[]) => {
     treePanelModel.openNodeInfoModal(idTree);
   }
 
+  // Function that handle opening IdeaModal action
   const handleIdeaModal = (idTree: string[]) => {
     treePanelModel.openIdeaModal(idTree);
   }
 
+  // Function that handle closing NodeInfoModal action
   const handleCloseNodeInfoModal = () => {
     treePanelModel.closeNodeInfoModal();
   }
 
+  // Function that handle changing tab status action
   const handleTabActive = (value: number) => {
     treePanelModel.setTabActive(value);
   }
 
+  // Function that handle adding chart on a new tab
   const handleAddChartNewTab = (idTree: string[]) => {
     treePanelModel.addChartNewTab(idTree[0]);
   }

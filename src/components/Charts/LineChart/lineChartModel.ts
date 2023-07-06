@@ -3,7 +3,7 @@ import JsonData from "../../../@types/JsonDataType";
 import Chart from "../chartModel";
 
 class LineChartModel extends Chart {
-  private viewport: Viewport;
+  private viewport: Viewport;   // x axis range of visualization
 
   constructor (idTree: string[][], defaultInterval: number, yInterval: number[], autoRange: boolean, timeMultiplier: number, title: string) {
     super(idTree);
@@ -18,6 +18,7 @@ class LineChartModel extends Chart {
     }
   }
 
+  // Initialization function
   public init = () => {
     this.dispatch({
       type: "INIT_CHART",
@@ -38,11 +39,13 @@ class LineChartModel extends Chart {
   }
 
   /*
-    defineRange: calcula o novo 'range', quando auto-refresh é desativado
+    defineRange: calculates the new 'range', when auto-refresh is turned off
   */
   public defineRange = () => {
     this.range = Math.max(this.elementRef[this.elementRef.length-1].x.getTime()-this.elementRef[0].x.getTime()-this.defaultInterval,0);
   }
+
+  // setters
 
   public setViewport = () => {
     if (this.elementRef) {
@@ -58,7 +61,7 @@ class LineChartModel extends Chart {
   }
 
   /*
-    setViewPortWithSlider: define o novo 'viewport', quando o slider é mudado
+    setViewPortWithSlider: sets the new 'viewport', when the slider is changed
   */
   public setViewportWithSlider = (value: number) => {
     if (this.range === 0) return;
@@ -74,8 +77,10 @@ class LineChartModel extends Chart {
     this.time = Math.trunc((this.elementRef[0].x.getTime()+(value*0.01)*this.range)+this.defaultInterval);
   }
 
+  // unused
   public handleStep = (step: number) => 0;
   
+  // Function that sets the new viewport value according to x axis slider
   public setViewportWithXAxisSlider = (value: number) => {
     if (this.range === 0) return;
 
@@ -107,6 +112,7 @@ class LineChartModel extends Chart {
     });
   }
 
+  // Function that finds viewport value with a instant of time
   public findViewportValueWithTime = (time: number) => {
     if (time) {
       const viewport = (time-this.defaultInterval-this.elementRef[0].x.getTime())*100/this.range
@@ -119,7 +125,7 @@ class LineChartModel extends Chart {
   }
 
   /*
-    getDomain: Devolve o intervalo atual de visualização do gráfico
+    getDomain: Returns the current visualization range of the chart
   */
   public getDomain = () => {
     if (this.elementRef.length === 0) {
@@ -128,8 +134,10 @@ class LineChartModel extends Chart {
     return ([this.elementRef[0].x.getTime(), Math.max(this.defaultInterval, this.elementRef[this.elementRef.length-1].x.getTime())])
   }
 
+  // unused
   public fixColors = () => {return}
 
+  // Function that deletes a list of colors from chart color's list
   public deleteColors = (items: number[]) => {
     let index: number | undefined;
     while (items.length !== 0) {
@@ -150,6 +158,8 @@ class LineChartModel extends Chart {
     })
   }
 
+  // getters
+
   public getXAxisViewPortValue = () => {
     const value = 100*(-this.range)/(1000-this.range-this.defaultInterval);
     if (value<0) return 0;
@@ -158,15 +168,19 @@ class LineChartModel extends Chart {
   }
 
   /*
-    constructDataChart: Constroi os novos 'previousDataChart' e 'dataChart'
+    constructDataChart: Build new 'previousDataChart' and 'dataChart'
   */
   public constructDataChart = () => {
+    // If there is no data, we initialize the vector with all information available
     if (this.dataChart.length === 0) {
       if (this.data[0].values) {
+        // We iterate the values vector
         for (let j = 0; j < this.data[0].values.length; j++) {
           let objAux: any = {};
           objAux["time"] = this.data[0].values[j].x;
+          // We iterate the data vector
           for (let i = 0; i < this.data.length; i++) {
+            // For each element, we process it to be in the format accepted by the library
             const element = this.data[i];
             if (this.jsonIds[i].length === 0) {
               if (element.values) objAux[`y${i}`] = element.values[j].y;
@@ -197,6 +211,7 @@ class LineChartModel extends Chart {
             }
           }
           
+          // Initializing the dataChart vectors
           this.previousDataChart.push(objAux);
           this.dataChart.push(objAux);
           this.dispatch({
@@ -206,11 +221,13 @@ class LineChartModel extends Chart {
         }
       }
     }
+    // Else, we just update the vectors
     else { 
       let objAux: any = {};
       if (this.data[0].values) {
         let len = this.data[0].values.length;
         objAux["time"] = this.data[0].values[len-1].x;
+        // We iterate the data vector
         for (let i = 0; i < this.data.length; i++) {
           const element = this.data[i];
           if (this.jsonIds[i].length === 0) {
@@ -243,6 +260,7 @@ class LineChartModel extends Chart {
         }
       }
 
+      // Updating the dataChart vectors
       this.previousDataChart.push(objAux);
       if (this.enableRefresh) {
         this.dataChart = [...this.previousDataChart];

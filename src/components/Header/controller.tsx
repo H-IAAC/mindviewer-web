@@ -5,6 +5,7 @@ import HeaderViewProps from '../../@types/HeaderViewProps';
 import HeaderModel from './model';
 import HeaderView from './view';
 
+// Initial state for Header
 const initialHeaderState = { 
   menuView: false,
   languageMenuView: false,
@@ -12,6 +13,7 @@ const initialHeaderState = {
   layoutMenuView: false
 };
 
+// Reducer for Header
 const reducerHeader = (state: any, action: any) => {
   switch (action.type) {
     case 'OPEN_MENU':
@@ -58,27 +60,38 @@ const reducerHeader = (state: any, action: any) => {
   }
 }
 
+// Controller for Header
 const HeaderController = (props: HeaderProps) => {
+  // Use of hooks
   const [headerState, dispatch] = useReducer(reducerHeader,initialHeaderState);
+
+  // Creating instance of Header model
   const headerModel = new HeaderModel(headerState, dispatch);
+
+  // Getting translation component
   const { i18n } = useTranslation();
 
+  // Function that handle MenuView action
   const handleMenuView = () => {
     headerModel.updateMenuView();
   }
 
+  // Function that handle LanguageMenuView action
   const handleLanguageMenuView = (value?: boolean) => {
     headerModel.updateLanguageMenuView(value);
   }
 
+  // Function that handle LayoutMenuView action
   const handleLayoutMenuView = (value?: boolean) => {
     headerModel.updateLayoutMenuView(value);
   }
 
+  // Function that handle changing language action
   const handleChangingLanguage = (lang: string) => {
     headerModel.setLanguage(i18n, lang);
   }
 
+  // Function that handle resetting LocalStorage action
   const handleResetLocalStorage = () => {
     headerModel.resetLocalStorage();
   }

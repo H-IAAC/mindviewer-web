@@ -1,4 +1,4 @@
-# mindviewer-web  
+# Cmob-visualizador
 
 Este projeto tem como objetivo desenvolver um visualizador de agente inteligente. O visualizador nos permite analisar o agente através de árvores de informações e gráficos personalizáveis.
 A aplicação é desenvolvida utilizando a biblioteca React e a linguagem TypeScript.

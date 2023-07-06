@@ -2,24 +2,13 @@ import IChart from "../../../interfaces/IChart";
 import ScatterChartModel from "./scatterChartModel";
 
 class ScatterChartActionsModel {
-  // private static instances: LineChartActionsModel[] = [];
-  private enableRefresh: boolean;
-  private sliderValue: number;
-  private editChartMenu: boolean;
-  private chartTime: string;
-  private inputTimeModal: boolean;
-  private chart!: ScatterChartModel;
-  private dispatch: React.Dispatch<any>;
-
-  // public static getInstance = (id: number) => {
-  //   if (LineChartActionsModel.instances.length < id+1)
-  //     LineChartActionsModel.instances.push(new LineChartActionsModel())
-  //   return LineChartActionsModel.instances[id]
-  // }
-
-  // public static removeInstance = (id: number) => {
-  //   LineChartActionsModel.instances.splice(id,1);
-  // }
+  private enableRefresh: boolean;       // it defines if chart's auto refresh is activated
+  private sliderValue: number;          // time axis slider value
+  private editChartMenu: boolean;       // it defines if edit chart menu is opened
+  private chartTime: string;            // instant of time showed by the chart
+  private inputTimeModal: boolean;      // it defines if input time modal is opened
+  private chart!: ScatterChartModel;    // chart model
+  private dispatch: React.Dispatch<any>;  // dispatch function
 
   constructor (chart: IChart) {
     this.chart = chart as ScatterChartModel;
@@ -31,29 +20,24 @@ class ScatterChartActionsModel {
     this.dispatch = () => null;
   }
 
+  // Initialization function (setting dispatch)
   public init = (dispatch: React.Dispatch<any>) => {
     this.dispatch = dispatch;
   }
 
+  // getters
+
   public getChart = () => {
     return this.chart;
   }
+
+  // setters
 
   public setEditChartMenu = (value: boolean) => {
     this.editChartMenu = value;
     this.dispatch({
       type: "UPDATE_EDITCHARTMENU",
       value: value
-    })
-  }
-
-  public restart = (dispatch: React.Dispatch<any>) => {
-    this.dispatch = dispatch;
-    this.dispatch({
-      type: "UPDATE_ALL",
-      enableRefresh: this.enableRefresh,
-      sliderValue: this.sliderValue,
-      chartTime: this.chartTime
     })
   }
 
@@ -66,10 +50,10 @@ class ScatterChartActionsModel {
   }
 
   public setEnableRefresh = (value: boolean) => {
-    console.log(value);
     this.enableRefresh = value;
-    console.log(value);
     this.chart.setEnableRefresh(value);
+
+    // According to the new value, we do some adjusts
     if (!value) {
       this.chart.defineRange();
       this.chartTime = this.chart.getTime().toString();
@@ -77,7 +61,6 @@ class ScatterChartActionsModel {
         type: "DISABLE_REFRESH",
         chartTime: this.chartTime,
       })
-      console.log("aki")
       this.chart.setTooltipActive(true);
     } else {
       this.chart.setTooltipActive(false);
@@ -104,6 +87,7 @@ class ScatterChartActionsModel {
     }
   }
 
+  // This function makes a change in the slider more precisely with the use of the arrows
   public setSliderWithStep = (e: React.KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     //console.log(e.key)
@@ -138,6 +122,7 @@ class ScatterChartActionsModel {
     this.setSliderValue(viewport);
   }
 
+  // If the chart is edited and the x axis changes, we do some adjusts. Just if enable refresh is false
   public xAxisChanged = () => {
     if (!this.enableRefresh) {
       this.chart.defineRange();
@@ -147,6 +132,17 @@ class ScatterChartActionsModel {
         type: "RESET_SLIDERVALUE"
       })
     }
+  }
+
+  // Functions that redefines dispatch function and some attributes
+  public restart = (dispatch: React.Dispatch<any>) => {
+    this.dispatch = dispatch;
+    this.dispatch({
+      type: "UPDATE_ALL",
+      enableRefresh: this.enableRefresh,
+      sliderValue: this.sliderValue,
+      chartTime: this.chartTime
+    })
   }
 }
 

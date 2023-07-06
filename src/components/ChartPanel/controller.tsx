@@ -4,11 +4,13 @@ import ChartPanelViewProps from '../../@types/ChartPanelViewProps';
 import ChartPanelModel from './model';
 import ChartPanelView from './view';
 
+// Initial state for ChartPanel
 const initialChartPanelState = { 
   tab: 0,
   previousChartListLength: -1
 };
 
+// Reducer for ChartPanel
 const reducerChartPanel = (state: any, action: any) => {
   switch (action.type) {
     case 'UPDATE_TAB':
@@ -26,12 +28,16 @@ const reducerChartPanel = (state: any, action: any) => {
   }
 }
 
+// Controller for ChartPanel
 const ChartPanelController = (props: ChartPanelProps) => {
   const {
     chartList
   } = props.charts;
 
+  // Use of hooks
   const [chartPanelState, dispatch] = useReducer(reducerChartPanel,initialChartPanelState);
+
+  // Creating ChartPanelModel instance
   const chartPanelModel = new ChartPanelModel(chartPanelState, dispatch);
 
   /*
@@ -49,6 +55,7 @@ const ChartPanelController = (props: ChartPanelProps) => {
     }
   },[chartList])
 
+  // Function that handle changing tab action
   const handleTab = (value: number) => {
     chartPanelModel.setTab(value)
   }

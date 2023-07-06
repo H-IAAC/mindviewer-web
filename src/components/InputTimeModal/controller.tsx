@@ -4,6 +4,7 @@ import InputTimeModalViewProps from "../../@types/InputTimeModalViewProps";
 import InputTimeModalModel from "./model";
 import InputTimeModalView from "./view";
 
+// Initial state for InputTimeModal
 const initialInputTimeModalState = { 
   day: 0,
   month: 0,
@@ -15,6 +16,7 @@ const initialInputTimeModalState = {
   warning: false
 };
 
+// Reducer for InputTimeModal
 const reducerInputTimeModal = (state: any, action: any) => {
   switch (action.type) {
     case 'UPDATE_DAY':
@@ -62,6 +64,7 @@ const reducerInputTimeModal = (state: any, action: any) => {
   }
 }
 
+// Controller for InputTimeModal
 const InputTimeModalController = (props: InputTimeModalProps) => {
   const {
     time,
@@ -69,9 +72,13 @@ const InputTimeModalController = (props: InputTimeModalProps) => {
     handleInputTimeModal
   } = props;
 
+  // Use of hooks
   const [inputTimeModalState, dispatch] = useReducer(reducerInputTimeModal,initialInputTimeModalState);
+
+  // Getting instance of InputTimeModal model
   const inputTimeModalModel = InputTimeModalModel.getInstance();
 
+  // Initializing model
   useEffect(() => {
     inputTimeModalModel.init(dispatch);
 
@@ -89,6 +96,7 @@ const InputTimeModalController = (props: InputTimeModalProps) => {
     inputTimeModalModel.setMilissecond(parseInt(milissecondAux));
   },[])
 
+  // Function that handle changing time action
   const handleTime = () => {
     const date = inputTimeModalModel.getTime();
 
@@ -98,6 +106,7 @@ const InputTimeModalController = (props: InputTimeModalProps) => {
     }
   }
 
+  // Function that handle updating info action
   const handleUpdateInfo = (idInfo: string, value: any) => {
     switch (idInfo) {
       case "day":
@@ -126,6 +135,7 @@ const InputTimeModalController = (props: InputTimeModalProps) => {
     }
   }
 
+  // Function that handle closing modal action
   const handleCloseModal = () => {
     handleInputTimeModal(false);
   }

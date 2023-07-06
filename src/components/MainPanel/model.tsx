@@ -26,9 +26,6 @@ import ScatterChart from '../Charts/ScatterChart';
 import HeatMapModel from '../HeatMap/heatMapModel';
 import HeatMapActionsModel from '../HeatMap/heatMapActionsModel';
 import HeatMap from '../HeatMap';
-import MapModel from '../Map/MapModel';
-import MapActionsModel from '../Map/MapActionsModel';
-import Map from '../Map';
 
 class MainPanelModel {
   private static instance: MainPanelModel;
@@ -303,20 +300,6 @@ class MainPanelModel {
       chart = newChart;
       chartComponent = (index: number) => (
         <HeatMap
-          chart={newChart} 
-          chartActions={newChartActions}
-          chartId={index} 
-          removeChart={this.removeChart} 
-          removeDataFromChart={this.removeDataFromChart}
-        />
-      )
-    } else if (type === 'map') {
-      const newChart =  new MapModel(idTreeVector, title);
-      const newChartActions =  new MapActionsModel(newChart);
-      newChart.setActive(true);
-      chart = newChart;
-      chartComponent = (index: number) => (
-        <Map
           chart={newChart} 
           chartActions={newChartActions}
           chartId={index} 

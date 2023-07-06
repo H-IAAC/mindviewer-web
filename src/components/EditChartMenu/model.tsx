@@ -1,6 +1,7 @@
 import IChart from "../../interfaces/IChart";
 import LineChartModel from "../Charts/LineChart/lineChartModel";
 
+// round function
 const roundDecimal = (num: number, places: number) => {
 	return +(num.toFixed(places));
 }

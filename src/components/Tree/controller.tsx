@@ -5,6 +5,7 @@ import TreeViewProps from '../../@types/TreeViewProps';
 import TreeModel from './model';
 import TreeView from './view';
 
+// Initial state for Tree
 const initialTreeState = { 
   showMenu: false,
   xPos: "0px",
@@ -12,6 +13,7 @@ const initialTreeState = {
   idTree: []
 };
 
+// Reducer for Tree
 const reducerTree = (state: any, action: any) => {
   switch (action.type) {
     case 'OPEN_CONTEXTMENU':
@@ -33,22 +35,28 @@ const reducerTree = (state: any, action: any) => {
   }
 }
 
+// Controller for Tree
 const TreeController = (props: TreeProps) => {
   const { selectedNodes, tabActive } = props.treePanelState;
 
+  // Use of hooks
   const [treeState, dispatch] = useReducer(reducerTree,initialTreeState);
+
+  // Creating instance of Tree model
   const treeModel = new TreeModel(treeState, dispatch);
 
-  //Inicialmente, configura-se o click para chamar a função 'handleClick';
+  // Initially, we configure the click to call the 'handleClick' function;
   useEffect(() => {
     window.addEventListener('click', handleClick);
     return () => {window.removeEventListener('click', handleClick)}
   });
 
+  // Function that handle context menu action
   const handleContextMenu = (e: any, key: string) => {
     treeModel.handleContextMenu(e, key, selectedNodes[tabActive]);
   }
 
+  // Function that handle click action
   const handleClick = () => {
     treeModel.handleClick()
   }

@@ -1,13 +1,9 @@
 import ChartPanelModelType from "../../@types/ChartPanelModelType";
 
 class ChartPanelModel {
-  /*
-    chartList -> Lista de gráficos
-    tab -> Aba atual
-  */
-  private tab: number;
-  private previousChartListLength: number;
-  private dispatch: React.Dispatch<any>;
+  private tab: number;                      // Current tab in chart panel
+  private previousChartListLength: number;  // Previous chart list length
+  private dispatch: React.Dispatch<any>;    // Dispatch function
 
   constructor (initialState: ChartPanelModelType, dispatch: React.Dispatch<any>) {
     this.tab = initialState.tab;
@@ -15,6 +11,12 @@ class ChartPanelModel {
     this.dispatch = dispatch;
   }
 
+  // getters
+
+  public getPreviousChartListLength = () => this.previousChartListLength;
+
+  // setters
+  
   public setTab = (value: number) => {
     this.tab = value;
     this.dispatch({
@@ -23,7 +25,6 @@ class ChartPanelModel {
     })
   }
 
-  public getPreviousChartListLength = () => this.previousChartListLength;
   public setPreviousChartListLength = (value: number) => {
     this.previousChartListLength = value;
     this.dispatch({

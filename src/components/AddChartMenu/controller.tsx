@@ -4,6 +4,7 @@ import AddChartMenuViewProps from '../../@types/AddChartMenuViewProps';
 import AddChartMenuModel from './model';
 import AddChartMenuView from './view';
 
+// Initial state for AddChartMenu
 const initialAddChartMenuState = { 
   tab: 0,
   type: "line",
@@ -16,6 +17,7 @@ const initialAddChartMenuState = {
   selectedChart: -1
 };
 
+// Reducer for AddChartMenu
 const reducerAddChartMenu = (state: any, action: any) => {
   switch (action.type) {
     case 'UPDATE_TAB':
@@ -68,6 +70,7 @@ const reducerAddChartMenu = (state: any, action: any) => {
   }
 }
 
+// Controller for AddChartMenu
 const AddChartMenuController = (props: AddChartMenuProps) => {
   const {
     treePanelState,
@@ -75,10 +78,18 @@ const AddChartMenuController = (props: AddChartMenuProps) => {
     handleNewDataInChart
   } = props;
 
+  // Use of hooks
   const [addChartMenuState, dispatch] = useReducer(reducerAddChartMenu,initialAddChartMenuState);
+
+  // Creating AddChartMenuModel instance
   const addChartMenuModel = new AddChartMenuModel(addChartMenuState, dispatch);
 
+  // Function that handle the submit action
   const handleSubmit = () => {
+    /* 
+      If the current tab is "Novo gráfico", the handleNewChart function is called.
+      Else if it's "Adicionar em gráfico existente", the handleNewDataInChart function is called.
+    */
     if (addChartMenuModel.getTab() === 0) {
       handleNewChart(
         {
@@ -91,6 +102,7 @@ const AddChartMenuController = (props: AddChartMenuProps) => {
     }
   }
 
+  // Function that handle the update info action
   const handleUpdateInfo = (idInfo: string, value: any) => {
     switch (idInfo) {
       case "tab":

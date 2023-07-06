@@ -4,6 +4,7 @@ import MainPanelViewProps from '../../@types/MainPanelViewProps';
 import MainPanelModel from './model';
 import MainPanelView from './view';
 
+// Initial state for MainPanel
 const initialMainPanelState = { 
   data: [],
   chartList: [],
@@ -13,6 +14,7 @@ const initialMainPanelState = {
   noConnection: true,
 };
 
+// Reducer for MainPanel
 const reducerMainPanel = (state: any, action: any) => {
   switch (action.type) {
     case 'UPDATE_DATA':
@@ -47,6 +49,7 @@ const reducerMainPanel = (state: any, action: any) => {
   }
 }
 
+// Controller for MainPanel
 const MainPanelController = (props: MainPanelProps) => {
   const {
     initialTime, 
@@ -60,9 +63,13 @@ const MainPanelController = (props: MainPanelProps) => {
     handleConnectionActive
   } = props;
 
+  // Use of hooks
   const [mainPanelState, dispatch] = useReducer(reducerMainPanel,initialMainPanelState);
+
+  // Getting instance of MainPanel model
   const mainPanelModel = MainPanelModel.getInstance();
 
+  // Initializing model
   useEffect(() => {
     mainPanelModel.init(mainPanelState, dispatch);
     if (setupOption) {
@@ -75,30 +82,37 @@ const MainPanelController = (props: MainPanelProps) => {
     }
   },[])
 
+  // When connection status changes, we update MainPanel
   useEffect(() => {
     mainPanelModel.setConnection(connectionActive);
   },[connectionActive])
 
+  // When data changes, we update MainPanel
   useEffect(() => {
     mainPanelModel.updateCharts();
   },[mainPanelState.data])
 
+  // Function that handle adding chart action
   const handleAddChart = (tabActive: number, options: any) => {
     mainPanelModel.addChart(tabActive, options);
   }
 
+  // Function that handle adding new data action
   const handleAddNewDataInChart = (tabActive: number, idTree: string[], key: number) => {
     mainPanelModel.addNewDataInChart(tabActive, idTree, key);
   }
 
+  // Function that handle removing chart action
   const handleRemoveChart = (id: number) => {
     mainPanelModel.removeChart(id);
   }
 
+  // Function that handle removing data action
   const handleRemoveDataFromChart = (chartId: number, elementId: number[]) => {
     mainPanelModel.removeDataFromChart(chartId, elementId);
   }
 
+  // Function that handle updating chart location action
   const handleUpdateChartLocation = (chartId: number, newLocation: string) => {
     mainPanelModel.updateChartLocation(chartId, newLocation);
   }

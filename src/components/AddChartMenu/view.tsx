@@ -55,7 +55,6 @@ const AddChartMenuView = (props: AddChartMenuViewProps) => {
               <option value="barForVector">Barra para vetor</option>
               <option value="scatter">Ponto</option>
               <option value="heatMap">HeatMap</option>
-              <option value="map">Mapa</option>
             </select>
           </div>
           <div className={styles.xInterval} style={{display: type === 'bar'? 'none':'flex'}}>

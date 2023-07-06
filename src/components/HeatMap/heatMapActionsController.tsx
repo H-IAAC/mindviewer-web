@@ -3,7 +3,7 @@ import getScreenshot from '../../utils/ScreenShot/getScreenshot';
 import HeatMapActionsModel from './heatMapActionsModel';
 import HeatMapActionsView from './heatMapActionsView';
 
-
+// Initial state for HeatMapActions
 const initialHeatMapActionsState = { 
   enableRefresh: true,
   sliderValue: 100,
@@ -12,8 +12,8 @@ const initialHeatMapActionsState = {
   inputTimeModal: false
 };
 
+// Reducer for HeatMapActions
 const reducerHeatMapActions = (state: any, action: any) => {
-  //console.log("aki")
   switch (action.type) {
     case 'UPDATE_ALL':
       return {
@@ -60,49 +60,62 @@ const reducerHeatMapActions = (state: any, action: any) => {
   }
 }
 
+// Controller for HeatMapActions
 const HeatMapActionsController = (props: any) => {
   const { chartId } = props;
+
+  // Getting instance of HeatMapActions model
   const chartActions = props.chartActions as HeatMapActionsModel;
 
+  // Use of hooks
   const [heatMapActionsState, dispatch] = useReducer(reducerHeatMapActions,initialHeatMapActionsState);
-  //const lineChartActionsModel = LineChartActionsModel.getInstance(chartId);
 
+  // Initializing HeatMapActions model
   useEffect(() => {
     chartActions.init(dispatch);
   },[])
 
+  // If model changes, we restart it
   useEffect(() => {
     chartActions.restart(dispatch);
   },[chartActions])
 
+  // Function that handle editting heatmap menu action
   const handleEditHeatMapMenu = (value: boolean) => {
     chartActions.setEditHeatMapMenu(value);
   }
 
+  // Function that handle input time modal action
   const handleInputTimeModal = (value: boolean) => {
     chartActions.setInputTimeModal(value);
   }
 
+  // Function that handle enabling refresh action
   const handleEnableRefresh = (value: boolean) => {
     chartActions.setEnableRefresh(value);
   }
 
+  // Function that handle slider action
   const handleSlider = (value: any) => {
     chartActions.setSliderValue(value as number);
   }
 
+  // Function that handle slider step action
   const handleSliderStep = (e: React.KeyboardEvent<HTMLInputElement>) => {
     chartActions.setSliderWithStep(e);
   }
 
+  // Function that handle input time action
   const handleInputTime = (date: Date) => {
     chartActions.setSliderValueWithInputTime(date);
   }
 
+  // Function that handle xAxis change action
   const handleXAxisChanged = () => {
     chartActions.xAxisChanged();
   }
 
+  // Function that handle screenshot action
   const handleScreenshot = (id: string, title: string) => {
     getScreenshot(id, title);
   }

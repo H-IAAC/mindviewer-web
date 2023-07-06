@@ -2,6 +2,7 @@ import { useEffect, useReducer } from "react";
 import HeatMapModel from "./heatMapModel";
 import HeatMapView from "./heatMapView";
 
+// Initial state for HeatMap
 const initialHeatMapState = {
   processedData: [],
   active: false,
@@ -22,8 +23,8 @@ const initialHeatMapState = {
   legendBar: undefined
 }
 
+// Reducer for HeatMap
 const reducerHeatMap = (state: any, action: any) => {
-  //console.log(action.type);
   switch (action.type) {
     case 'INIT_HEATMAP':
       return {
@@ -53,7 +54,6 @@ const reducerHeatMap = (state: any, action: any) => {
         ...state,
         viewport: action.value
       }
-    //outros updates
     case 'UPDATE_ACTIVE':
       return {
         ...state,
@@ -100,7 +100,6 @@ const reducerHeatMap = (state: any, action: any) => {
         valueLabelEnabled: action.value
       }
     case 'UPDATE_TOOLTIPENABLED':
-      //console.log(action.value)
       return {
         ...state,
         tooltipEnabled: action.value
@@ -141,22 +140,23 @@ const reducerHeatMap = (state: any, action: any) => {
   }
 }
 
+// Controller for HeatMap
 const HeatMapController = (props: any) => {
   const { chartId } = props;
+
+  // Getting instance of HeatMap model
   const chart = props.chart as HeatMapModel;
 
+  // Use of hooks
   const [heatMapState, dispatch] = useReducer(reducerHeatMap, initialHeatMapState);
 
+  // Initializing HeatMap model
   useEffect(() => {
     chart.setDispatch(dispatch);
     chart.init();
     chart.setId(chartId);
     setTimeout(chart.updateLegendBar, 300);
   }, [chart])
-
-  // useEffect(()=>{
-  //   setTimeout(chart.fixColors,5)
-  // },[barChartState.viewport, barChartState.dataChart])
 
   const heatMapViewProps: any = {
     heatMapState,
