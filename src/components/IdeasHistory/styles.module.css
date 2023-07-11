@@ -1,53 +1,52 @@
-.container {
-  height: 40px;
-  width: 100%;
-  margin:0 auto;
-}
-
-.timeframe {
-  height: inherit;
-  width: 90%;
-  float: left;
+.timeControl {
+  height: 25%;
+  width: inherit;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  vertical-align: baseline;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .seekbar {
-  width: inherit;
-}
-
-.options {
-  width:10%;
-  float:right;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.dot {
-  height: 10px;
-  width: inherit;
-  background-color: #ff0000;
-  display: inline-block;
-}
-
-.dot:hover {
-  height: 10px;
-  width: inherit;
-  background-color: #3700ff;
-  display: inline-block;
-}
-
-.histButton {
   width: 70%;
-  min-height: 30px;
-  margin: 5px;
-  
+  height: 100%;
 }
 
-.controlButton {
+.playButton {
   width: 5%;
   min-height: 30px;
+}
+
+.liveButton {
+  width: 5%;
+  min-height: 30px;
+  margin: 5px;  
+}
+
+option {
+  width: fit-content;
+  padding: 0;
+}
+
+input[type="range"] {
+  height: 12%;
+  width: inherit;
+  margin: 0;
+  position: absolute;
+  bottom: 0;
+  margin: 0 auto;
+}
+
+.chartLimiter {
+  height: 10%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+}
+
+.chart {
+  margin: 7px 7px 0px 7px;
 }

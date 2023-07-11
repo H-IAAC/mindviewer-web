@@ -83,7 +83,6 @@ const IdeasView = (props: IdeasViewProps) => {
               </button>
             </div>
 
-
             <div className={styles.body} id='body'>
               <div className={styles.bodyLeft}>
                 <div>
@@ -118,11 +117,11 @@ const IdeasView = (props: IdeasViewProps) => {
                 />
               }
               <div className={styles.tippys} id='tippys'></div>
-              <div>
+
                 <IdeasHistory
                   {...ideasHistoryProps}
                 />
-              </div>
+              
             </div>
           </div>
         </div>

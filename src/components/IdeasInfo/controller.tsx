@@ -17,6 +17,8 @@ cytoscape.use(popper);
 
 const maxZoom = 1.3;
 const minZoom = 0.2;
+var indexToDisplay: number = 0;
+var indexBeenDisplayed: number = 0;
 
 const initialNodeInfoState = { 
   pathList: [],
@@ -273,17 +275,15 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     handleCloseNodeInfoModal();
   }
 
-  const handleUserIndex = (customIndex: number) => {
-    setUserIndex(customIndex);
-    console.log('Selected index = ' + customIndex);
+  const handleUserIndex = (index: number) => {
+    indexToDisplay = index;
   }
 
   const [zoom, setZoom] = useState(0.55);
   const [fullScreen, setFullscreen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [isLoading, setLoading] = useState(true);
-  const [userIndex, setUserIndex] = useState(0);
-  var [elementsChanged, setElementsChanged] = useState(false);
+  const [elementsChanged, setElementsChanged] = useState(false);
 
   const cyRef = React.useRef<cytoscape.Core | undefined>();
 
@@ -332,7 +332,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       currentElements.edges = latestElements.edges;
     } else {
       // Remove nodes that are not present in the new nodeData
-      for (let [key, value] of currentElements.nodes) {        
+      for (let [key] of currentElements.nodes) {        
         if (!latestElements.nodes.has(key)) {
           cyRef.current?.$id(key).remove();
           currentElements.nodes.delete(key);
@@ -343,7 +343,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       }
 
       // Remove edges that are not present in the new nodeData
-      for (let [key, value] of currentElements.edges) {        
+      for (let [key] of currentElements.edges) {        
         if (!latestElements.edges.has(key)) {
           cyRef.current?.$id(key).remove();
           currentElements.edges.delete(key);
@@ -390,7 +390,9 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
 
   useEffect(() => {
+    var skipRender: boolean = false;
     let timeoutExec: NodeJS.Timeout;
+
     if (!nodeInfoState.nodeData) {
       setLoading(true);
       ideasModel.init(dispatch);
@@ -403,18 +405,19 @@ const IdeasInfoController = (props: NodeInfoProps) => {
         nodeInfoState.numberOfElements = latestElements.nodes.size;
 
         // Parse the selected index
-        if (userIndex === 0) {
-          console.log('LIVE MODE');
-          console.log('LIVE MODE size: ' + nodeInfoState.numberOfElements);
-        } else {
-          console.log('SELECTION MODE index: ' + userIndex);
-          latestElements = parseNodeData(nodeInfoState.nodeData, userIndex);
-          console.log('SELECTION MODE size: ' + latestElements.nodes.size);
+        if (indexToDisplay !== 0) {
+          console.log('SELECTION MODE index: ' + indexToDisplay);
+          if (indexToDisplay === indexBeenDisplayed) {
+            console.log('SELECTION MODE same index, ignoring...');
+            skipRender = true;
+          } else {
+            latestElements = parseNodeData(nodeInfoState.nodeData, indexToDisplay);
+            indexBeenDisplayed = indexToDisplay;
+          }
         }
 
-
-      // Render the correct index???????
-      let hasChanged = compareNodeData(jsonElements, latestElements);
+      if (!skipRender) {
+        let hasChanged = compareNodeData(jsonElements, latestElements);
 
         if (hasChanged) {
           // Refresh Graph to display added and removed nodes/edges.
@@ -424,7 +427,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
           // to the new elements.
           setElementsChanged(!elementsChanged);
         }
-      
+      }
 
       setLoading(false);
 
