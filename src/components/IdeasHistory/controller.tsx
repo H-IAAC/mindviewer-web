@@ -108,6 +108,7 @@ const IdeasHistoryController = (props: IdeasHistoryProps) => {
           <Chart options={ChartOptions} series={[{ data: chartSeries}]} type="area" height="90%" className={styles.chart}/>
         }
         <input type="range" min="1" max={lastMapKey}
+              className={styles.historyProgressBar}
               onChange={handleIndexChanged}
               onMouseOver={handleMouseOverChart}
               value={(isLive) ? lastMapKey : selectedFrame}>
