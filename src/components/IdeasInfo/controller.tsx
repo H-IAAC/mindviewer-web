@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useReducer } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import NodeInfoProps from "../../@types/NodeInfoProps";
 import IdeasViewProps from "../../@types/IdeasViewProps";
 import Elements from "../../@types/IdeasGraphElements";
@@ -508,8 +508,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     cyRef,
     jsonElements,
     isLoading,
-    showInfo,
-    nodeInfoProps: props
+    showInfo
   }
 
   return(

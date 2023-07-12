@@ -1,5 +1,3 @@
-import Chart from "react-apexcharts";
-
 // Reference: https://apexcharts.com/docs/options/annotations/
 const options = {
     type: 'area',
@@ -15,19 +13,6 @@ const options = {
       sparkline: {
         enabled: true
       },
-      grid: {
-        show: true,
-        yaxis: {
-          lines: {
-            show: false
-          }
-        },
-        xaxis: {
-          lines: {
-            show: false
-          }
-        }
-      }
     },
     tooltip: {
       followCursor: true,
@@ -60,6 +45,7 @@ const options = {
       }
     },
     yaxis: {
+      min: 0,
       labels: {
         show: true
       }

@@ -16,7 +16,6 @@ type NodeInfoViewProps = {
   jsonElements: any,
   isLoading: boolean,
   showInfo: boolean,
-  nodeInfoProps: NodeInfoProps;
 }
 
 export default NodeInfoViewProps;

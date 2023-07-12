@@ -50,7 +50,7 @@ class IdeasInfoModel {
       idTree: requiredData.id
     }) 
   
-    while (idTreeAux.length != 0) {
+    while (idTreeAux.length !== 0) {
       id = idTreeAux.pop();
       if (id) {
         if (id === "i") {
@@ -83,7 +83,7 @@ class IdeasInfoModel {
     }
 
     if (hasJsonTree) {
-      while (idTreeAux.length != 0) {
+      while (idTreeAux.length !== 0) {
         id = idTreeAux.pop();
         if (id) idCompare = idCompare !== "" ? idCompare+"-"+id : id;
 

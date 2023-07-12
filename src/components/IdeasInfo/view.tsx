@@ -12,9 +12,6 @@ cytoscape.use(dagre);
 
 const IdeasView = (props: IdeasViewProps) => {
   const {
-    handleCloseNodeInfoModal,
-  } = props.nodeInfoProps;
-  const {
     index,
     time,
     nodeData,
@@ -104,7 +101,7 @@ const IdeasView = (props: IdeasViewProps) => {
               </div>
 
               { isLoading && <div className="App">Loading...</div> }
-              { cyElements.nodes.length == 0 && <div className="App">There is no idea to display.</div> }
+              { cyElements.nodes.length === 0 && <div className="App">There is no idea to display.</div> }
               { !isLoading && <CytoscapeComponent
                   cy={(cy) => (cyRef.current = cy)}
                   stylesheet={stylesheet}
