@@ -1,5 +1,4 @@
 import styles from './styles.module.css';
-import "hammerjs";
 import { Paper } from '@material-ui/core';
 import React from 'react';
 import HeatMapComponent from './HeatMapComponent';
