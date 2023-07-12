@@ -8,10 +8,10 @@ import cytoscapeLayout from './cytoscapeLayout';
 import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
 import tippy from 'tippy.js';
-import html2canvas from "html2canvas";
 import styles from './styles.module.css';
 import IDataTree from "../../interfaces/IDataTree";
 import graph from './cytoscapeClasses';
+import getScreenshot from '../../utils/ScreenShot/getScreenshot';
 
 cytoscape.use(popper);
 
@@ -249,24 +249,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
   const handleFullScreen = () => { (fullScreen) ? setFullscreen(false) : setFullscreen(true); }
 
-  const handleSaveImage = async () => {
-    const element = document.getElementById('body')
-    const canvas = await html2canvas(element!);
-
-    const data = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-
-    if (typeof link.download === 'string') {
-      link.href = data;
-      link.download = 'image.png';
-
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } else {
-      window.open(data);
-    }
-  }
+  const handleSaveImage = async () => { getScreenshot('body', 'ideas_screenshot'); }
 
   const handleClose = () => {
     jsonElements.nodes = new Map<string, cytoscape.ElementDefinition>();
@@ -284,6 +267,8 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   const [showInfo, setShowInfo] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [elementsChanged, setElementsChanged] = useState(false);
+  const [nodeInfoState, dispatch] = useReducer(reducerNodeInfo, initialNodeInfoState);
+  const ideasModel = IdeasInfoModel.getInstance();
 
   const cyRef = React.useRef<cytoscape.Core | undefined>();
 
@@ -292,9 +277,6 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       (ref) =>
         ref.current && ref.current.state && !ref.current.state.isDestroyed && ref.current.destroy()
     );
-
-  const [nodeInfoState, dispatch] = useReducer(reducerNodeInfo, initialNodeInfoState);
-  const ideasModel = IdeasInfoModel.getInstance();
 
   useEffect(() => {
     cyRef?.current?.zoom(zoom);
@@ -332,7 +314,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       currentElements.edges = latestElements.edges;
     } else {
       // Remove nodes that are not present in the new nodeData
-      for (let [key] of currentElements.nodes) {        
+      currentElements.nodes.forEach (function(value, key) {
         if (!latestElements.nodes.has(key)) {
           cyRef.current?.$id(key).remove();
           currentElements.nodes.delete(key);
@@ -340,34 +322,34 @@ const IdeasInfoController = (props: NodeInfoProps) => {
           (cyRef.current?.elements().$id(key) as any).tippy = undefined;
           hasChanged = true;
         }
-      }
+      })
 
       // Remove edges that are not present in the new nodeData
-      for (let [key] of currentElements.edges) {        
+      currentElements.edges.forEach (function(value, key) {
         if (!latestElements.edges.has(key)) {
           cyRef.current?.$id(key).remove();
           currentElements.edges.delete(key);
           hasChanged = true;
         }
-      }
+      })
 
       // Add nodes that are not present in the current graph
-      for (let [key, value] of latestElements.nodes) {        
+      latestElements.nodes.forEach (function(value, key) {  
         if (!currentElements.nodes.has(key)) {
           cyRef.current?.add(value);
           currentElements.nodes.set(key, value);
           hasChanged = true;
         }
-      }
+      })
 
       // Add edges that are not present in the current graph
-      for (let [key, value] of latestElements.edges) {
+      latestElements.edges.forEach (function(value, key) {  
         if (!currentElements.edges.has(key)) {
           cyRef.current?.add(value);
           currentElements.edges.set(key, value);
           hasChanged = true;
         }
-      }
+      })
     }
 
     return hasChanged;
@@ -385,56 +367,53 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
 
 
-
-
-
+  // Initializing model
+  useEffect(() => {
+    setLoading(true);
+    ideasModel.init(dispatch);
+    //ideasModel.reset();
+    ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
+  },[])
 
   useEffect(() => {
     var skipRender: boolean = false;
     let timeoutExec: NodeJS.Timeout;
 
-    if (!nodeInfoState.nodeData) {
-      setLoading(true);
-      ideasModel.init(dispatch);
-      //ideasModel.reset();
-      ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
+    if (!nodeInfoState.nodeData) return;
+      // Parse last index available
+      let latestElements = parseNodeData(nodeInfoState.nodeData, nodeInfoState.index);
+      nodeInfoState.numberOfElements = latestElements.nodes.size;
 
-    } else {
-        // Parse last index available
-        let latestElements = parseNodeData(nodeInfoState.nodeData, nodeInfoState.index);
-        nodeInfoState.numberOfElements = latestElements.nodes.size;
-
-        // Parse the selected index
-        if (indexToDisplay !== 0) {
-          console.log('SELECTION MODE index: ' + indexToDisplay);
-          if (indexToDisplay === indexBeenDisplayed) {
-            console.log('SELECTION MODE same index, ignoring...');
-            skipRender = true;
-          } else {
-            latestElements = parseNodeData(nodeInfoState.nodeData, indexToDisplay);
-            indexBeenDisplayed = indexToDisplay;
-          }
-        }
-
-      if (!skipRender) {
-        let hasChanged = compareNodeData(jsonElements, latestElements);
-
-        if (hasChanged) {
-          // Refresh Graph to display added and removed nodes/edges.
-          refreshGraphLayout(cyRef);
-
-          // When graph changes, it is necessary to set tippy and events
-          // to the new elements.
-          setElementsChanged(!elementsChanged);
+      // Parse the selected index
+      if (indexToDisplay !== 0) {
+        console.log('SELECTION MODE index: ' + indexToDisplay);
+        if (indexToDisplay === indexBeenDisplayed) {
+          console.log('SELECTION MODE same index, ignoring...');
+          skipRender = true;
+        } else {
+          latestElements = parseNodeData(nodeInfoState.nodeData, indexToDisplay);
+          indexBeenDisplayed = indexToDisplay;
         }
       }
 
-      setLoading(false);
+    if (!skipRender) {
+      let hasChanged = compareNodeData(jsonElements, latestElements);
 
-      timeoutExec = setTimeout(() => {        
-        ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
-      }, 4000);
+      if (hasChanged) {
+        // Refresh Graph to display added and removed nodes/edges.
+        refreshGraphLayout(cyRef);
+
+        // When graph changes, it is necessary to set tippy and events
+        // to the new elements.
+        setElementsChanged(!elementsChanged);
+      }
     }
+
+    setLoading(false);
+
+    timeoutExec = setTimeout(() => {        
+      ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
+    }, 4000);
 
     return () => { clearTimeout(timeoutExec); } ;
   },[nodeInfoState]);
