@@ -179,6 +179,7 @@ class IdeasInfoModel {
   public getIdTree = () => this.idTree;
 
   public reset = () => {
+    this.time = "";
     this.index = -1;
   }
 }
