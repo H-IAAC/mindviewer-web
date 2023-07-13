@@ -1,8 +1,8 @@
 import styles from './styles.module.css';
 
-import SettingsIcon from '@material-ui/icons/Settings';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuList from '@material-ui/core/MenuList';
+import SettingsIcon from '@mui/icons-material/Settings';
+import MenuItem from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
 
 import {Trans} from "react-i18next";
 import HeaderViewProps from '../../@types/HeaderViewProps';

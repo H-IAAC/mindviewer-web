@@ -1,5 +1,5 @@
 import styles from './styles.module.css';
-import { Paper } from '@material-ui/core';
+import { Paper } from '@mui/material';
 import React from 'react';
 import HeatMapComponent from './HeatMapComponent';
 import imgExample from '../../assets/quarto.jpg';
