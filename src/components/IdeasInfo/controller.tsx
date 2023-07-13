@@ -17,8 +17,8 @@ cytoscape.use(popper);
 
 const maxZoom = 1.3;
 const minZoom = 0.2;
-var indexToDisplay: number = 0;
-var indexBeenDisplayed: number = 0;
+let indexToDisplay: number = 0;
+let indexBeenDisplayed: number = 0;
 
 const initialNodeInfoState = { 
   pathList: [],
@@ -56,7 +56,7 @@ const removeNodeDataElements = (ids: Set<string>, parsedElements: Elements) => {
 const parseNodeDataSubElement = (values: any, edgeId: string, ids: Set<string>, parsedElements: Elements) => {
   values.info.forEach(function (value: any) {
 
-    var type = (value.info[4] == null || value.info[4].info == null) ? '' : 'type' + value.info[4].info;
+    const type = (value.info[4] == null || value.info[4].info == null) ? '' : 'type' + value.info[4].info;
     ids.add(value.info[0].info);
     // Get sub nodes
     parsedElements.nodes.set(value.info[0].info, graph.Node(value.info[0].info, // id
@@ -77,8 +77,8 @@ const parseNodeDataSubElement = (values: any, edgeId: string, ids: Set<string>, 
 
 const parseNodeData = (nodeData: IDataTree | undefined, index: number) : Elements=> {
 
-  let ids = new Set<string>();
-  let parsedElements: Elements = {
+  const ids = new Set<string>();
+  const parsedElements: Elements = {
     nodes: new Map<string, cytoscape.ElementDefinition>(jsonElements.nodes),
     edges: new Map<string, cytoscape.ElementDefinition>(jsonElements.edges)
   }
@@ -89,7 +89,7 @@ const parseNodeData = (nodeData: IDataTree | undefined, index: number) : Element
     node.y.info.forEach(function (value: any) {
       if (value.hasChildren) {
         // This children node refers to the root node.
-        var type = (value.info[4] == null || value.info[4].info == null) ? '' : 'type' + value.info[4].info;
+        const type = (value.info[4] == null || value.info[4].info == null) ? '' : 'type' + value.info[4].info;
         ids.add(node.y.info[0].info);
         parsedElements.nodes.set(node.y.info[0].info, graph.Node(node.y.info[0].info, // id
                                               node.y.info[1].info, // name
@@ -164,14 +164,14 @@ function destroyPopper (cyRef: any) {
 }
 
 function makePopper(ele: cytoscape.NodeSingular | any, showInfo: boolean, fullScreen: boolean) {
-  let tippysDiv = document.getElementById('tippys');
+  const tippysDiv = document.getElementById('tippys');
   (fullScreen) ? tippysDiv!.className = styles.tippysFullscreen : tippysDiv!.className = styles.tippys;
 
   ele.tippy?.destroy();
 
   ele.tippy = tippy(document.createElement('div'), {
     content: () => {
-      let content = document.createElement("div");
+      const content = document.createElement("div");
       content.style.padding = '5px 5px 5px 5px';
 
       if (showInfo) {
@@ -205,7 +205,7 @@ function makePopper(ele: cytoscape.NodeSingular | any, showInfo: boolean, fullSc
       }
     },
     onShow(instance) {
-      instance.popperInstance!.reference = ele.popperRef();;
+      instance.popperInstance!.reference = ele.popperRef();
     }
   });
 
@@ -236,12 +236,12 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   }
 
   const handleZoomIn = () => {
-    let currentZoom = (cyRef?.current?.zoom()) ? cyRef?.current?.zoom() : 0;
+    const currentZoom = (cyRef?.current?.zoom()) ? cyRef?.current?.zoom() : 0;
     setZoom(currentZoom + 0.1);
   }
   
   const handleZoomOut = () => {
-    let currentZoom = (cyRef?.current?.zoom()) ? cyRef?.current?.zoom() : 0;
+    const currentZoom = (cyRef?.current?.zoom()) ? cyRef?.current?.zoom() : 0;
     setZoom(currentZoom - 0.1);
   }
 
@@ -376,7 +376,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   },[])
 
   useEffect(() => {
-    var skipRender: boolean = false;
+    let skipRender: boolean = false;
     let timeoutExec: NodeJS.Timeout;
 
     if (!nodeInfoState.nodeData) return;
@@ -397,7 +397,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       }
 
     if (!skipRender) {
-      let hasChanged = compareNodeData(jsonElements, latestElements);
+      const hasChanged = compareNodeData(jsonElements, latestElements);
 
       if (hasChanged) {
         // Refresh Graph to display added and removed nodes/edges.
@@ -427,7 +427,6 @@ const IdeasInfoController = (props: NodeInfoProps) => {
           if ((ele.tippy === undefined) ||
               (ele.tippy.fullScreen !== fullScreen || ele.tippy.showInfo !== showInfo)) {
             makePopper(ele, showInfo, fullScreen);
-          } else {
           }
         });
       });
@@ -472,7 +471,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
                                     });
 
       cyRef.current.unbind('scrollzoom');
-      cyRef.current.on('scrollzoom', (event) => {
+      cyRef.current.on('scrollzoom', () => {
         if (showInfo) {
           setShowInfo(false);
           destroyPopper(cyRef);
@@ -480,7 +479,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       });
 
       cyRef.current.unbind('dragpan');
-      cyRef.current.on('dragpan', (event) => {
+      cyRef.current.on('dragpan', () => {
         setShowInfo(false);
       });
 

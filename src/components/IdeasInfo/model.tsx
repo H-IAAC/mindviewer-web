@@ -34,8 +34,8 @@ class IdeasInfoModel {
   public handleNewInfo = (idTree: string, data: IDataTree[], tabActive: number) => {
     this.idTree = idTree;
     this.nodeJsonData = undefined;
-    let idTreeAux = idTree.split("-").reverse();
-    let nodeInfoListAux = [];
+    const idTreeAux = idTree.split("-").reverse();
+    const nodeInfoListAux = [];
 
     let id;
     let requiredData: IDataTree = data[tabActive];
@@ -109,8 +109,7 @@ class IdeasInfoModel {
     const nodeDataType = this.getType(this.nodeJsonData ? this.nodeJsonData : this.nodeData);
 
     if (requiredData.values) {
-      //console.log('index: ' + (requiredData.values!!.length-1));
-      this.index = requiredData.values!!.length-1;
+      this.index = requiredData.values.length - 1;
       const timeAux = (requiredData.values[this.index].x as Date).getTime();
       this.time = `${new Date(timeAux).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}`;
     }

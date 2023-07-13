@@ -9,14 +9,14 @@ type GraphHistoryState = {
   numberOfElements: number;
   time: string;
 }
-var isLive: boolean = true;
-var selectedFrame = 1;
+let isLive: boolean = true;
+let selectedFrame = 1;
 
 // HistoryMap stores all graph states, where the key, is period in time,
 // so the values are sequential. And the values, are some graph state
 // values related to that period.
 const historyMap = new Map<number, GraphHistoryState>();
-var lastMapKey = 0;
+let lastMapKey = 0;
 
 const IdeasHistoryController = (props: IdeasHistoryProps) => {
 
