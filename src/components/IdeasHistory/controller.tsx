@@ -27,6 +27,14 @@ const IdeasHistoryController = (props: IdeasHistoryProps) => {
   const [chartSeries, setChartSeries] = useState<number[]>(Array.from(historyMap.values()).map(v => v.numberOfElements));
 
   useEffect(() => {
+    return () => {
+      // Clean up when element is not used anymore.
+      lastMapKey = 0;
+      historyMap.clear();
+    }
+  }, []);
+
+  useEffect(() => {
     // If the latest index is the same, but the number of elements are diferent, then update the historyMap with
     // the new value. It is necessary to avoid scenarios of same index with diferent number of elements.
     if (historyMap.get(lastMapKey)?.index === props.index &&

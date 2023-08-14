@@ -115,10 +115,11 @@ const IdeasView = (props: IdeasViewProps) => {
               }
               <div className={styles.tippys} id='tippys'></div>
 
+              { cyElements.nodes.length > 0 &&
                 <IdeasHistory
                   {...ideasHistoryProps}
                 />
-              
+              }
             </div>
           </div>
         </div>
