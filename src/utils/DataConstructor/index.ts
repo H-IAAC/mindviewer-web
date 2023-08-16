@@ -483,8 +483,9 @@ class DataConstructor {
     let valueY: number | undefined;
 
     if (codeletData === undefined || codeletData.length === 0) return undefined;
+    if (codeletData[codeletData.length-1].activation === undefined) return undefined;
 
-    name = codeletData[0].codeletName+": "+codeletData[codeletData.length-1].activation.toFixed(3);;
+    name = codeletData[0].codeletName+": "+codeletData[codeletData.length-1].activation.toFixed(3);
     labelChart = codeletData[0].codeletName;
 
     let valuesAux: Array<any> = [];
@@ -629,9 +630,22 @@ class DataConstructor {
     return data;
   }
 
+  public strEncodeUTF16 = (str: string) => {
+    var buf = new ArrayBuffer(str.length*2);
+    var bufView = new Uint16Array(buf);
+    for (var i=0, strLen=str.length; i < strLen; i++) {
+      bufView[i] = str.charCodeAt(i);
+    }
+    return bufView.toString();
+  }
+
   public getJsonFromFile = (file: string) => {
     let jsonString = atob(file.split(',')[1]);
     jsonString = jsonString.slice(0,-1)+"]";
+    //jsonString = this.strEncodeUTF16(jsonString);
+    //const array = [jsonString];
+    //const string = JSON.stringify(array);
+
     try {
       const convertedJson = JSON.parse(jsonString);
       return(convertedJson);
