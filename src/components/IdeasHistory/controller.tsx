@@ -5,9 +5,13 @@ import ChartOptions from './apexChart';
 import styles from './styles.module.css';
 
 type GraphHistoryState = { 
-  index: number;
+  index: number,
   numberOfElements: number;
   time: string;
+  fromFile: boolean;
+  isLoadingData: boolean;
+  currentTime: number;
+  indexToDisplay: number;
 }
 let isLive: boolean = true;
 let selectedFrame = 1;
@@ -39,7 +43,7 @@ const IdeasHistoryController = (props: IdeasHistoryProps) => {
     // the new value. It is necessary to avoid scenarios of same index with diferent number of elements.
     if (historyMap.get(lastMapKey)?.index === props.index &&
         historyMap.get(lastMapKey)?.numberOfElements !== props.numberOfElements) {
-      historyMap.set(lastMapKey, {index: props.index, numberOfElements: props.numberOfElements, time: props.time});
+          historyMap.set(lastMapKey, {index: props.index, numberOfElements: props.numberOfElements, time: props.time, fromFile: props.fromFile, isLoadingData: props.isLoadingData, currentTime: props.currentTime, indexToDisplay: props.indexToDisplay });
 
       const newChartSeries = chartSeries.map((value, i) => {
         if (i === (lastMapKey - 1)) {
@@ -55,14 +59,18 @@ const IdeasHistoryController = (props: IdeasHistoryProps) => {
     } else if (historyMap.get(lastMapKey)?.index !== props.index) {
 
       lastMapKey++;
-      historyMap.set(lastMapKey, {index: props.index, numberOfElements: props.numberOfElements, time: props.time});
+      historyMap.set(lastMapKey, {index: props.index, numberOfElements: props.numberOfElements, time: props.time, fromFile: props.fromFile, isLoadingData: props.isLoadingData, currentTime: props.currentTime, indexToDisplay: props.indexToDisplay });
       setChartSeries([...chartSeries, props.numberOfElements]);
+      playNextFrame();
+
+    } else if (props.fromFile) {
       playNextFrame();
     }
 
-  }, [props.index, props.numberOfElements]);
+  }, [props.index, props.numberOfElements, props.indexToDisplay, isPaused]);
 
   useEffect(() => {
+
     if (isPaused && isLive) {
       selectedFrame = lastMapKey;
       props.handleUserIndex(historyMap.get(lastMapKey)!.index);
@@ -78,8 +86,12 @@ const IdeasHistoryController = (props: IdeasHistoryProps) => {
 
   const playNextFrame = () => {
     if (!isLive && !isPaused) {
-      selectedFrame++;
-      props.handleUserIndex(historyMap.get(selectedFrame)!.index);
+
+      // Must not get "next frame" when already in the latest frame.
+      selectedFrame = (selectedFrame === lastMapKey) ? selectedFrame : selectedFrame + 1;
+
+      if (selectedFrame <= lastMapKey)
+        props.handleUserIndex(historyMap.get(selectedFrame)!.index);
     }
   }
 
@@ -106,27 +118,34 @@ const IdeasHistoryController = (props: IdeasHistoryProps) => {
   return(
     <div className={styles.timeControl}>
       {/* Pause button */}
-      { isPaused ? <button className={styles.playButton} onClick={handlePlay}><b>&#9658;</b></button>
-                 : <button className={styles.playButton} onClick={handlePlay}><b>||</b></button>
+      {(!props.isLoadingData) &&
+        (isPaused ? <button className={styles.playButton} onClick={handlePlay}><b>&#9658;</b></button>
+                  : <button className={styles.playButton} onClick={handlePlay}><b>||</b></button>)
       }
 
       {/* Seek bar and Chart */}
-      <div className={styles.seekbar}>
-        { isChartShown &&
-          <Chart options={ChartOptions} series={[{ data: chartSeries}]} type="area" height="90%" className={styles.chart}/>
-        }
-        <input type="range" min="1" max={lastMapKey}
-              className={styles.historyProgressBar}
-              onChange={handleIndexChanged}
-              onMouseOver={handleMouseOverChart}
-              value={(isLive) ? lastMapKey : selectedFrame}>
-        </input>
+      {(props.isLoadingData)
+        ?
+        <div>Loading data</div>
+        :
+        <div className={styles.seekbar}>
+          { isChartShown &&
+            <Chart options={ChartOptions} series={[{ data: chartSeries}]} type="area" height="90%" className={styles.chart}/>
+          }
+          <input type="range" min="1" max={lastMapKey}
+                className={styles.historyProgressBar}
+                onChange={handleIndexChanged}
+                onMouseOver={handleMouseOverChart}
+                value={(isLive) ? lastMapKey : selectedFrame}>
+          </input>
 
-      </div>
+        </div>        
+      }
 
       {/* Live button */}
-      { isLive ? <button className={styles.liveButton} onClick={handleReset}><b>Live</b></button>
-               : <button className={styles.liveButton} onClick={handleReset}>Live</button>
+      {(!props.fromFile) &&
+        (isLive ? <button className={styles.liveButton} onClick={handleReset}><b>Live</b></button>
+               : <button className={styles.liveButton} onClick={handleReset}>Live</button>)
       }
       <div className={styles.chartLimiter} onMouseOut={handleMouseOutChart}></div>
     </div>

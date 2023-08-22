@@ -12,12 +12,14 @@ cytoscape.use(dagre);
 
 const IdeasView = (props: IdeasViewProps) => {
   const {
-    index,
+    lastIndex,
+    indexBeenDisplayed,
     time,
     nodeData,
     nodeJsonData,
     pathList,
-    numberOfElements
+    numberOfElements,
+    setupOption
   } = props.nodeInfoState
   const {
     handleIdTree,
@@ -32,13 +34,19 @@ const IdeasView = (props: IdeasViewProps) => {
     cyRef,
     jsonElements,
     isLoading,
-    showInfo
+    showInfo,
+    isLoadingData,
+    indexToDisplay
   } = props
 
   const ideasHistoryProps: IdeasHistoryProps = {
-    index,
+    index: (isLoadingData) ? indexBeenDisplayed : lastIndex,
     time,
     numberOfElements,
+    isLoadingData,
+    fromFile: (setupOption == 1) ? true : false,
+    currentTime: Date.now(),
+    indexToDisplay: indexBeenDisplayed,
     handleUserIndex
   }
 
@@ -90,6 +98,15 @@ const IdeasView = (props: IdeasViewProps) => {
                 <div>
                 </div>
                   <button onClick={handleZoomOut}>&#x002D;</button>
+                </div>
+                <div>
+                  <p>{indexBeenDisplayed}</p>
+                </div>
+                <div>
+                  <p>{indexToDisplay}</p>
+                </div>
+                <div>
+                  <p>{lastIndex}</p>
                 </div>
               </div>
               <div className={styles.bodyRight}>

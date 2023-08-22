@@ -18,15 +18,17 @@ cytoscape.use(popper);
 const maxZoom = 1.3;
 const minZoom = 0.2;
 let indexToDisplay: number = 0;
-let indexBeenDisplayed: number = 0;
+let isLoadingData: boolean = true;
 
 const initialNodeInfoState = { 
   pathList: [],
   nodeData: undefined,
   nodeJsonData: undefined,
   nodeDataType: "Undefined",
-  index: 0,
-  numberOfElements: 0
+  lastIndex: 0,
+  indexBeenDisplayed: -1,
+  numberOfElements: 0,
+  setupOption: -1
 };
 
 const elemsGrabbed = new Set<string>();
@@ -121,8 +123,9 @@ const reducerNodeInfo = (state: any, action: any) => {
         nodeData: action.nodeData,
         nodeJsonData: action.nodeJsonData,
         nodeDataType: action.nodeDataType,
-        index: action.index,
-        time: action.time
+        lastIndex: action.index,
+        time: action.time,
+        setupOption: action.setupOption
       };
     default:
       return state;
@@ -239,7 +242,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     const currentZoom = (cyRef?.current?.zoom()) ? cyRef?.current?.zoom() : 0;
     setZoom(currentZoom + 0.1);
   }
-  
+
   const handleZoomOut = () => {
     const currentZoom = (cyRef?.current?.zoom()) ? cyRef?.current?.zoom() : 0;
     setZoom(currentZoom - 0.1);
@@ -271,12 +274,6 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   const ideasModel = IdeasInfoModel.getInstance();
 
   const cyRef = React.useRef<cytoscape.Core | undefined>();
-
-  const clearRefs = (...refs: any[]) =>
-    refs.forEach(
-      (ref) =>
-        ref.current && ref.current.state && !ref.current.state.isDestroyed && ref.current.destroy()
-    );
 
   useEffect(() => {
     cyRef?.current?.zoom(zoom);
@@ -376,25 +373,77 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   },[])
 
   useEffect(() => {
+    return () => {
+      // Clean up when element is not used anymore.
+      isLoadingData = true;
+      indexToDisplay = 0;
+      elemsGrabbed.clear();
+      elemsGrabbed.add('0');
+      jsonElements.nodes = new Map<string, cytoscape.ElementDefinition>();
+      jsonElements.edges = new Map<string, cytoscape.ElementDefinition>();
+
+      if (cyRef.current) {
+        cyRef.current.removeAllListeners();
+        cyRef.current = undefined;
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     let skipRender: boolean = false;
     let timeoutExec: NodeJS.Timeout;
+    let waitTime: number = 2000;
 
-    if (!nodeInfoState.nodeData) return;
-      // Parse last index available
-      let latestElements = parseNodeData(nodeInfoState.nodeData, nodeInfoState.index);
-      nodeInfoState.numberOfElements = latestElements.nodes.size;
+    if (!nodeInfoState.nodeData)
+      return;
 
-      // Parse the selected index
-      if (indexToDisplay !== 0) {
-        console.log('SELECTION MODE index: ' + indexToDisplay);
-        if (indexToDisplay === indexBeenDisplayed) {
-          console.log('SELECTION MODE same index, ignoring...');
-          skipRender = true;
-        } else {
-          latestElements = parseNodeData(nodeInfoState.nodeData, indexToDisplay);
-          indexBeenDisplayed = indexToDisplay;
+    let latestElements = nodeInfoState.numberOfElements;
+
+    // Load from file:
+    // If 'setupOption' is equals to 1, then data was loaded from a File
+    if (nodeInfoState.setupOption == 1) {
+      if (isLoadingData) {
+        // Index are created based on milisecond, not based on file content, so
+        // it is possible to have too many repeated index, to avoid loading repeated content
+        // we are only considering indexs stepping from 10 to 10.
+        nodeInfoState.indexBeenDisplayed = ((nodeInfoState.indexBeenDisplayed + 10) < nodeInfoState.lastIndex)
+                                                                         ? nodeInfoState.indexBeenDisplayed + 10
+                                                                         : nodeInfoState.lastIndex;
+
+        if (nodeInfoState.indexBeenDisplayed === nodeInfoState.lastIndex) {
+          // When reached the lastIndex, then load is completed.
+          isLoadingData = false;
         }
+        latestElements = parseNodeData(nodeInfoState.nodeData, nodeInfoState.indexBeenDisplayed);
+        nodeInfoState.numberOfElements = latestElements.nodes.size;
+        waitTime = 200;
+      } else {
+        // In here, the File content has been all loaded, and no parse is necessary anymore,
+        // so just need to skip the Render as there is nothing else to load.
+        skipRender = true;
       }
+    
+    // Load from URL:
+    } else {
+      // When loading data from URL, parse last index available.
+      nodeInfoState.indexBeenDisplayed = nodeInfoState.lastIndex;
+      latestElements = parseNodeData(nodeInfoState.nodeData, nodeInfoState.lastIndex);
+      isLoadingData = false;
+      nodeInfoState.numberOfElements = latestElements.nodes.size;
+    }
+       
+
+    // Parse the selected index
+    if (indexToDisplay !== 0) {
+      //console.log('SELECTION MODE index: ' + indexToDisplay);
+      if (indexToDisplay === nodeInfoState.indexBeenDisplayed) {
+        //console.log('SELECTION MODE same index, ignoring...');
+        skipRender = true;
+      } else {
+        latestElements = parseNodeData(nodeInfoState.nodeData, indexToDisplay);
+        nodeInfoState.indexBeenDisplayed = indexToDisplay;
+      }
+    }
 
     if (!skipRender) {
       const hasChanged = compareNodeData(jsonElements, latestElements);
@@ -413,7 +462,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
     timeoutExec = setTimeout(() => {        
       ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
-    }, 4000);
+    }, waitTime);
 
     return () => { clearTimeout(timeoutExec); } ;
   },[nodeInfoState]);
@@ -507,7 +556,9 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     cyRef,
     jsonElements,
     isLoading,
-    showInfo
+    showInfo,
+    isLoadingData,
+    indexToDisplay
   }
 
   return(

@@ -7,9 +7,11 @@ type IdeasInfoModelType = {
     nodeJsonData: any,
     nodeDataType: string,
     time: string,
-    index: number,
+    lastIndex: number,
+    indexBeenDisplayed: number,
     inputTimeModal: boolean,
-    numberOfElements: number
+    numberOfElements: number,
+    setupOption: number
   }
   
   export default IdeasInfoModelType;

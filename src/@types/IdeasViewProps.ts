@@ -15,7 +15,9 @@ type NodeInfoViewProps = {
   cyRef: React.MutableRefObject<any>,
   jsonElements: any,
   isLoading: boolean,
-  showInfo: boolean,
+  showInfo: boolean
+  isLoadingData: boolean,
+  indexToDisplay: number
 }
 
 export default NodeInfoViewProps;

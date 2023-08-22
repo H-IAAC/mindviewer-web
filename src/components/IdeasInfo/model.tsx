@@ -42,8 +42,8 @@ class IdeasInfoModel {
     let requiredJsonData: JsonData | undefined;
     let idCompare = "";
     let hasJsonTree = false;
-
-    //console.log(JSON.stringify(data));
+    // setupOption informs if is loading data from URL(0) ou File(1).
+    const setupOption = localStorage.getItem("@visualizador/setupOption");
 
     nodeInfoListAux.push({
       name: requiredData.name.includes(":")? requiredData.name.slice(0,requiredData.name.indexOf(":")): requiredData.name,
@@ -122,7 +122,8 @@ class IdeasInfoModel {
       nodeDataType: nodeDataType,
       index: this.index,
       time: this.time,
-      numberOfElements: 0
+      numberOfElements: 0,
+      setupOption: setupOption
     })
   }
 
