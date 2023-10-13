@@ -1,12 +1,13 @@
 export namespace cytoscapeClasses {
-    export const Node = (id: string, name: string, value: string, type: string, category: string, scope: string, classes: string, posX = 0, posY = 0) => ({
+    export const Node = (id: string, name: string, value: string, type: string, category: string, scope: string, label: string, classes: string, posX = 0, posY = 0) => ({
         data: {
             id,
             name,
             value,
             type,
             category,
-            scope
+            scope,
+            label
         },
         position: {
             x: posX,

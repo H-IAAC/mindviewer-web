@@ -23,7 +23,7 @@ const stylesheet: cytoscape.Stylesheet[] = [
     {
       selector: "node",
       style: {
-        label: "data(id)",
+        label: "data(label)",
         height: "100",
         width: "100",
         "text-valign": "center",
@@ -32,7 +32,8 @@ const stylesheet: cytoscape.Stylesheet[] = [
         "background-color": "LightGray",
         "border-color": "black",
         "border-width": 2,
-        "font-size": "24"
+        "font-size": "14",
+        "text-wrap": "wrap"
       }
     },
     {

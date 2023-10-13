@@ -55,6 +55,20 @@ const removeNodeDataElements = (ids: Set<string>, parsedElements: Elements) => {
 
 }
 
+const extractValue = (value: any) : any => {
+  if (isNaN(value))
+    return value;
+
+  return value ? parseFloat(value).toFixed(2).toString() : '';
+}
+
+const getLabelFormat = (value: any) : any => {
+  if (value.length > 7)
+    return value.substring(0,8) + '...';
+
+  return value;
+}
+
 const parseNodeDataSubElement = (values: any, edgeId: string, ids: Set<string>, parsedElements: Elements) => {
   values.info.forEach(function (value: any) {
 
@@ -62,12 +76,13 @@ const parseNodeDataSubElement = (values: any, edgeId: string, ids: Set<string>, 
     ids.add(value.info[0].info);
     // Get sub nodes
     parsedElements.nodes.set(value.info[0].info, graph.Node(value.info[0].info, // id
-                                     value.info[1].info, // name
-                                     parseFloat(value.info[2].info).toFixed(2).toString(), // value
-                                     value.info[4].info, // type
-                                     value.info[5].info, // category
-                                     value.info[6].info, // scope
-                                     "ellipse " + type));
+                                                            value.info[1].info, // name
+                                                            extractValue(value.info[2].info), // value
+                                                            value.info[4].info, // type
+                                                            value.info[5].info, // category
+                                                            value.info[6].info, // scope
+                                                            value.info[0].info + '\n\n' + getLabelFormat(extractValue(value.info[2].info)),
+                                                            "ellipse " + type));
     // Get node edge
     parsedElements.edges.set(edgeId + '_' + value.info[0].info, graph.Edge(edgeId, value.info[0].info, ''));
 
@@ -91,17 +106,16 @@ const parseNodeData = (nodeData: IDataTree | undefined, index: number) : Element
     node.y.info.forEach(function (value: any) {
       if (value.hasChildren) {
         // This children node refers to the root node.
-        const type = (value.info[4] == null || value.info[4].info == null) ? '' : 'type' + value.info[4].info;
+        const type = (node.y.info[4] == null || node.y.info[4].info == null) ? '' : 'type' + node.y.info[4].info;
         ids.add(node.y.info[0].info);
         parsedElements.nodes.set(node.y.info[0].info, graph.Node(node.y.info[0].info, // id
-                                              node.y.info[1].info, // name
-                                              node.y.info[2].info ?
-                                                parseFloat(node.y.info[2].info).toFixed(2).toString() :
-                                                '',
-                                              node.y.info[4].info, // type
-                                              node.y.info[5].info, // category
-                                              node.y.info[6].info, // scope
-                                              "ellipse-double " + type));
+                                 node.y.info[1].info, // name
+                                 extractValue(node.y.info[2].info),
+                                 node.y.info[4].info, // type
+                                 node.y.info[5].info, // category
+                                 node.y.info[6].info, // scope
+                                 node.y.info[0].info + '\n\n' + extractValue(node.y.info[2].info),
+                                 "ellipse-double " + type));
 
         // Every other node related to this root is identified by the function below
         parseNodeDataSubElement(value, node.y.info[0].info, ids, parsedElements);
@@ -397,7 +411,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     if (!nodeInfoState.nodeData)
       return;
 
-    let latestElements = nodeInfoState.numberOfElements;
+    let latestElements = nodeInfoState.numberOfElements; // <- to remove?
 
     // Load from file:
     // If 'setupOption' is equals to 1, then data was loaded from a File
