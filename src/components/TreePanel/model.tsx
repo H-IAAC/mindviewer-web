@@ -15,6 +15,7 @@ class TreePanelModel {
   private selectedNodesProcessed: string[][];
   private addChartMenu: boolean;
   private nodeInfoModal: boolean;
+  private ideasModal: boolean;
   private idTree: string[];
   private allCharts: string[];
   private dispatch: React.Dispatch<any>;
@@ -26,6 +27,7 @@ class TreePanelModel {
     this.selectedNodesProcessed = initialState.selectedNodesProcessed;
     this.addChartMenu = initialState.addChartMenu;
     this.nodeInfoModal = initialState.nodeInfoModal;
+    this.ideasModal = initialState.ideasModal;
     this.idTree = initialState.idTree;
     this.allCharts = initialState.allCharts;
     this.dispatch = dispatch;
@@ -98,8 +100,19 @@ class TreePanelModel {
 
   public closeNodeInfoModal = () => {
     this.nodeInfoModal = false;
+    this.ideasModal = false;
     this.dispatch({
       type: "CLOSE_NODEINFOMODAL"
+    })
+  }
+
+  public openIdeaModal = (idTree: string[]) => {
+    this.idTree = idTree;
+    this.nodeInfoModal = false;
+    this.ideasModal = true;
+    this.dispatch({
+      type: "OPEN_IDEAMODAL",
+      idTree: this.idTree,
     })
   }
 

@@ -1,0 +1,52 @@
+.timeControl {
+  height: 25%;
+  width: inherit;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.seekbar {
+  width: 70%;
+  height: 100%;
+}
+
+.playButton {
+  width: 5%;
+  min-height: 30px;
+}
+
+.liveButton {
+  width: 5%;
+  min-height: 30px;
+  margin: 5px;  
+}
+
+option {
+  width: fit-content;
+  padding: 0;
+}
+
+.historyProgressBar {
+  height: 12%;
+  width: inherit;
+  margin: 0;
+  position: absolute;
+  bottom: 0;
+  margin: 0 auto;
+}
+
+.chartLimiter {
+  height: 10%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+}
+
+.chart {
+  margin: 7px 7px 0px 7px;
+}

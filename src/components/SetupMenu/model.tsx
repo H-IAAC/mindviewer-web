@@ -27,37 +27,34 @@ class SetupMenuModel {
     })
   }
 
+  public setErrorMessage = (msg: string) => {
+    this.dispatch({
+      type: "UPDATE_ERROR_MESSAGE",
+      errorMessage: msg
+    })
+  }
+
   public saveUrlOption = (url: string) => {
     localStorage.setItem("@visualizador/setupOption","0");
     localStorage.setItem("@visualizador/url",`${url}`);
   }
 
-  public saveFileOption = async (files: FileList) => {
-    let filesArray: Array<string> = [];
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      let base64 = await this.getBase64FromFile(file);
-      filesArray.push(base64);
+  public saveFileOption = async (filesArray: Array<string>) => {
+    try {
+      localStorage.setItem("@visualizador/setupOption","1");
+      localStorage.setItem("@visualizador/files", JSON.stringify(filesArray));
+    } catch (e: any) {
+      if (e.message.includes("exceeded the quota"))
+        this.setErrorMessage("Import Failed! File size is limited to 5 Mb.");
+      else
+        this.setErrorMessage(e.message);
+      return false;
     }
-    
-    localStorage.setItem("@visualizador/setupOption","1");
-    localStorage.setItem("@visualizador/files", JSON.stringify(filesArray));
 
-    return filesArray;
+    return true;
   }
 
-  public getBase64FromFile = async (file: File) => {
-    return new Promise<string>((resolve, reject) => {
-      var reader = new FileReader();
 
-      reader.onload = (f => (e: any) => {
-        let base64: string = e.target.result;
-        resolve(base64);          
-      })(file);
-
-      reader.readAsDataURL(file);
-    });
-  }
 }
 
 export default SetupMenuModel;

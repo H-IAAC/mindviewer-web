@@ -1,22 +1,5 @@
 import styles from './styles.module.css';
-import "hammerjs";
-import {
-  Chart,
-  ChartSeries,
-  ChartSeriesItem,
-  ChartTitle,
-  ChartTooltip,
-  ChartXAxis,
-  ChartXAxisCrosshair,
-  ChartXAxisCrosshairTooltip,
-  ChartXAxisItem,
-  ChartYAxis,
-  ChartYAxisCrosshair,
-  ChartYAxisCrosshairTooltip,
-  ChartYAxisItem,
-} from "@progress/kendo-react-charts";
-import '@progress/kendo-theme-default/dist/all.css';
-import { Paper } from '@material-ui/core';
+import { Paper } from '@mui/material';
 import React from 'react';
 import HeatMapComponent from './HeatMapComponent';
 import imgExample from '../../assets/quarto.jpg';
@@ -62,66 +45,6 @@ const HeatMapView = React.memo((props: any) => {
             backgroundImageEnabled={backgroundImageEnabled}
             backgroundImage={imgExample}
           />
-          // <Chart
-          //   style={{
-          //     //width: "1200px",
-          //     height: "100%"
-          //   }}
-          //   pannable={panZoomEnabled}
-          //   zoomable={panZoomEnabled}
-          //   renderAs='svg'
-          // >
-          //   <ChartTitle
-          //     text={title}
-          //     // margin={{
-          //     //   left: 40,
-          //     // }}
-          //   />
-
-          //   <ChartTooltip
-          //     visible={tooltipEnabled}
-          //   />
-            
-          //   <ChartSeries>
-          //     <ChartSeriesItem
-          //       type="heatmap"
-          //       data={processedData[viewport]}
-          //       xField="x"
-          //       yField="y"
-          //       field="value"
-          //       color={colorFunction}
-          //       markers={{
-          //         type: markerShape,
-          //         //border: { width: 1 },
-          //         borderRadius: 15,
-          //         size: markerSize
-          //       }}
-          //       labels={{
-          //         visible: valueLabelEnabled
-          //       }}
-          //     />
-          //   </ChartSeries>
-
-          //   <ChartXAxis>
-          //     <ChartXAxisItem
-          //       labels={{visible: xLabelsEnabled}}
-          //     >
-          //       <ChartXAxisCrosshair visible={xCrossHairEnabled} width={1} color="#f00">
-          //         <ChartXAxisCrosshairTooltip/>
-          //       </ChartXAxisCrosshair>
-          //     </ChartXAxisItem>
-          //   </ChartXAxis>
-
-          //   <ChartYAxis>
-          //     <ChartYAxisItem
-          //       labels={{visible: yLabelsEnabled}}
-          //     >
-          //       <ChartYAxisCrosshair visible={yCrossHairEnabled} width={1} color="#f00">
-          //         <ChartYAxisCrosshairTooltip/>
-          //       </ChartYAxisCrosshair>
-          //     </ChartYAxisItem>
-          //   </ChartYAxis>
-          // </Chart>
           :
           loading
             ? (

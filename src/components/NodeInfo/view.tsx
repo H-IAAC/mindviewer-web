@@ -91,7 +91,7 @@ const NodeInfoView = (props: NodeInfoViewProps) => {
         )
       }
 
-      if (dataAux.values) {        
+      if (dataAux.values) {
         return(
           <div>
             <div>

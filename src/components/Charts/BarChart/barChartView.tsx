@@ -1,7 +1,7 @@
 import styles from './styles.module.css';
 import './styles.css';
 
-import Paper from '@material-ui/core/Paper';
+import Paper from '@mui/material/Paper';
 import {
   ArgumentAxis,
   ValueAxis,

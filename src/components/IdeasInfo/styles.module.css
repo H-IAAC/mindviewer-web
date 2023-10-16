@@ -1,0 +1,156 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.background {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  background-color: rgba(0,0,0,0.1);
+}
+
+.modal {
+  width: 80%;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  background: #fcfdfd;
+  border-radius: 10px;
+  /* position: relative; */
+  z-index: 2;
+  overflow: hidden;
+}
+
+.modalFullscreen {
+  width: 94%;
+  height: 94%;
+  display: flex;
+  flex-direction: column;
+  background: #fcfdfd;
+  border-radius: 10px;
+  /* position: relative; */
+  z-index: 2;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 20px;
+  background: #c3cfd9;
+  border-radius: 10px 10px 0 0;
+}
+
+.type p, .time p {
+  color: #fff;
+}
+
+.path {
+  display: flex;
+  align-items: center;
+  max-width: 80%;
+  overflow: auto;
+}
+
+.path div {
+  display: flex;
+  align-items: center;
+}
+
+.path div:last-child button {
+  pointer-events: none;
+}
+
+.path div:last-child p {
+  display: none;
+}
+
+.path button {
+  border: none;
+  background: #fff;
+  padding: 6px 9px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.path p {
+  margin: 0px 7px;
+  font-size: 18px;
+}
+
+.closeButton {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 60px);
+  padding: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bodyLeft {
+  position: absolute;
+  top: 0;
+  z-index: 99999;
+  margin: 2px;
+  left: 0;
+}
+
+.bodyRight {
+  position: absolute;
+  top: 0;
+  z-index: 99999;
+  margin: 2px;
+  right: 0;
+}
+
+.buttons {
+  position: absolute;
+  top: 0;
+  z-index: 99999;
+  margin: 2px;
+}
+
+button {
+  min-width: 45px;
+  min-height: 30px;
+  margin: 0px 5px 5px 5px;
+  padding: 3px 10px 3px 10px;
+}
+
+.tippys {
+  position: absolute !important;
+  z-index: 2;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+  margin-top: calc(-15vh - 60px) !important;
+  margin-left: -10vw !important;
+}
+
+.tippysFullscreen {
+  position: absolute !important;
+  z-index: 2;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+  margin-top: calc(-3vh - 60px) !important;
+  margin-left: -3vw !important;
+}

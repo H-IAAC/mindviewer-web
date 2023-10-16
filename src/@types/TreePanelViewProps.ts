@@ -18,6 +18,7 @@ type TreePanelViewProps = {
   handleOpenAddChartMenu: (idTree: string[]) => void,
   handleCloseAddChartMenu: () => void,
   handleOpenNodeInfoModal: (idTree: string[]) => void,
+  handleIdeaModal: (idTree: string[]) => void,
   handleCloseNodeInfoModal: () => void,
   handleAddChartNewTab: (idTree: string[]) => void,
   handleTabActive: (value: number) => void,

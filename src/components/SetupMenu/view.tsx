@@ -5,13 +5,15 @@ import styles from './styles.module.css';
 const SetupMenuView = (props: SetupMenuViewProps) => {
   const {
     stage,
-    selectedOption
+    selectedOption,
+    errorMessage,
   } = props.setupMenuState;
   const {
     handleSelectedOption,
     handleStage,
     handleUrlOption,
-    handleFileOption
+    handleFileOption,
+    setErrorMsg
   } = props;
 
   const [url, setUrl] = useState("");
@@ -73,7 +75,9 @@ const SetupMenuView = (props: SetupMenuViewProps) => {
             Selecione o arquivo:
           </div>
           <div className={styles.options}>
-            <input type="file" onChange={e => e.target.files && setFiles(e.target.files)} multiple/>
+            <input type="file" onChange={e => e.target.files && setFiles(e.target.files)}
+                               onClick={e => setErrorMsg('')}
+                               multiple/>
           </div>
           <div className={styles.buttons} style={{justifyContent: 'space-between'}}>
             <button onClick={() => handleStage(0)}>
@@ -83,6 +87,7 @@ const SetupMenuView = (props: SetupMenuViewProps) => {
               Confirmar
             </button>
           </div>
+          <p>{errorMessage}</p>
         </div>
       }
     </div>

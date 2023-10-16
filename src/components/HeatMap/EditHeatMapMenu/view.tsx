@@ -1,10 +1,10 @@
 import styles from './styles.module.css';
 import './colorPickerStyles.css';
 
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { ColorPicker } from 'material-ui-color';
 
-import { MenuItem, Select } from '@material-ui/core';
+import { MenuItem, Select } from '@mui/material';
 import GradientColorEditController from '../ColorManager/gradientColorEditController';
 import CategoricalColorEditController from '../ColorManager/categoricalColorEditController';
 

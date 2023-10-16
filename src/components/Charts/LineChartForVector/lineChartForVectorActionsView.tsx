@@ -1,8 +1,8 @@
 import styles from './styles1.module.css';
 import './styles.css';
 
-import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 
 import EditChartMenu from '../../EditChartMenu';
 import InputTimeModal from '../../InputTimeModal';
