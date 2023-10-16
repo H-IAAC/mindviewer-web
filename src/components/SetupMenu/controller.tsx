@@ -82,8 +82,8 @@ const SetupMenuController = (props: SetupMenuProps) => {
 
         // Validate files as JSON and convert to base64
         try {
-          const content = await setupMenuUtils.readFile(file);
-          JSON.parse(content);
+          //const content = await setupMenuUtils.readFile(file);
+          //JSON.parse(content);
 
           const base64 = await setupMenuUtils.getBase64FromFile(file);
           filesArray.push(base64);

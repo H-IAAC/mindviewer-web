@@ -114,7 +114,7 @@ const IdeasView = (props: IdeasViewProps) => {
                 {showInfo ? <button onClick={handleShowInfo}><b>Show Info</b></button>
                           : <button onClick={handleShowInfo}>Show Info</button>
                 }
-                <button onClick={handleSaveImage}>Save PNG</button>
+                <button onClick={handleSaveImage}>Screenshot</button>
               </div>
 
               { isLoading && <div className="App">Loading...</div> }

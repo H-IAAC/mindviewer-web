@@ -1,24 +1,26 @@
 import React, { useEffect, useState, useReducer } from "react";
 import NodeInfoProps from "../../@types/NodeInfoProps";
 import IdeasViewProps from "../../@types/IdeasViewProps";
-import Elements from "../../@types/IdeasGraphElements";
 import IdeasInfoModel from "./model";
 import IdeasView from "./view";
 import cytoscapeLayout from './cytoscapeLayout';
+import CytoscapeElements from './cytoscapeElements';
+import CytoscapePopper from './cytoscapePopper';
 import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
-import tippy from 'tippy.js';
 import styles from './styles.module.css';
-import IDataTree from "../../interfaces/IDataTree";
-import graph from './cytoscapeClasses';
 import getScreenshot from '../../utils/ScreenShot/getScreenshot';
 
 cytoscape.use(popper);
 
 const maxZoom = 1.3;
 const minZoom = 0.2;
+const cyElements = new CytoscapeElements();
+const cyPopper = new CytoscapePopper();
+const elemsGrabbed = new Set<string>();
 let indexToDisplay: number = 0;
 let isLoadingData: boolean = true;
+elemsGrabbed.add('0');
 
 const initialNodeInfoState = { 
   pathList: [],
@@ -30,103 +32,6 @@ const initialNodeInfoState = {
   numberOfElements: 0,
   setupOption: -1
 };
-
-const elemsGrabbed = new Set<string>();
-elemsGrabbed.add('0');
-
-const jsonElements : Elements = {
-  nodes: new Map<string, cytoscape.ElementDefinition>(),
-  edges: new Map<string, cytoscape.ElementDefinition>()
-};
-
-const removeNodeDataElements = (ids: Set<string>, parsedElements: Elements) => {
-
-  parsedElements.nodes.forEach(function (value: any, key: string) {
-    if (!ids.has(key)) {
-      parsedElements.nodes.delete(key);
-    }
-  });
-
-  parsedElements.edges.forEach(function (value: any, key: string) {
-    if (!ids.has(value.data.source) || !ids.has(value.data.target)) {
-      parsedElements.edges.delete(key);
-    }
-  });
-
-}
-
-const extractValue = (value: any) : any => {
-  if (isNaN(value))
-    return value;
-
-  return value ? parseFloat(value).toFixed(2).toString() : '';
-}
-
-const getLabelFormat = (value: any) : any => {
-  if (value.length > 7)
-    return value.substring(0,8) + '...';
-
-  return value;
-}
-
-const parseNodeDataSubElement = (values: any, edgeId: string, ids: Set<string>, parsedElements: Elements) => {
-  values.info.forEach(function (value: any) {
-
-    const type = (value.info[4] == null || value.info[4].info == null) ? '' : 'type' + value.info[4].info;
-    ids.add(value.info[0].info);
-    // Get sub nodes
-    parsedElements.nodes.set(value.info[0].info, graph.Node(value.info[0].info, // id
-                                                            value.info[1].info, // name
-                                                            extractValue(value.info[2].info), // value
-                                                            value.info[4].info, // type
-                                                            value.info[5].info, // category
-                                                            value.info[6].info, // scope
-                                                            value.info[0].info + '\n\n' + getLabelFormat(extractValue(value.info[2].info)),
-                                                            "ellipse " + type));
-    // Get node edge
-    parsedElements.edges.set(edgeId + '_' + value.info[0].info, graph.Edge(edgeId, value.info[0].info, ''));
-
-    if (value.info[3].info.length > 0 ) {
-      parseNodeDataSubElement(value.info[3], value.info[0].info, ids, parsedElements);
-    }
-  });
-}
-
-const parseNodeData = (nodeData: IDataTree | undefined, index: number) : Elements=> {
-
-  const ids = new Set<string>();
-  const parsedElements: Elements = {
-    nodes: new Map<string, cytoscape.ElementDefinition>(jsonElements.nodes),
-    edges: new Map<string, cytoscape.ElementDefinition>(jsonElements.edges)
-  }
-
-  if (nodeData && nodeData.values && nodeData.values[index] && nodeData.values[index].y && nodeData.values[index].y.info) {
-    const node = nodeData.values[index];
-    
-    node.y.info.forEach(function (value: any) {
-      if (value.hasChildren) {
-        // This children node refers to the root node.
-        const type = (node.y.info[4] == null || node.y.info[4].info == null) ? '' : 'type' + node.y.info[4].info;
-        ids.add(node.y.info[0].info);
-        parsedElements.nodes.set(node.y.info[0].info, graph.Node(node.y.info[0].info, // id
-                                 node.y.info[1].info, // name
-                                 extractValue(node.y.info[2].info),
-                                 node.y.info[4].info, // type
-                                 node.y.info[5].info, // category
-                                 node.y.info[6].info, // scope
-                                 node.y.info[0].info + '\n\n' + extractValue(node.y.info[2].info),
-                                 "ellipse-double " + type));
-
-        // Every other node related to this root is identified by the function below
-        parseNodeDataSubElement(value, node.y.info[0].info, ids, parsedElements);
-      }
-    });
-  }
-
-  removeNodeDataElements(ids, parsedElements);
-
-  return parsedElements;
-}
 
 const reducerNodeInfo = (state: any, action: any) => {
   switch (action.type) {
@@ -172,67 +77,17 @@ function refreshGraphLayout(cyRef : any) {
   //cyRef.current?.fit();
 }
 
-function destroyPopper (cyRef: any) {
-  cyRef.current!.elements().nodes().forEach(function(ele : any) {
-    ele.tippy?.destroy();
-    ele.tippy = undefined;
-  });
-
-}
-
-function makePopper(ele: cytoscape.NodeSingular | any, showInfo: boolean, fullScreen: boolean) {
-  const tippysDiv = document.getElementById('tippys');
-  (fullScreen) ? tippysDiv!.className = styles.tippysFullscreen : tippysDiv!.className = styles.tippys;
-
-  ele.tippy?.destroy();
-
-  ele.tippy = tippy(document.createElement('div'), {
-    content: () => {
-      const content = document.createElement("div");
-      content.style.padding = '5px 5px 5px 5px';
-
-      if (showInfo) {
-        content.innerHTML = ele.data('name') +
-                            '<br>' +
-                            ele.data('value');
-        content.style.fontSize = "11px";
-        content.style.textAlign = "center"
-      } else {
-        content.innerHTML = "Name: " + ele.data('name') + '<br>' +
-                            "Value: " + ele.data('value') + '<br>' +
-                            "Type: " + ele.data('type') + '<br>' +
-                            "Category: " + ele.data('category') + '<br>' +
-                            "Scope: " + ele.data('scope');
-        content.style.backgroundColor = "#e9e9e9";
-        content.style.border = "1px solid black";
-      }
-      
-      return content;
-    },
-    hideOnClick: (showInfo) ? false : true,
-    placement: (showInfo) ? "bottom" : 'right',
-    zIndex: 2,
-    flip: true,
-    appendTo: () =>  tippysDiv!,
-    popperOptions: {
-      modifiers: {
-        flip: {
-          boundariesElement: 'scrollParent',
-        },
-      }
-    },
-    onShow(instance) {
-      instance.popperInstance!.reference = ele.popperRef();
-    }
-  });
-
-  ele.tippy.showInfo = showInfo;
-  ele.tippy.fullScreen = fullScreen;
-
-  if (showInfo) ele.tippy?.show();
-}
-
 const IdeasInfoController = (props: NodeInfoProps) => {
+
+  const [zoom, setZoom] = useState(0.55);
+  const [fullScreen, setFullscreen] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+  const [elementsChanged, setElementsChanged] = useState(false);
+  const [nodeInfoState, dispatch] = useReducer(reducerNodeInfo, initialNodeInfoState);
+  const ideasModel = IdeasInfoModel.getInstance();
+
+  const cyRef = React.useRef<cytoscape.Core | undefined>();
 
   const {
     idTree,
@@ -269,9 +124,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   const handleSaveImage = async () => { getScreenshot('body', 'ideas_screenshot'); }
 
   const handleClose = () => {
-    jsonElements.nodes = new Map<string, cytoscape.ElementDefinition>();
-    jsonElements.edges = new Map<string, cytoscape.ElementDefinition>();
-
+    cyElements.clear();
     handleCloseNodeInfoModal();
   }
 
@@ -279,106 +132,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     indexToDisplay = index;
   }
 
-  const [zoom, setZoom] = useState(0.55);
-  const [fullScreen, setFullscreen] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
-  const [isLoading, setLoading] = useState(true);
-  const [elementsChanged, setElementsChanged] = useState(false);
-  const [nodeInfoState, dispatch] = useReducer(reducerNodeInfo, initialNodeInfoState);
-  const ideasModel = IdeasInfoModel.getInstance();
-
-  const cyRef = React.useRef<cytoscape.Core | undefined>();
-
-  useEffect(() => {
-    cyRef?.current?.zoom(zoom);
-
-    if (showInfo) {
-      cyRef.current!.elements().nodes().forEach(function(ele) {
-        makePopper(ele, showInfo, fullScreen);
-      });
-    }
-    return () => {
-    };
-  },[zoom]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  function compareNodeData(currentElements: Elements, latestElements: Elements) : boolean {
-
-    let hasChanged = false;
-
-    if (currentElements.nodes.size === 0) {
-      currentElements.nodes = latestElements.nodes;
-      currentElements.edges = latestElements.edges;
-    } else {
-      // Remove nodes that are not present in the new nodeData
-      currentElements.nodes.forEach (function(value, key) {
-        if (!latestElements.nodes.has(key)) {
-          cyRef.current?.$id(key).remove();
-          currentElements.nodes.delete(key);
-          (cyRef.current?.elements().$id(key) as any).tippy?.destroy();
-          (cyRef.current?.elements().$id(key) as any).tippy = undefined;
-          hasChanged = true;
-        }
-      })
-
-      // Remove edges that are not present in the new nodeData
-      currentElements.edges.forEach (function(value, key) {
-        if (!latestElements.edges.has(key)) {
-          cyRef.current?.$id(key).remove();
-          currentElements.edges.delete(key);
-          hasChanged = true;
-        }
-      })
-
-      // Add nodes that are not present in the current graph
-      latestElements.nodes.forEach (function(value, key) {  
-        if (!currentElements.nodes.has(key)) {
-          cyRef.current?.add(value);
-          currentElements.nodes.set(key, value);
-          hasChanged = true;
-        }
-      })
-
-      // Add edges that are not present in the current graph
-      latestElements.edges.forEach (function(value, key) {  
-        if (!currentElements.edges.has(key)) {
-          cyRef.current?.add(value);
-          currentElements.edges.set(key, value);
-          hasChanged = true;
-        }
-      })
-    }
-
-    return hasChanged;
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // Initializing model
+  // Initializing
   useEffect(() => {
     setLoading(true);
     ideasModel.init(dispatch);
@@ -386,6 +140,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
   },[])
 
+  // Cleanup mechanism for effects
   useEffect(() => {
     return () => {
       // Clean up when element is not used anymore.
@@ -393,8 +148,8 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       indexToDisplay = 0;
       elemsGrabbed.clear();
       elemsGrabbed.add('0');
-      jsonElements.nodes = new Map<string, cytoscape.ElementDefinition>();
-      jsonElements.edges = new Map<string, cytoscape.ElementDefinition>();
+      cyElements.jsonElements.nodes = new Map<string, cytoscape.ElementDefinition>();
+      cyElements.jsonElements.edges = new Map<string, cytoscape.ElementDefinition>();
 
       if (cyRef.current) {
         cyRef.current.removeAllListeners();
@@ -403,9 +158,22 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     }
   }, []);
 
+  // Handle Zoom
+  useEffect(() => {
+    cyRef?.current?.zoom(zoom);
+
+    if (showInfo) {
+      cyRef.current!.elements().nodes().forEach(function(ele) {
+        cyPopper.makePopper(ele, showInfo, fullScreen);
+      });
+    }
+    return () => {
+    };
+  },[zoom]);
+
+  // Handle 'nodeInfoState' changes
   useEffect(() => {
     let skipRender: boolean = false;
-    let timeoutExec: NodeJS.Timeout;
     let waitTime: number = 2000;
 
     if (!nodeInfoState.nodeData)
@@ -428,7 +196,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
           // When reached the lastIndex, then load is completed.
           isLoadingData = false;
         }
-        latestElements = parseNodeData(nodeInfoState.nodeData, nodeInfoState.indexBeenDisplayed);
+        latestElements = cyElements.parseNodeData(nodeInfoState.nodeData, nodeInfoState.indexBeenDisplayed);
         nodeInfoState.numberOfElements = latestElements.nodes.size;
         waitTime = 200;
       } else {
@@ -441,7 +209,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     } else {
       // When loading data from URL, parse last index available.
       nodeInfoState.indexBeenDisplayed = nodeInfoState.lastIndex;
-      latestElements = parseNodeData(nodeInfoState.nodeData, nodeInfoState.lastIndex);
+      latestElements = cyElements.parseNodeData(nodeInfoState.nodeData, nodeInfoState.lastIndex);
       isLoadingData = false;
       nodeInfoState.numberOfElements = latestElements.nodes.size;
     }
@@ -454,13 +222,13 @@ const IdeasInfoController = (props: NodeInfoProps) => {
         //console.log('SELECTION MODE same index, ignoring...');
         skipRender = true;
       } else {
-        latestElements = parseNodeData(nodeInfoState.nodeData, indexToDisplay);
+        latestElements = cyElements.parseNodeData(nodeInfoState.nodeData, indexToDisplay);
         nodeInfoState.indexBeenDisplayed = indexToDisplay;
       }
     }
 
     if (!skipRender) {
-      const hasChanged = compareNodeData(jsonElements, latestElements);
+      const hasChanged = cyElements.compareNodeData(cyRef, cyElements.jsonElements, latestElements);
 
       if (hasChanged) {
         // Refresh Graph to display added and removed nodes/edges.
@@ -474,13 +242,14 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
     setLoading(false);
 
-    timeoutExec = setTimeout(() => {        
+    const timeoutExec: NodeJS.Timeout = setTimeout(() => {        
       ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
     }, waitTime);
 
     return () => { clearTimeout(timeoutExec); } ;
   },[nodeInfoState]);
 
+  // Handle user interaction and changes on cytoscape graph
   useEffect(() => {
     if (cyRef.current) {
       cyRef.current.ready(function() {
@@ -489,7 +258,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
           // when showInfo/fullScreen options has changes.
           if ((ele.tippy === undefined) ||
               (ele.tippy.fullScreen !== fullScreen || ele.tippy.showInfo !== showInfo)) {
-            makePopper(ele, showInfo, fullScreen);
+                cyPopper.makePopper(ele, showInfo, fullScreen);
           }
         });
       });
@@ -524,7 +293,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       cyRef.current.elements().bind('position', (event) => {
                                       event.target.tippy?.destroy();
                                       event.target.tippy = undefined;
-                                      makePopper(event.target, showInfo, fullScreen);
+                                      cyPopper.makePopper(event.target, showInfo, fullScreen);
                                     });
 
       cyRef.current.elements().unbind('remove');
@@ -537,7 +306,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
       cyRef.current.on('scrollzoom', () => {
         if (showInfo) {
           setShowInfo(false);
-          destroyPopper(cyRef);
+          cyPopper.destroyPopper(cyRef);
         }
       });
 
@@ -552,6 +321,8 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     }
   }, [cyRef.current, elementsChanged, showInfo, fullScreen]);
 
+  // Screen modal needs to display the 'memory path'. It is only used to keep
+  // same behaviour from other screens.
   const handleIdTree = (idTree: string) => {
     ideasModel.handleNewInfo(idTree, mainPanelState.data, tabActive);
   }
@@ -568,7 +339,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     handleClose,
     handleUserIndex,
     cyRef,
-    jsonElements,
+    jsonElements: cyElements.jsonElements,
     isLoading,
     showInfo,
     isLoadingData,

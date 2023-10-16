@@ -1,5 +1,5 @@
 import IdeasInfoModelType from "./IdeasInfoModelType";
-import NodeInfoProps from "./NodeInfoProps";
+import Elements from "../@types/IdeasGraphElements";
 
 type NodeInfoViewProps = {
   nodeInfoState: IdeasInfoModelType,
@@ -13,7 +13,7 @@ type NodeInfoViewProps = {
   handleClose: () => void,
   handleUserIndex: (customIndex: number) => void,
   cyRef: React.MutableRefObject<any>,
-  jsonElements: any,
+  jsonElements: Elements,
   isLoading: boolean,
   showInfo: boolean
   isLoadingData: boolean,
