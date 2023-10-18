@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import NodeInfoViewProps from '../../@types/NodeInfoViewProps';
 import IDataTree from '../../interfaces/IDataTree';
 import InputTimeModal from '../InputTimeModal';

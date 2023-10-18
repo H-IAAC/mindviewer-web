@@ -8,9 +8,6 @@ import TreeItem from '@mui/lab/TreeItem';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 
-import IDataTree from '../../interfaces/IDataTree';
-import TreeViewProps from '../../@types/TreeViewProps';
-
 const TreeForJsonView = (props: any) => {
   const {
     treeForJsonState,

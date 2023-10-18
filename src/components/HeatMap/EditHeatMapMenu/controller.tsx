@@ -112,8 +112,6 @@ const reducerEditHeatMapMenu = (state: any, action: any) => {
 const EditHeatMapMenuController = (props: any) => {
   const {
     chartId,
-    handleXAxisChanged,
-    removeDataFromChart,
     handleEditHeatMapMenu
   } = props;
 

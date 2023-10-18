@@ -54,7 +54,7 @@ class TreePanelModel {
     this.selectedNodes[this.tabActive] = nodeIds;
 
     this.selectedNodesProcessed = nodeIds.map(item => {
-      let list = [item];
+      const list = [item];
       
       while (item !== "0") {
         item = item.length === 1? "0" : item.slice(0,-1);
@@ -73,7 +73,7 @@ class TreePanelModel {
 
   public openAddChartMenu = (chartList: any, idTree: string[]) => {
     this.idTree = idTree;
-    this.allCharts = chartList.map((item: any) => item.getTitle());;
+    this.allCharts = chartList.map((item: any) => item.getTitle());
     this.addChartMenu = true;
     this.dispatch({
       type: "OPEN_ADDCHARTMENU",

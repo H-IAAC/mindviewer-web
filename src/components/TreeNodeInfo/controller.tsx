@@ -1,6 +1,4 @@
 import React, {useEffect, useReducer} from 'react';
-import TreeProps from '../../@types/TreeProps';
-import TreeViewProps from '../../@types/TreeViewProps';
 import TreeNodeInfoModel from './model';
 import TreeNodeInfoView from './view';
 

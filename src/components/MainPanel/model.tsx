@@ -172,15 +172,15 @@ class MainPanelModel {
 
   public addChart = (tabActive: number, options: {idTree: string[], type: string, xInterval: number, timeMultiplier: number, yInterval:Array<number>, autoRange: boolean, title: string}) => {
     const {idTree, type, xInterval, yInterval, autoRange, timeMultiplier, title} = options;
-    let idTreeVector: string[][] = [];
-    let requiredDataAll = []
+    const idTreeVector: string[][] = [];
+    const requiredDataAll = []
     
     for (let i = 0; i < idTree.length; i++) {
       const idTreeItem = idTree[i];
       
-      let idTreeList = idTreeItem.split("-").reverse();
+      const idTreeList = idTreeItem.split("-").reverse();
 
-      let idTreeListAux = [...idTreeList];
+      const idTreeListAux = [...idTreeList];
       let id;
       let requiredData = this.data[tabActive];
       let idCompare = ""
@@ -212,7 +212,7 @@ class MainPanelModel {
         if (item.requiredData.children) {
           for (let i = 0; i < item.requiredData.children.length; i++) {
             if (item.requiredData.children[i].values) {
-              let idTreeAux2 = [...item.idTree];
+              const idTreeAux2 = [...item.idTree];
               idTreeAux2.unshift(item.requiredData.children[i].id.split("-").slice(-1)[0]);
               idTreeVector.push(idTreeAux2)
             }
@@ -313,14 +313,14 @@ class MainPanelModel {
   }
 
   public addNewDataInChart = (tabActive: number, idTree: string[], key: number) => {
-    let idTreeVector: string[][] = [];
-    let requiredDataAll = []
+    const idTreeVector: string[][] = [];
+    const requiredDataAll = []
 
     for (let i = 0; i < idTree.length; i++) {
       const idTreeItem = idTree[i];
 
-      let idTreeList = idTreeItem.split("-").reverse();
-      let idTreeListAux = [...idTreeList];
+      const idTreeList = idTreeItem.split("-").reverse();
+      const idTreeListAux = [...idTreeList];
       let id;
       let requiredData = this.data[tabActive];
       let idCompare = ""
@@ -355,7 +355,7 @@ class MainPanelModel {
         if (item.requiredData.children) {
           for (let i = 0; i < item.requiredData.children.length; i++) {
             if (item.requiredData.children[i].values) {
-              let idTreeAux2 = [...item.idTree];
+              const idTreeAux2 = [...item.idTree];
               idTreeAux2.unshift(item.requiredData.children[i].id.split("-").slice(-1)[0]);
               if (!idTreeToCompare.includes([idTreeAux2[0],idTreeAux2[idTreeAux2.length-1]].join(",")))
                 idTreeVector.push(idTreeAux2)
@@ -366,7 +366,7 @@ class MainPanelModel {
     }
 
     //console.log([...this.chartList[key].getIdTree()])
-    let idTreeAux = this.chartList[key].getIdTree();
+    const idTreeAux = this.chartList[key].getIdTree();
     idTreeAux.push(...idTreeVector)
     console.log(idTreeAux)
     this.chartList[key].reset();
@@ -409,7 +409,7 @@ class MainPanelModel {
     const listAux = elementId.sort();
     for (let i = listAux.length-1; i >= 0; i--) {
       const element = listAux[i];
-      let idTreeAux = this.chartList[chartId].getIdTree();
+      const idTreeAux = this.chartList[chartId].getIdTree();
       idTreeAux.splice(element,1);
       this.chartList[chartId].setIdTree([...idTreeAux]);
     }
@@ -426,15 +426,15 @@ class MainPanelModel {
   public updateCharts = () => {
     this.chartList.forEach((item: any) => {
       //console.log(item)
-      let requiredDataFinal: [IDataTree, string][] = [];
-      let idTree = item.getIdTree();
+      const requiredDataFinal: [IDataTree, string][] = [];
+      const idTree = item.getIdTree();
       for (let i = 0; i < idTree.length; i++) {
         const element = idTree[i];
         
         let hasJson = false;
         let jsonId = "i";
 
-        let idTreeAux = [...element];
+        const idTreeAux = [...element];
         let id = idTreeAux.pop();
         if (id) {
           let requiredData = this.data[parseInt(id)];

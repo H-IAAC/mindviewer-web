@@ -53,8 +53,8 @@ const ChartManager = (props: ChartManagerProps) => {
         break;
     
       case "vertical":
-        let v1: number[] = [];
-        let v2: number[] = [];
+        const v1: number[] = [];
+        const v2: number[] = [];
 
         mainPanelState.chartList.forEach((item: any, index: number) => {
           if (item.getLocation() === "vert2") {
@@ -82,8 +82,8 @@ const ChartManager = (props: ChartManagerProps) => {
         break;
 
       case "horizontal": 
-        let h1: number[] = [];
-        let h2: number[] = [];
+        const h1: number[] = [];
+        const h2: number[] = [];
 
         mainPanelState.chartList.forEach((item: any, index: number) => {
           if (item.getLocation() === "horiz2") {
@@ -111,10 +111,10 @@ const ChartManager = (props: ChartManagerProps) => {
         break;
 
       case "fourPanels":
-        let f1: number[] = [];
-        let f2: number[] = [];
-        let f3: number[] = [];
-        let f4: number[] = [];
+        const f1: number[] = [];
+        const f2: number[] = [];
+        const f3: number[] = [];
+        const f4: number[] = [];
 
         mainPanelState.chartList.forEach((item: any, index: number) => {
           if (item.getLocation() === "f2") {

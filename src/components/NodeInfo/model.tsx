@@ -38,8 +38,8 @@ class NodeInfoModel {
   public handleNewInfo = (idTree: string, data: IDataTree[], tabActive: number) => {
     this.idTree = idTree;
     this.nodeJsonData = undefined;
-    let idTreeAux = idTree.split("-").reverse();
-    let nodeInfoListAux = [];
+    const idTreeAux = idTree.split("-").reverse();
+    const nodeInfoListAux = [];
 
     let id;
     let requiredData: IDataTree = data[tabActive];
@@ -138,7 +138,7 @@ class NodeInfoModel {
 
     if (this.idTree.includes("i-")) {
       let id;
-      let idTreeAux = this.idTree.split("i-")[1].split("-").reverse();
+      const idTreeAux = this.idTree.split("i-")[1].split("-").reverse();
       let idCompare = this.idTree.split("i-")[0]+"i";
 
       while (idTreeAux.length != 0) {

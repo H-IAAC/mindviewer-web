@@ -76,9 +76,9 @@ const getType2 = (data: any): string => {
 class DataConstructor {
 
   public constructJsonTree = (jsonData: any, time: Date, id = "") => {
-    let jsonTree: any[] = [];
+    const jsonTree: any[] = [];
     let counterId = 1;
-    let isObject = getType2(jsonData) === "Object";
+    const isObject = getType2(jsonData) === "Object";
 
     if (jsonData === undefined || !isObject)
       return [jsonData, false]
@@ -87,7 +87,7 @@ class DataConstructor {
 
     if (isArray) {
       jsonData.forEach((item: any, index: number) => {
-        let newId = id !== "" ? id+"-"+counterId.toString() : counterId.toString();
+        const newId = id !== "" ? id+"-"+counterId.toString() : counterId.toString();
 
         const [info, hasChildren] = this.constructJsonTree(item, time, newId);
 
@@ -105,8 +105,8 @@ class DataConstructor {
         counterId++;
       })
     } else {
-      for (let key in jsonData) {
-        let newId = id !== "" ? id+"-"+counterId.toString() : counterId.toString();
+      for (const key in jsonData) {
+        const newId = id !== "" ? id+"-"+counterId.toString() : counterId.toString();
 
         const [info, hasChildren] = this.constructJsonTree(jsonData[key], time, newId);
 
@@ -138,12 +138,12 @@ class DataConstructor {
     let icon: string;
     let valueX: Date | number | undefined;
     let valueY: any;
-    let memoryJson: Array<IDataTree> = [];
+    const memoryJson: Array<IDataTree> = [];
 
     if (memoryData === undefined || memoryData.length === 0) return undefined;
 
     memoryData.forEach((memory) => {
-      let newId = id !== "" ? id+"-"+counterId.toString() : counterId.toString();
+      const newId = id !== "" ? id+"-"+counterId.toString() : counterId.toString();
       //Se a memória for um container, a função realizará uma chamada recursiva para resolver os dados dos filhos
       if (memory.memories.length !== 0) {
         children = memory.memories;
@@ -221,10 +221,9 @@ class DataConstructor {
       try {
         data_aux[i].name = json[i].name+": "+json[i].I?.toFixed(3)+" ("+json[i].evaluation?.toFixed(3)+")";
       } catch (error) {
-        ;
       }
       
-      let valueX = new Date(json[i].timestamp);
+      const valueX = new Date(json[i].timestamp);
       let valueY = json[i].I;
       if (getType(valueY) === "Object") {
         const [info, hasChildren] = this.constructJsonTree(valueY, valueX, data_aux[i].id+"-i");
@@ -268,7 +267,7 @@ class DataConstructor {
     let broadcastMemories: IMemoryProperties[] = [];
     let name: string;
     //let icon: string;
-    let codeletJson: Array<IDataTree> = [];
+    const codeletJson: Array<IDataTree> = [];
     let labelChart: string;
     let valueX: Date | number | undefined;
     let valueY: number | undefined;
@@ -308,14 +307,14 @@ class DataConstructor {
 
       //Concatenamos todas as possíveis memórias do codelet em um vetor
       if (inputMemories.length != 0 || outputMemories.length != 0 || broadcastMemories.length != 0) {
-        let aux: Array<any> = [];
+        const aux: Array<any> = [];
         children = aux.concat(inputMemories, outputMemories, broadcastMemories);
         //console.log(children);
       } else {
         children = undefined;
       }
 
-      let newId = id !== "" ? id+"-"+counterId.toString() : counterId.toString();
+      const newId = id !== "" ? id+"-"+counterId.toString() : counterId.toString();
 
       codeletJson.push({
         id: newId,
@@ -367,8 +366,8 @@ class DataConstructor {
           broadcastMemories = json[i].broadcast;
         } 
 
-        let aux: Array<any> = [];
-        let childrenAux = aux.concat(inputMemories, outputMemories, broadcastMemories);
+        const aux: Array<any> = [];
+        const childrenAux = aux.concat(inputMemories, outputMemories, broadcastMemories);
 
         data_aux[i].children = this.updateMemoryTree(data_aux[i].children, childrenAux);
       }
@@ -383,17 +382,15 @@ class DataConstructor {
     let children: IMemoryProperties[] | undefined;
     let name: string;
     let icon: string;
-    let valueX: Date | number | undefined;
-    let valueY: any;
     let labelChart: string;
     let valuesAux: Array<any> | undefined;
-    let memoryJson: Array<IDataTree> = [];
+    const memoryJson: Array<IDataTree> = [];
 
     if (memoryData === undefined || memoryData.length === 0) return undefined;
 
     memoryData[0].forEach((memory:any, index: number) => {
       labelChart = memory.data.name;
-      let newId = id !== "" ? id+"-"+counterId.toString() : counterId.toString();
+      const newId = id !== "" ? id+"-"+counterId.toString() : counterId.toString();
 
       //Se a memória for um container, a função realizará uma chamada recursiva para resolver os dados dos filhos
       if (memory.type.includes("MemoryContainer")) {
@@ -415,7 +412,7 @@ class DataConstructor {
 
         valuesAux = [];
         memoryData.forEach((memory: any) => {
-          let valueX = new Date(memory[index].data.timestamp);
+          const valueX = new Date(memory[index].data.timestamp);
           let valueY = memory[index].data.I;
           if (getType(valueY) === "Object") {
             const [info, hasChildren] = this.constructJsonTree(valueY, valueX, newId+"-i");
@@ -475,20 +472,14 @@ class DataConstructor {
     let inputMemories: IDataTree[] | undefined = [];
     let outputMemories: IDataTree[]| undefined = [];
     let broadcastMemories: IDataTree[]| undefined = [];
-    let name: string;
-    //let icon: string;
-    //let codeletJson: Array<IDataTree> = [];
-    let labelChart: string;
-    let valueX: Date | number | undefined;
-    let valueY: number | undefined;
 
     if (codeletData === undefined || codeletData.length === 0) return undefined;
     if (codeletData[codeletData.length-1].activation === undefined) return undefined;
 
-    name = codeletData[0].codeletName+": "+codeletData[codeletData.length-1].activation.toFixed(3);
-    labelChart = codeletData[0].codeletName;
+    const name = codeletData[0].codeletName+": "+codeletData[codeletData.length-1].activation.toFixed(3);
+    const labelChart = codeletData[0].codeletName;
 
-    let valuesAux: Array<any> = [];
+    const valuesAux: Array<any> = [];
     codeletData.forEach((codelet: any) => {
       let time: string = codelet.time;
       const day = time.slice(3,5);
@@ -506,7 +497,7 @@ class DataConstructor {
 
     //Se o codelet tiver inputs
     if (codeletData[0].mInputs.length !== 0) {
-      let mInputs = codeletData.map((codelet:any) => (codelet.mInputs));
+      const mInputs = codeletData.map((codelet:any) => (codelet.mInputs));
       inputMemories = this.constructMemoryTreeFromJsonFile(mInputs,"input", id, currentIndex);
       currentIndex = currentIndex+codeletData[0].mInputs.length;
     } else {
@@ -515,7 +506,7 @@ class DataConstructor {
 
     //Se o codeletData tiver outputs
     if (codeletData[0].mOutputs.length !== 0) {
-      let mOutputs = codeletData.map((codelet:any) => (codelet.mOutputs));
+      const mOutputs = codeletData.map((codelet:any) => (codelet.mOutputs));
       outputMemories = this.constructMemoryTreeFromJsonFile(mOutputs,"output",id, currentIndex);
       currentIndex = currentIndex+codeletData[0].mOutputs.length;
     } else {
@@ -524,7 +515,7 @@ class DataConstructor {
 
     //Se o codeletData tiver broadcasts
     if (codeletData[0].mBroadcasts.length !== 0) {
-      let mBroadcasts = codeletData.map((codelet:any) => (codelet.mBroadcasts));
+      const mBroadcasts = codeletData.map((codelet:any) => (codelet.mBroadcasts));
       broadcastMemories = this.constructMemoryTreeFromJsonFile(mBroadcasts,"broadcast", id, currentIndex);
       currentIndex = currentIndex+codeletData[0].mBroadcasts.length;
     } else {
@@ -533,14 +524,14 @@ class DataConstructor {
 
     //Concatenamos todas as possíveis memórias do codeletData em um vetor
     if (inputMemories?.length != 0 || outputMemories?.length != 0 || broadcastMemories?.length != 0) {
-      let aux: Array<any> = [];
+      const aux: Array<any> = [];
       children = aux.concat(inputMemories, outputMemories, broadcastMemories);
       console.log(children);
     } else {
       children = undefined;
     }
 
-    let codeletJson:IDataTree = {
+    const codeletJson:IDataTree = {
       id: id,
       type: 'codelet',
       icon: codeletIcon,
@@ -554,23 +545,23 @@ class DataConstructor {
   }
 
   public initializeDataFromFiles = (files: Array<string>) => {
-    let jsonList: JSON[] = [];
+    const jsonList: JSON[] = [];
 
     //Leitura dos arquivos
     if (files) {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
 
-        let convertedJson = this.getJsonFromFile(file);
+        const convertedJson = this.getJsonFromFile(file);
         jsonList.push(convertedJson)
       }
     }
     //console.log([...jsonList]);
     // //Conversão para tree
     
-    let codeletTree: Array<IDataTree> = [];
+    const codeletTree: Array<IDataTree> = [];
     let memoryTree: Array<IDataTree> = [];
-    let allMemories: Array<IDataTree> = [];
+    const allMemories: Array<IDataTree> = [];
 
     if (jsonList.length !== 0) {
       jsonList.forEach((item, index) => {
@@ -587,7 +578,7 @@ class DataConstructor {
         
       })
 
-      let memoryNames: Array<string> = [];
+      const memoryNames: Array<string> = [];
       for (let i = 0; i < allMemories.length; i++) {
         const memory = {...allMemories[i]};
         if (!memoryNames.includes(memory.name)) {
@@ -602,7 +593,7 @@ class DataConstructor {
         }
       }
 
-      memoryTree = memoryTree.sort((a,b) => {
+      memoryTree = memoryTree.sort((a) => {
         if (a.children) return 1;
         return -1;
       })
@@ -631,9 +622,9 @@ class DataConstructor {
   }
 
   public strEncodeUTF16 = (str: string) => {
-    var buf = new ArrayBuffer(str.length*2);
-    var bufView = new Uint16Array(buf);
-    for (var i=0, strLen=str.length; i < strLen; i++) {
+    const buf = new ArrayBuffer(str.length*2);
+    const bufView = new Uint16Array(buf);
+    for (let i=0, strLen=str.length; i < strLen; i++) {
       bufView[i] = str.charCodeAt(i);
     }
     return bufView.toString();
@@ -679,11 +670,11 @@ class DataConstructor {
   }
 
   public updateDataFromJson = (json: IMindProperties, data: IDataTree[]) => {
-    let memoryGroups: {[key: string]: IMemoryProperties[]} = {};
-    let codeletGroups: {[key: string]: ICodeletProperties[]} = {};
+    const memoryGroups: {[key: string]: IMemoryProperties[]} = {};
+    const codeletGroups: {[key: string]: ICodeletProperties[]} = {};
 
-    let memoryGroupNames: string[] = [];
-    let codeletGroupNames: string[] = [];
+    const memoryGroupNames: string[] = [];
+    const codeletGroupNames: string[] = [];
 
     json.memories.forEach(memory => {
       const group = memory.group;
@@ -709,8 +700,8 @@ class DataConstructor {
       }
     })
 
-    let memRoot = data[0].children ?? [];
-    let codRoot = data[1].children ?? [];
+    const memRoot = data[0].children ?? [];
+    const codRoot = data[1].children ?? [];
 
     for (let i = 0; i < memRoot.length; i++) {
       memRoot[i].children = this.updateMemoryTree(memRoot[i].children, memoryGroups[memoryGroupNames[i]]);
@@ -729,7 +720,7 @@ class DataConstructor {
   }
 
   public constructMemoryGroups = (memoryData: IMemoryProperties[]) => {
-    let memoryGroups: {[key: string]: IMemoryProperties[]} = {};
+    const memoryGroups: {[key: string]: IMemoryProperties[]} = {};
     memoryData.forEach(memory => {
       const group = memory.group;
       if (group) {
@@ -741,8 +732,8 @@ class DataConstructor {
       }
     })
 
-    let memoryGroupsList: IDataTree[] = [];
-    for (let key in memoryGroups) {
+    const memoryGroupsList: IDataTree[] = [];
+    for (const key in memoryGroups) {
       memoryGroupsList.push({
         id: key,
         type: "root",
@@ -757,7 +748,7 @@ class DataConstructor {
   }
 
   public constructCodeletGroups = (codeletData: ICodeletProperties[]) => {
-    let codeletGroups: {[key: string]: ICodeletProperties[]} = {};
+    const codeletGroups: {[key: string]: ICodeletProperties[]} = {};
     codeletData.forEach(codelet => {
       const group = codelet.group;
       if (group) {
@@ -769,8 +760,8 @@ class DataConstructor {
       }
     })
 
-    let codeletGroupsList: IDataTree[] = [];
-    for (let key in codeletGroups) {
+    const codeletGroupsList: IDataTree[] = [];
+    for (const key in codeletGroups) {
       codeletGroupsList.push({
         id: key,
         type: "root",

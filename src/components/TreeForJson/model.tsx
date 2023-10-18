@@ -1,5 +1,3 @@
-import TreeModelType from "../../@types/TreeModelType";
-
 class TreeForJsonModel {
   /*
     showMenu -> Váriavel booleana que indica se o menu de contexto está sendo visualizado;

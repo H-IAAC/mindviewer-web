@@ -35,7 +35,7 @@ const HeatMapComponent = (props: PropType) => {
     backgroundImage
   } = props;
 
-  let windowAux: any = window;
+  const windowAux: any = window;
 
   const [instance, setInstance] = useState<any>();
   const [hasZoomPan, setHasZoomPan] = useState(false);
@@ -123,8 +123,8 @@ const HeatMapComponent = (props: PropType) => {
       else if (parseInt(data[i].y) > maxY) maxY = parseInt(data[i].y);
     }
 
-    let listX = [];
-    let listY = [];
+    const listX = [];
+    const listY = [];
 
     for (let i = minX; i <= maxX; i++) {
       listX.push(i);      
@@ -136,7 +136,7 @@ const HeatMapComponent = (props: PropType) => {
     setXAxis([...listX]);
     setYAxis([...listY]);
 
-    let aux = {minX, maxX, minY, maxY}
+    const aux = {minX, maxX, minY, maxY}
     //console.log(aux);
     setMinMaxNumbers(aux);
     return aux;

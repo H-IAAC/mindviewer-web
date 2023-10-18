@@ -1,6 +1,4 @@
 import {useEffect, useReducer} from 'react';
-import TreeProps from '../../@types/TreeProps';
-import TreeViewProps from '../../@types/TreeViewProps';
 
 import TreeForJsonModel from './model';
 import TreeForJsonView from './view';

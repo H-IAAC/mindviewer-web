@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import InputTimeModalProps from "../../@types/InputTimeModalProps";
 import InputTimeModalViewProps from "../../@types/InputTimeModalViewProps";
 import InputTimeModalModel from "./model";

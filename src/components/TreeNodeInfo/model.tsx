@@ -1,5 +1,4 @@
 import React from "react";
-import TreeModelType from "../../@types/TreeModelType";
 import IDataTree from "../../interfaces/IDataTree";
 
 class TreeNodeInfoModel {

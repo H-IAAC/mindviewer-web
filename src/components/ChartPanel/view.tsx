@@ -1,6 +1,4 @@
 import styles from './styles.module.css';
-import LineChart from '../Charts/LineChart';
-import { useEffect } from 'react';
 import ChartPanelViewProps from '../../@types/ChartPanelViewProps';
 
 const ChartPanelView = (props: ChartPanelViewProps) => {

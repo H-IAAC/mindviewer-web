@@ -1,5 +1,4 @@
 import IChart from "../../../interfaces/IChart";
-import BarChartModel from "./barChartForVectorModel";
 import BarChartForVectorModel from "./barChartForVectorModel";
 
 class BarChartForVectorActionsModel {
@@ -7,8 +6,8 @@ class BarChartForVectorActionsModel {
   private sliderValue: number;          // time axis slider value
   private editChartMenu: boolean;       // it defines if edit chart menu is opened
   private chartTime: string;            // instant of time showed by the chart
-  private inputTimeModal: boolean;      // it defines if input time modal is opened
-  private chart!: BarChartModel;        // chart model
+  private inputTimeModal: boolean;        // it defines if input time modal is opened
+  private chart!: BarChartForVectorModel; // chart model
   private dispatch: React.Dispatch<any>;  // dispatch function
 
   constructor (chart: IChart) {

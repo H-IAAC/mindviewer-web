@@ -9,8 +9,6 @@ import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 
 import IDataTree from '../../interfaces/IDataTree';
-import TreeViewProps from '../../@types/TreeViewProps';
-import React, { useState } from 'react';
 
 const TreeNodeInfoView = (props: any) => {
   const {
