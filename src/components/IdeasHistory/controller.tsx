@@ -9,7 +9,7 @@ type GraphHistoryState = {
   numberOfElements: number;
   time: string;
   fromFile: boolean;
-  isLoadingData: boolean;
+  isLoadingFileData: boolean;
   currentTime: number;
   indexToDisplay: number;
 }
@@ -43,7 +43,7 @@ const IdeasHistoryController = (props: IdeasHistoryProps) => {
     // the new value. It is necessary to avoid scenarios of same index with diferent number of elements.
     if (historyMap.get(lastMapKey)?.index === props.index &&
         historyMap.get(lastMapKey)?.numberOfElements !== props.numberOfElements) {
-          historyMap.set(lastMapKey, {index: props.index, numberOfElements: props.numberOfElements, time: props.time, fromFile: props.fromFile, isLoadingData: props.isLoadingData, currentTime: props.currentTime, indexToDisplay: props.indexToDisplay });
+          historyMap.set(lastMapKey, {index: props.index, numberOfElements: props.numberOfElements, time: props.time, fromFile: props.fromFile, isLoadingFileData: props.isLoadingFileData, currentTime: props.currentTime, indexToDisplay: props.indexToDisplay });
 
       const newChartSeries = chartSeries.map((value, i) => {
         if (i === (lastMapKey - 1)) {
@@ -59,7 +59,7 @@ const IdeasHistoryController = (props: IdeasHistoryProps) => {
     } else if (historyMap.get(lastMapKey)?.index !== props.index) {
 
       lastMapKey++;
-      historyMap.set(lastMapKey, {index: props.index, numberOfElements: props.numberOfElements, time: props.time, fromFile: props.fromFile, isLoadingData: props.isLoadingData, currentTime: props.currentTime, indexToDisplay: props.indexToDisplay });
+      historyMap.set(lastMapKey, {index: props.index, numberOfElements: props.numberOfElements, time: props.time, fromFile: props.fromFile, isLoadingFileData: props.isLoadingFileData, currentTime: props.currentTime, indexToDisplay: props.indexToDisplay });
       setChartSeries([...chartSeries, props.numberOfElements]);
       playNextFrame();
 
@@ -118,13 +118,13 @@ const IdeasHistoryController = (props: IdeasHistoryProps) => {
   return(
     <div className={styles.timeControl}>
       {/* Pause button */}
-      {(!props.isLoadingData) &&
+      {(!props.isLoadingFileData) &&
         (isPaused ? <button className={styles.playButton} onClick={handlePlay}><b>&#9658;</b></button>
                   : <button className={styles.playButton} onClick={handlePlay}><b>||</b></button>)
       }
 
       {/* Seek bar and Chart */}
-      {(props.isLoadingData)
+      {(props.isLoadingFileData)
         ?
         <div>Loading data</div>
         :

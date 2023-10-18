@@ -35,15 +35,15 @@ const IdeasView = (props: IdeasViewProps) => {
     jsonElements,
     isLoading,
     showInfo,
-    isLoadingData,
-    indexToDisplay
+    isLoadingFileData,
+    indexSelectedToBeDisplayed
   } = props
 
   const ideasHistoryProps: IdeasHistoryProps = {
-    index: (isLoadingData) ? indexBeenDisplayed : lastIndex,
+    index: (isLoadingFileData) ? indexBeenDisplayed : lastIndex,
     time,
     numberOfElements,
-    isLoadingData,
+    isLoadingFileData,
     fromFile: (setupOption == 1) ? true : false,
     currentTime: Date.now(),
     indexToDisplay: indexBeenDisplayed,
@@ -103,7 +103,7 @@ const IdeasView = (props: IdeasViewProps) => {
                   <p>{indexBeenDisplayed}</p>
                 </div>
                 <div>
-                  <p>{indexToDisplay}</p>
+                  <p>{indexSelectedToBeDisplayed}</p>
                 </div>
                 <div>
                   <p>{lastIndex}</p>

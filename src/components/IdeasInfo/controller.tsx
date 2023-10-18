@@ -18,8 +18,8 @@ const minZoom = 0.2;
 const cyElements = new CytoscapeElements();
 const cyPopper = new CytoscapePopper();
 const elemsGrabbed = new Set<string>();
-let indexToDisplay: number = 0;
-let isLoadingData: boolean = true;
+let indexSelectedToBeDisplayed: number = 0;
+let isLoadingFileData: boolean = true;
 elemsGrabbed.add('0');
 
 const initialNodeInfoState = { 
@@ -129,7 +129,39 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   }
 
   const handleUserIndex = (index: number) => {
-    indexToDisplay = index;
+    indexSelectedToBeDisplayed = index;
+  }
+
+  const loadFromFile = (loadParameters: any) => {
+    if (isLoadingFileData) {
+      // Index are created in milisecond, not based on file content, so
+      // it is possible to have many repeated index, to avoid loading repeated content
+      // we are only considering index are stepping from 10 to 10.
+      nodeInfoState.indexBeenDisplayed = ((nodeInfoState.indexBeenDisplayed + 10) < nodeInfoState.lastIndex)
+                                                                       ? nodeInfoState.indexBeenDisplayed + 10
+                                                                       : nodeInfoState.lastIndex;
+  
+      if (nodeInfoState.indexBeenDisplayed === nodeInfoState.lastIndex) {
+        // When reached the lastIndex, then load is completed.
+        isLoadingFileData = false;
+      }
+
+      loadParameters.latestElements = cyElements.parseNodeData(nodeInfoState.nodeData, nodeInfoState.indexBeenDisplayed);
+      nodeInfoState.numberOfElements = loadParameters.latestElements.nodes.size;
+      loadParameters.waitTime = 200;
+    } else {
+      // In here, the File content has been all loaded, and no parse is necessary anymore,
+      // so just need to skip the Render as there is nothing else to load.
+      loadParameters.updateRender = false;
+    }
+  }
+  
+  const loadFromUrl = (loadParameters: any) => {
+    // When loading data from URL, parse last index available.
+    nodeInfoState.indexBeenDisplayed = nodeInfoState.lastIndex;
+    loadParameters.latestElements = cyElements.parseNodeData(nodeInfoState.nodeData, nodeInfoState.lastIndex);
+    isLoadingFileData = false;
+    nodeInfoState.numberOfElements = loadParameters.latestElements.nodes.size;
   }
 
   // Initializing
@@ -144,8 +176,8 @@ const IdeasInfoController = (props: NodeInfoProps) => {
   useEffect(() => {
     return () => {
       // Clean up when element is not used anymore.
-      isLoadingData = true;
-      indexToDisplay = 0;
+      isLoadingFileData = true;
+      indexSelectedToBeDisplayed = 0;
       elemsGrabbed.clear();
       elemsGrabbed.add('0');
       cyElements.jsonElements.nodes = new Map<string, cytoscape.ElementDefinition>();
@@ -173,62 +205,42 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
   // Handle 'nodeInfoState' changes
   useEffect(() => {
-    let skipRender: boolean = false;
-    let waitTime: number = 2000;
 
     if (!nodeInfoState.nodeData)
       return;
 
-    let latestElements = nodeInfoState.numberOfElements; // <- to remove?
+    const loadParameters = {
+      latestElements: nodeInfoState.numberOfElements,
+      waitTime: 2000,
+      updateRender: true
+    };
 
-    // Load from file:
+    // Load data from url or file.
     // If 'setupOption' is equals to 1, then data was loaded from a File
-    if (nodeInfoState.setupOption == 1) {
-      if (isLoadingData) {
-        // Index are created based on milisecond, not based on file content, so
-        // it is possible to have too many repeated index, to avoid loading repeated content
-        // we are only considering indexs stepping from 10 to 10.
-        nodeInfoState.indexBeenDisplayed = ((nodeInfoState.indexBeenDisplayed + 10) < nodeInfoState.lastIndex)
-                                                                         ? nodeInfoState.indexBeenDisplayed + 10
-                                                                         : nodeInfoState.lastIndex;
+    if (nodeInfoState.setupOption == 1)
+      loadFromFile(loadParameters);
+    else
+      loadFromUrl(loadParameters);
 
-        if (nodeInfoState.indexBeenDisplayed === nodeInfoState.lastIndex) {
-          // When reached the lastIndex, then load is completed.
-          isLoadingData = false;
-        }
-        latestElements = cyElements.parseNodeData(nodeInfoState.nodeData, nodeInfoState.indexBeenDisplayed);
-        nodeInfoState.numberOfElements = latestElements.nodes.size;
-        waitTime = 200;
+    // Get elements that must be display. These elements can be related to user selection or
+    // the latest elements from an url.
+    if (indexSelectedToBeDisplayed !== 0) {
+      if (indexSelectedToBeDisplayed === nodeInfoState.indexBeenDisplayed) {
+        // If the selected item to be displayed is already been shown, then simply ignore/skip it.
+        loadParameters.updateRender = false;
       } else {
-        // In here, the File content has been all loaded, and no parse is necessary anymore,
-        // so just need to skip the Render as there is nothing else to load.
-        skipRender = true;
-      }
-    
-    // Load from URL:
-    } else {
-      // When loading data from URL, parse last index available.
-      nodeInfoState.indexBeenDisplayed = nodeInfoState.lastIndex;
-      latestElements = cyElements.parseNodeData(nodeInfoState.nodeData, nodeInfoState.lastIndex);
-      isLoadingData = false;
-      nodeInfoState.numberOfElements = latestElements.nodes.size;
-    }
-       
-
-    // Parse the selected index
-    if (indexToDisplay !== 0) {
-      //console.log('SELECTION MODE index: ' + indexToDisplay);
-      if (indexToDisplay === nodeInfoState.indexBeenDisplayed) {
-        //console.log('SELECTION MODE same index, ignoring...');
-        skipRender = true;
-      } else {
-        latestElements = cyElements.parseNodeData(nodeInfoState.nodeData, indexToDisplay);
-        nodeInfoState.indexBeenDisplayed = indexToDisplay;
+        // Retrieve elements related to the selected index.
+        loadParameters.updateRender = true;
+        loadParameters.latestElements = cyElements.parseNodeData(nodeInfoState.nodeData, indexSelectedToBeDisplayed);
+        nodeInfoState.indexBeenDisplayed = indexSelectedToBeDisplayed;
       }
     }
 
-    if (!skipRender) {
-      const hasChanged = cyElements.compareNodeData(cyRef, cyElements.jsonElements, latestElements);
+    // Check it needs to update render.
+    if (loadParameters.updateRender) {
+      // Compare elements been displayed, and the elements from selected index, and check if there are different,
+      // it is important to avoid unnecessary renders.
+      const hasChanged = cyElements.compareNodeData(cyRef, cyElements.jsonElements, loadParameters.latestElements);
 
       if (hasChanged) {
         // Refresh Graph to display added and removed nodes/edges.
@@ -244,7 +256,7 @@ const IdeasInfoController = (props: NodeInfoProps) => {
 
     const timeoutExec: NodeJS.Timeout = setTimeout(() => {        
       ideasModel.handleNewInfo(idTree[0], mainPanelState.data, tabActive);
-    }, waitTime);
+    }, loadParameters.waitTime);
 
     return () => { clearTimeout(timeoutExec); } ;
   },[nodeInfoState]);
@@ -342,8 +354,8 @@ const IdeasInfoController = (props: NodeInfoProps) => {
     jsonElements: cyElements.jsonElements,
     isLoading,
     showInfo,
-    isLoadingData,
-    indexToDisplay
+    isLoadingFileData,
+    indexSelectedToBeDisplayed
   }
 
   return(

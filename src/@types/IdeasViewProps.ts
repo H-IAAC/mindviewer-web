@@ -16,8 +16,8 @@ type NodeInfoViewProps = {
   jsonElements: Elements,
   isLoading: boolean,
   showInfo: boolean
-  isLoadingData: boolean,
-  indexToDisplay: number
+  isLoadingFileData: boolean,
+  indexSelectedToBeDisplayed: number
 }
 
 export default NodeInfoViewProps;

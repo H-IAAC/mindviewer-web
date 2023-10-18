@@ -2,7 +2,7 @@ type IdeasHistoryProps = {
   index: number,
   time: string,
   numberOfElements: number,
-  isLoadingData: boolean,
+  isLoadingFileData: boolean,
   fromFile: boolean,
   currentTime: number,
   indexToDisplay: number,
