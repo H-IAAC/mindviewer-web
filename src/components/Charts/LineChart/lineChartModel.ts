@@ -176,7 +176,7 @@ class LineChartModel extends Chart {
       if (this.data[0].values) {
         // We iterate the values vector
         for (let j = 0; j < this.data[0].values.length; j++) {
-          let objAux: any = {};
+          const objAux: any = {};
           objAux["time"] = this.data[0].values[j].x;
           // We iterate the data vector
           for (let i = 0; i < this.data.length; i++) {
@@ -185,7 +185,7 @@ class LineChartModel extends Chart {
             if (this.jsonIds[i].length === 0) {
               if (element.values) objAux[`y${i}`] = element.values[j].y;
             } else if (element.values) {
-              let idTreeAux = this.jsonIds[i].split("-").reverse();
+              const idTreeAux = this.jsonIds[i].split("-").reverse();
               let requiredJsonData: JsonData = element.values[j].y;
               
               let id;
@@ -223,9 +223,9 @@ class LineChartModel extends Chart {
     }
     // Else, we just update the vectors
     else { 
-      let objAux: any = {};
+      const objAux: any = {};
       if (this.data[0].values) {
-        let len = this.data[0].values.length;
+        const len = this.data[0].values.length;
         objAux["time"] = this.data[0].values[len-1].x;
         // We iterate the data vector
         for (let i = 0; i < this.data.length; i++) {
@@ -233,7 +233,7 @@ class LineChartModel extends Chart {
           if (this.jsonIds[i].length === 0) {
             if (element.values) objAux[`y${i}`] = element.values[len-1].y;
           } else if (element.values) {
-            let idTreeAux = this.jsonIds[i].split("-").reverse();
+            const idTreeAux = this.jsonIds[i].split("-").reverse();
             let requiredJsonData: JsonData = element.values[len-1].y;
             
             let id;

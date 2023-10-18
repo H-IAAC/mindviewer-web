@@ -1,4 +1,3 @@
-import LineChartActionsModelType from "../../../@types/LineChartActionsModelType";
 import IChart from "../../../interfaces/IChart";
 import LineChartModel from "./lineChartModel";
 
