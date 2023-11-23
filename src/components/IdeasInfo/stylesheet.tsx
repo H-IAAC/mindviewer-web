@@ -37,6 +37,14 @@ const stylesheet: cytoscape.Stylesheet[] = [
       }
     },
     {
+      selector: ':selected',
+      style: {
+        height: "140",
+        width: "140",
+        "border-color": "blue",
+        }
+      },
+    {
       selector: "edge",
       style: {
         width: 2,

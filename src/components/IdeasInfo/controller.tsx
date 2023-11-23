@@ -327,6 +327,11 @@ const IdeasInfoController = (props: NodeInfoProps) => {
         setShowInfo(false);
       });
 
+      cyRef.current.elements().bind('click', (event) => {
+                                      if (!event.target.isNode())
+                                        return;
+                                      event.target.select();
+                                    });
     }
     return () => {
       

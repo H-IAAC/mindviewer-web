@@ -1,5 +1,5 @@
 .timeControl {
-  height: 25%;
+  /*height: 25%;*/
   width: inherit;
   display: flex;
   align-items: flex-end;
@@ -12,7 +12,7 @@
 
 .seekbar {
   width: 70%;
-  height: 100%;
+  /*height: 100%;*/
 }
 
 .playButton {
@@ -32,11 +32,10 @@ option {
 }
 
 .historyProgressBar {
-  height: 12%;
+  /*height: 12%;*/
   width: inherit;
-  margin: 0;
   position: absolute;
-  bottom: 0;
+  bottom: 1px;
   margin: 0 auto;
 }
 
@@ -48,5 +47,5 @@ option {
 }
 
 .chart {
-  margin: 7px 7px 0px 7px;
+  margin: 7px 7px 4px 7px;
 }
